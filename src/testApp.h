@@ -56,7 +56,7 @@ public:
     
     void setCalibrationMode(bool state);
     
-    ofVboMesh terrainVboMesh;
+    ofVboMesh terrainVboMesh, terrainWaterMesh;
     ofImage terrainTex, terrainTexAlpha, heightMap, terrainCrop, sendMap, featureMap, featureMapCrop, featureHeightMap;
     ofVec2f terrainSW, terrainNE, terrainCenterOffset;
     ofVec3f terrainToHeightMapScale;
@@ -64,7 +64,7 @@ public:
     ofVec2f normalizedMapCenter, normalizedReliefSize;
     float terrainPeakHeight, featureHeight;
     ofVec3f surfaceAt(ofVec2f pos);
-    float waterLevel;
+    float waterLevel, prevWaterLevel;
     bool isPanning;
     
     std::vector<MapFeature*> mapFeatures;
@@ -81,7 +81,7 @@ public:
     
     ofVec2f touchPoint;
     int deviceOrientation;
-    
+    float epsilon = 1e-8;
     float terrainUnitToScreenUnit, reliefUnitToScreenUnit, reliefUnitToTerrainUnit;
     bool calibrationMode, zoomMode;
     float timeSinceLastDoubleTap;
@@ -97,6 +97,7 @@ public:
     void resetCam(); 
     
     void drawIdentity();
+    void drawWater(float waterLevel);
     void drawTerrain(bool transparent, bool wireframe);
     void drawGrid(ofVec2f sw, ofVec2f ne, int subdivisionsX, int subdivisionsY, ofColor line);
     void drawGrid(ofVec2f sw, ofVec2f ne, int subdivisionsX, int subdivisionsY, ofColor line, ofColor background);

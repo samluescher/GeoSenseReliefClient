@@ -22,10 +22,15 @@
 #else
 
 #define IS_TOP_DOWN_CLIENT false
-
 #define LINE_WIDTH_GRID_SUBDIV 1
 #define LINE_WIDTH_GRID_WHOLE 2
-#define COLOR_WATER ofColor(0, 160, 200, 255)
+
+#if (IS_TOP_DOWN_CLIENT)
+#define COLOR_WATER ofColor(0, 100, 120, 255)
+#else
+#define COLOR_WATER ofColor(0, 100, 120, 255)
+#endif
+
 
 #endif
 

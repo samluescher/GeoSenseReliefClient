@@ -117,8 +117,7 @@ void testApp::setup()
     
     //int heightMapStepPixels = (heightMap.width * heightMap.height) / 1000000 * .8;
 	//terrainVboMesh = meshFromImage(heightMap, heightMapStepPixels, terrainPeakHeight);
-    terrainVboMesh = meshFromImage(heightMap, 1, terrainPeakHeight);
-    
+    terrainVboMesh = meshFromImage(heightMap, 1, terrainPeakHeight, false, 0, ofVec2f(0,0), ofVec2f(0,0));
     light.enable();
     light.setPosition(100, 0, 0);
     
@@ -143,7 +142,8 @@ void testApp::setup()
     drawMiniMapEnabled = true;
     drawWaterEnabled = false;
     tetherWaterEnabled = false;
-    waterLevel = 0.017;
+    waterLevel = 0.3;
+    prevWaterLevel = 0.0;
     reliefSendMode = RELIEF_SEND_OFF;
     fullscreenEnabled = true;
     ofSetFullscreen(fullscreenEnabled);
@@ -181,12 +181,12 @@ void testApp::setup()
 	layersGUI->addToggle("FEATURES", drawMapFeaturesEnabled, dim, dim);
 	layersGUI->addToggle("MINIMAP", drawMiniMapEnabled, dim, dim);
 	layersGUI->addToggle("WATER", drawWaterEnabled, dim, dim);
-    layersGUI->addSlider("WATER LEVEL", 0, .125, waterLevel, guiW - spacing * 2, dim);
+    layersGUI->addSlider("WATER LEVEL", 0, terrainPeakHeight/3, waterLevel, guiW - spacing * 2, dim);
 	layersGUI->addToggle("DEBUG", drawDebugEnabled, dim, dim);
     
 	layersGUI->addWidgetDown(new ofxUILabel("", OFX_UI_FONT_LARGE)); 
 	layersGUI->addWidgetDown(new ofxUILabel("", OFX_UI_FONT_LARGE)); 
-	layersGUI->addWidgetDown(new ofxUILabel("RELIEF SERVER", OFX_UI_FONT_LARGE)); 
+	layersGUI->addWidgetDown(new ofxUILabel("RELIEF SERVER", OFX_UI_FONT_LARGE));
 	layersGUI->addToggle("SEND TERRAIN", reliefSendMode == RELIEF_SEND_TERRAIN, dim, dim);
 	layersGUI->addToggle("SEND FEATURES", reliefSendMode == RELIEF_SEND_FEATURES, dim, dim);
     
@@ -350,6 +350,18 @@ void testApp::update()
 
 //--------------------------------------------------------------
 
+void testApp::drawWater(float waterLevel) {
+    
+    ofPushMatrix();
+    ofTranslate(terrainSW + terrainExtents / 2);
+    ofScale(terrainToHeightMapScale.x, terrainToHeightMapScale.y, terrainToHeightMapScale.z);
+    
+    ofSetColor(COLOR_WATER);
+    
+    terrainWaterMesh.draw();
+    
+    ofPopMatrix();
+}
 void testApp::drawTerrain(bool transparent, bool wireframe) {
     ofPushMatrix();
     ofTranslate(terrainSW + terrainExtents / 2);
@@ -359,7 +371,7 @@ void testApp::drawTerrain(bool transparent, bool wireframe) {
     if (transparent && !wireframe) terrainTexAlpha.bind(); else terrainTexAlpha.bind();
     
     if (!wireframe) {
-        terrainVboMesh.draw(); 
+        terrainVboMesh.draw();
     } else {
         ofSetColor(100, 100, 100, 100);
         terrainVboMesh.drawWireframe(); 
@@ -429,26 +441,33 @@ void testApp::draw()
 #endif
     
     ofPushMatrix();
-    
     ofScale(1 / terrainUnitToScreenUnit, 1 / terrainUnitToScreenUnit, 1 / terrainUnitToScreenUnit);
-    
-    if (drawWaterEnabled && !calibrationMode) {
-        ofPushMatrix();
-        ofEnableBlendMode(OF_BLENDMODE_ALPHA);
-        glEnable(GL_DEPTH_TEST);
-        ofTranslate(0, 0, -.51);
-        ofScale(terrainExtents.x, terrainExtents.y, 1 + waterLevel);
-        ofSetColor(COLOR_WATER);
-        ofFill();
-        ofBox(1);
-        ofDisableBlendMode(); 
-        glDisable(GL_DEPTH_TEST);
-        ofPopMatrix();
-    }
     
     ofPushMatrix();
     ofTranslate(-mapCenter);
     
+    if (drawWaterEnabled && !calibrationMode) {
+        if(abs(waterLevel - prevWaterLevel) > epsilon) {
+            terrainWaterMesh = meshFromImage(heightMap, 1, terrainPeakHeight, true, waterLevel, ofVec2f(0,0), ofVec2f(0,0) /*placeholders*/);
+            prevWaterLevel = waterLevel;
+        }
+    
+        //ofEnableAlphaBlending();
+        glEnable(GL_DEPTH_TEST);
+        drawWater(waterLevel);
+        glDisable(GL_DEPTH_TEST);
+        //ofDisableAlphaBlending();
+    }
+    
+    ofPopMatrix();
+    ofPopMatrix();
+    
+    ofPushMatrix();
+    ofScale(1 / terrainUnitToScreenUnit, 1 / terrainUnitToScreenUnit, 1 / terrainUnitToScreenUnit);
+    
+    
+    ofPushMatrix();
+    ofTranslate(-mapCenter);
     if (drawTerrainEnabled && !calibrationMode) {
 #if !(TARGET_OS_IPHONE)
         ofDisableBlendMode(); // TODO: for some reason mesh is not textured on OSX if alpha blending enabled

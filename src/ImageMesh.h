@@ -53,7 +53,7 @@ ofVec3f getVertexFromImg(ofImage& img, int x, int y, float maxHeight) {
 }
 
 //--------------------------------------------------------------
-ofMesh meshFromImage(ofImage& img, int skip, float maxHeight) {
+ofMesh meshFromImage(ofImage& img, int skip, float maxHeight, bool isWater, float waterLevel, ofVec2f swExtent, ofVec2f neExtent) {
 	ofMesh mesh;
 	// OF_PRIMITIVE_TRIANGLES means every three vertices create a triangle
 	mesh.setMode(OF_PRIMITIVE_TRIANGLES);
@@ -63,6 +63,7 @@ ofMesh meshFromImage(ofImage& img, int skip, float maxHeight) {
     float ws = width;
     float hs = height;
 	ofVec3f zero(0, 0, 0);
+    
 	for(int y = 0; y < height - skip; y += skip) {
 		for(int x = 0; x < width - skip; x += skip) {
 			/*
@@ -80,12 +81,38 @@ ofMesh meshFromImage(ofImage& img, int skip, float maxHeight) {
 			ofVec2f nei((x + skip) / ws, y / hs);
 			ofVec2f swi(x / ws, (y + skip) / hs);
 			ofVec2f sei((x + skip) / ws, (y + skip) / hs);
-			
+            
 			// ignore any zero-data (where there is no depth info)
-			if(nw != zero && ne != zero && sw != zero && se != zero) {
-				addFace(mesh, nw, ne, se, sw);
-				addTexCoords(mesh, nwi, nei, sei, swi);
-                numFaces += 1;
+            int numZero = (nw == zero) + (ne == zero) + (sw == zero) + (se == zero);
+			if(numZero == 0) {
+                //terrain
+                if(!isWater) {
+                    addFace(mesh, nw, ne, se, sw);
+                    addTexCoords(mesh, nwi, nei, sei, swi);
+                    numFaces += 1;
+                }
+                //water
+                else {
+                    int numBelow = (nw.z < waterLevel) + (ne.z < waterLevel) + (sw.z < waterLevel) + (se.z < waterLevel);
+                    if(numBelow > 0) {
+                        
+                        
+                        ofVec3f nwBot(nw.x, nw.y, min(nw.z, waterLevel));
+                        ofVec3f neBot(ne.x, ne.y, min(ne.z, waterLevel));
+                        ofVec3f swBot(sw.x, sw.y, min(sw.z, waterLevel));
+                        ofVec3f seBot(se.x, se.y, min(se.z, waterLevel));
+                        
+                        ofVec3f nwTop(nw.x, nw.y, waterLevel);
+                        ofVec3f neTop(ne.x, ne.y, waterLevel);
+                        ofVec3f swTop(sw.x, sw.y, waterLevel);
+                        ofVec3f seTop(se.x, se.y, waterLevel);
+                        
+                        addFace(mesh, nwTop, neTop, seTop, swTop);
+                        addFace(mesh, nwBot, neBot, seBot, swBot);
+                        
+                        numFaces += 2;
+                    }
+                }
 			}
 		}
 	}
