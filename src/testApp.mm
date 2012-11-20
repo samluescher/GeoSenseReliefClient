@@ -86,6 +86,8 @@ void testApp::setup()
     
     terrainSW = ofVec2f(128, 28);
     terrainNE = ofVec2f(150, 46);
+    waterSW = ofVec2f(20, 10);
+    waterNE = ofVec2f(30, 25);
     terrainExtents = ofVec2f(terrainNE.x - terrainSW.x, terrainNE.y - terrainSW.y);
     ofLog() << "terrainExtents: " << terrainExtents.x << "," << terrainExtents.y;
     ofVec2f center = terrainSW + terrainExtents / 2;
@@ -117,7 +119,7 @@ void testApp::setup()
     
     //int heightMapStepPixels = (heightMap.width * heightMap.height) / 1000000 * .8;
 	//terrainVboMesh = meshFromImage(heightMap, heightMapStepPixels, terrainPeakHeight);
-    terrainVboMesh = meshFromImage(heightMap, 1, terrainPeakHeight, false, 0, ofVec2f(0,0), ofVec2f(0,0));
+    terrainVboMesh = meshFromImage(heightMap, 1, terrainPeakHeight);
     light.enable();
     light.setPosition(100, 0, 0);
     
@@ -448,7 +450,7 @@ void testApp::draw()
     
     if (drawWaterEnabled && !calibrationMode) {
         if(abs(waterLevel - prevWaterLevel) > epsilon) {
-            terrainWaterMesh = meshFromImage(heightMap, 1, terrainPeakHeight, true, waterLevel, ofVec2f(0,0), ofVec2f(0,0) /*placeholders*/);
+            terrainWaterMesh = waterMeshFromImage(heightMap, 1, terrainPeakHeight, waterLevel, waterSW, waterNE);
             prevWaterLevel = waterLevel;
         }
     

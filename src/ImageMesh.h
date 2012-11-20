@@ -53,7 +53,7 @@ ofVec3f getVertexFromImg(ofImage& img, int x, int y, float maxHeight) {
 }
 
 //--------------------------------------------------------------
-ofMesh meshFromImage(ofImage& img, int skip, float maxHeight, bool isWater, float waterLevel, ofVec2f swExtent, ofVec2f neExtent) {
+ofMesh meshFromImage(ofImage& img, int skip, float maxHeight) {
 	ofMesh mesh;
 	// OF_PRIMITIVE_TRIANGLES means every three vertices create a triangle
 	mesh.setMode(OF_PRIMITIVE_TRIANGLES);
@@ -83,40 +83,69 @@ ofMesh meshFromImage(ofImage& img, int skip, float maxHeight, bool isWater, floa
 			ofVec2f sei((x + skip) / ws, (y + skip) / hs);
             
 			// ignore any zero-data (where there is no depth info)
-            int numZero = (nw == zero) + (ne == zero) + (sw == zero) + (se == zero);
-			if(numZero == 0) {
-                //terrain
-                if(!isWater) {
-                    addFace(mesh, nw, ne, se, sw);
-                    addTexCoords(mesh, nwi, nei, sei, swi);
-                    numFaces += 1;
-                }
-                //water
-                else {
-                    int numBelow = (nw.z < waterLevel) + (ne.z < waterLevel) + (sw.z < waterLevel) + (se.z < waterLevel);
-                    if(numBelow > 0) {
-                        
-                        
-                        ofVec3f nwBot(nw.x, nw.y, min(nw.z, waterLevel));
-                        ofVec3f neBot(ne.x, ne.y, min(ne.z, waterLevel));
-                        ofVec3f swBot(sw.x, sw.y, min(sw.z, waterLevel));
-                        ofVec3f seBot(se.x, se.y, min(se.z, waterLevel));
-                        
-                        ofVec3f nwTop(nw.x, nw.y, waterLevel);
-                        ofVec3f neTop(ne.x, ne.y, waterLevel);
-                        ofVec3f swTop(sw.x, sw.y, waterLevel);
-                        ofVec3f seTop(se.x, se.y, waterLevel);
-                        
-                        addFace(mesh, nwTop, neTop, seTop, swTop);
-                        addFace(mesh, nwBot, neBot, seBot, swBot);
-                        
-                        numFaces += 2;
-                    }
-                }
+            if(nw != zero && ne != zero && sw != zero && se != zero) {
+                addFace(mesh, nw, ne, se, sw);
+                addTexCoords(mesh, nwi, nei, sei, swi);
+                numFaces += 1;
 			}
 		}
 	}
 	
     cout << "generated mesh with faces: " << numFaces << "\n ";
+    return mesh;
+}
+
+ofMesh waterMeshFromImage(ofImage& img, int skip, float maxHeight, float waterLevel, ofVec2f waterSW, ofVec2f waterNE) {
+	ofMesh mesh;
+	// OF_PRIMITIVE_TRIANGLES means every three vertices create a triangle
+	mesh.setMode(OF_PRIMITIVE_TRIANGLES);
+	int width = img.getWidth();
+	int height = img.getHeight();
+    double numFaces;
+    float ws = width;
+    float hs = height;
+	ofVec3f zero(0, 0, 0);
+    
+	for(int y = 0; y < height - skip; y += skip) {
+		for(int x = 0; x < width - skip; x += skip) {
+			/*
+			 To construct a mesh, we have to build a collection of quads made up of
+			 the current pixel, the one to the right, to the bottom right, and
+			 beneath. These are called nw, ne, se and sw. To get the texture coords
+			 we need to use the actual image indices.
+			 */
+			ofVec3f nw = getVertexFromImg(img, x, y, maxHeight);
+			ofVec3f ne = getVertexFromImg(img, x + skip, y, maxHeight);
+			ofVec3f sw = getVertexFromImg(img, x, y + skip, maxHeight);
+			ofVec3f se = getVertexFromImg(img, x + skip, y + skip, maxHeight);
+            cout << "nw.x: " << nw.x << " nw.y: " << nw.y << endl;
+			// ignore any zero-data (where there is no depth info)
+            int numZero = (nw == zero) + (ne == zero) + (sw == zero) + (se == zero);
+			if(nw != zero && ne != zero && sw != zero && se != zero) {
+                if((nw.z < waterLevel || ne.z < waterLevel || sw.z < waterLevel || se.z < waterLevel) &&
+                   nw.x > waterSW.x && nw.x < waterNE.x && nw.y > waterSW.y && nw.y < waterNE.y &&
+                   ne.x > waterSW.x && ne.x < waterNE.x && ne.y > waterSW.y && ne.y < waterNE.y &&
+                   sw.x > waterSW.x && sw.x < waterNE.x && sw.y > waterSW.y && sw.y < waterNE.y &&
+                   se.x > waterSW.x && se.x < waterNE.x && se.y > waterSW.y && se.y < waterNE.y) {
+                    ofVec3f nwBot(nw.x, nw.y, min(nw.z, waterLevel));
+                    ofVec3f neBot(ne.x, ne.y, min(ne.z, waterLevel));
+                    ofVec3f swBot(sw.x, sw.y, min(sw.z, waterLevel));
+                    ofVec3f seBot(se.x, se.y, min(se.z, waterLevel));
+                    
+                    ofVec3f nwTop(nw.x, nw.y, waterLevel);
+                    ofVec3f neTop(ne.x, ne.y, waterLevel);
+                    ofVec3f swTop(sw.x, sw.y, waterLevel);
+                    ofVec3f seTop(se.x, se.y, waterLevel);
+                    
+                    addFace(mesh, nwTop, neTop, seTop, swTop);
+                    addFace(mesh, nwBot, neBot, seBot, swBot);
+                    
+                    numFaces += 2;
+                }
+			}
+		}
+	}
+	
+    cout << "generated water mesh with faces: " << numFaces << "\n ";
     return mesh;
 }

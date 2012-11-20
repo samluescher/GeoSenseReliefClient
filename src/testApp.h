@@ -58,7 +58,7 @@ public:
     
     ofVboMesh terrainVboMesh, terrainWaterMesh;
     ofImage terrainTex, terrainTexAlpha, heightMap, terrainCrop, sendMap, featureMap, featureMapCrop, featureHeightMap;
-    ofVec2f terrainSW, terrainNE, terrainCenterOffset;
+    ofVec2f terrainSW, terrainNE, terrainCenterOffset, waterSW, waterNE;
     ofVec3f terrainToHeightMapScale;
     float sendMapResampledValues[RELIEF_SIZE_X * RELIEF_SIZE_Y];
     ofVec2f normalizedMapCenter, normalizedReliefSize;
