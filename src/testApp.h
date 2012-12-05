@@ -22,6 +22,8 @@
 #include "ofxUI.h"
 #include "config.h"
 
+#include <time.h>
+
 class testApp : public ReliefClientBase{
 	
 public:
@@ -77,11 +79,11 @@ public:
     void loadFeaturesFromFile(string filePath);
     float gridSize;
     
-    ofLight light;
+    ofLight pointLight, directionalLight;
     
     ofVec2f touchPoint;
     int deviceOrientation;
-    float epsilon = 1e-8;
+    float startTime;
     float terrainUnitToScreenUnit, reliefUnitToScreenUnit, reliefUnitToTerrainUnit;
     bool calibrationMode, zoomMode;
     float timeSinceLastDoubleTap;

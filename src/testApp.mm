@@ -83,6 +83,7 @@ void testApp::setup()
     /*terrainTexAlpha.allocate(terrainTex.width, terrainTex.height, OF_IMAGE_COLOR_ALPHA);
      copyImageWithScaledColors(terrainTex, terrainTexAlpha, .8, .8);
      terrainTexAlpha.reloadTexture();*/
+    startTime = ofGetElapsedTimef();
     
     terrainSW = ofVec2f(128, 28);
     terrainNE = ofVec2f(150, 46);
@@ -120,8 +121,13 @@ void testApp::setup()
     //int heightMapStepPixels = (heightMap.width * heightMap.height) / 1000000 * .8;
 	//terrainVboMesh = meshFromImage(heightMap, heightMapStepPixels, terrainPeakHeight);
     terrainVboMesh = meshFromImage(heightMap, 1, terrainPeakHeight);
-    light.enable();
-    light.setPosition(100, 0, 0);
+    
+    //ofSetSmoothLighting(true);
+	pointLight.setPointLight();
+    directionalLight.setDirectional();
+    directionalLight.setOrientation(ofVec3f(0,0,-90));
+    
+    pointLight.setPosition((waterNE.x + waterSW.x)/2, (waterNE.y + waterSW.y)/2, 100);
     
     numLoading = 0;
     ofRegisterURLNotification(this);  
@@ -273,6 +279,7 @@ void testApp::guiEvent(ofxUIEventArgs &e)
         }
         if (name == "WATER") {
             drawWaterEnabled = value;
+            startTime = ofGetElapsedTimef();
         }
         if (name == "GRID") {
             drawTerrainGridEnabled = value;
@@ -353,14 +360,13 @@ void testApp::update()
 //--------------------------------------------------------------
 
 void testApp::drawWater(float waterLevel) {
-    
     ofPushMatrix();
     ofTranslate(terrainSW + terrainExtents / 2);
     ofScale(terrainToHeightMapScale.x, terrainToHeightMapScale.y, terrainToHeightMapScale.z);
     
     ofSetColor(COLOR_WATER);
     
-    terrainWaterMesh.draw();
+    terrainWaterMesh.drawWireframe();
     
     ofPopMatrix();
 }
@@ -389,7 +395,12 @@ void testApp::drawMapFeatures()
 }
 
 void testApp::draw()
-{    
+{
+    //glEnable(GL_DEPTH_TEST);
+    //ofEnableLighting();
+    //pointLight.enable();
+    //directionalLight.enable();
+    
 #if (USE_QCAR)
     ofxQCAR * qcar = ofxQCAR::getInstance();
     qcar->draw();
@@ -448,28 +459,6 @@ void testApp::draw()
     ofPushMatrix();
     ofTranslate(-mapCenter);
     
-    if (drawWaterEnabled && !calibrationMode) {
-        if(abs(waterLevel - prevWaterLevel) > epsilon) {
-            terrainWaterMesh = waterMeshFromImage(heightMap, 1, terrainPeakHeight, waterLevel, waterSW, waterNE);
-            prevWaterLevel = waterLevel;
-        }
-    
-        //ofEnableAlphaBlending();
-        glEnable(GL_DEPTH_TEST);
-        drawWater(waterLevel);
-        glDisable(GL_DEPTH_TEST);
-        //ofDisableAlphaBlending();
-    }
-    
-    ofPopMatrix();
-    ofPopMatrix();
-    
-    ofPushMatrix();
-    ofScale(1 / terrainUnitToScreenUnit, 1 / terrainUnitToScreenUnit, 1 / terrainUnitToScreenUnit);
-    
-    
-    ofPushMatrix();
-    ofTranslate(-mapCenter);
     if (drawTerrainEnabled && !calibrationMode) {
 #if !(TARGET_OS_IPHONE)
         ofDisableBlendMode(); // TODO: for some reason mesh is not textured on OSX if alpha blending enabled
@@ -500,6 +489,16 @@ void testApp::draw()
         ofEnableBlendMode(OF_BLENDMODE_ALPHA);
         drawTerrainGrid();
         ofDisableBlendMode(); 
+    }
+    
+    if (drawWaterEnabled && !calibrationMode) {
+        terrainWaterMesh = waterMeshFromImage(heightMap, 1, terrainPeakHeight, waterLevel, waterSW, waterNE, ofGetElapsedTimef(), startTime);
+        
+        ofEnableAlphaBlending();
+        glEnable(GL_DEPTH_TEST);
+        drawWater(waterLevel);
+        glDisable(GL_DEPTH_TEST);
+        ofDisableAlphaBlending();
     }
     
     ofPopMatrix();
@@ -536,6 +535,10 @@ void testApp::draw()
     if (!calibrationMode) {
         testApp::drawGUI();
     }
+    ofDisableLighting();
+    
+    pointLight.draw();
+    directionalLight.draw();
 }
 
 void testApp::drawGUI() 

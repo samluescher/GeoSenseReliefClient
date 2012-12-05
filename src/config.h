@@ -28,7 +28,7 @@
 #if (IS_TOP_DOWN_CLIENT)
 #define COLOR_WATER ofColor(0, 100, 120, 255)
 #else
-#define COLOR_WATER ofColor(0, 100, 120, 255)
+#define COLOR_WATER ofColor(0, 100, 120, 127)
 #endif
 
 
