@@ -5,6 +5,7 @@
 #define GRID_SUBDIVISIONS 10
 #define MAX_VAL 500.0f // for normalizing val -- this will come from db later
 #define MINI_MAP_W 350
+#define LIGHT_POS_INC .2
 
 #define fukushima ofVec2f(141.033247, 37.425252)
 
@@ -76,6 +77,7 @@ void testApp::setup()
     
     ofLog() << "Loading maps";
     heightMap.loadImage("maps/heightmap.ASTGTM2_128,28,149,45-900.png");
+    //heightMap.loadImage("maps/testmap-200x200.png");
     
 	terrainTex.loadImage("maps/srtm.ASTGTM2_128,28,149,45-14400.png");
 	terrainTexAlpha.loadImage("maps/srtm.ASTGTM2_128,28,149,45-14400-a65.png");
@@ -122,12 +124,10 @@ void testApp::setup()
 	//terrainVboMesh = meshFromImage(heightMap, heightMapStepPixels, terrainPeakHeight);
     terrainVboMesh = meshFromImage(heightMap, 1, terrainPeakHeight);
     
-    //ofSetSmoothLighting(true);
+    ofSetSmoothLighting(true);
 	pointLight.setPointLight();
-    directionalLight.setDirectional();
-    directionalLight.setOrientation(ofVec3f(0,0,-90));
-    
-    pointLight.setPosition((waterNE.x + waterSW.x)/2, (waterNE.y + waterSW.y)/2, 100);
+    pointLight.setAttenuation(.1);
+    pointLight.setPosition(mapCenter + ofVec3f(-1, 1, 2));
     
     numLoading = 0;
     ofRegisterURLNotification(this);  
@@ -242,11 +242,11 @@ void testApp::setup()
 
 void testApp::resetCam() 
 {
-    cam.lookAt(mapCenter,ofVec3f(0,1,0));    
     cam.setNearClip(1);
-    cam.setPosition(mapCenter);
-    cam.move(0, 0, 3);
-    cam.lookAt(mapCenter,ofVec3f(0,1,0));
+    cam.setFarClip(100000);
+    cam.setPosition(mapCenter + ofVec3f(0, 0, 4));
+    cam.lookAt(mapCenter);
+    cam.setDistance(2000); // tmp -- for light debugging
     updateVisibleMap(true);
 }
 
@@ -366,7 +366,7 @@ void testApp::drawWater(float waterLevel) {
     
     ofSetColor(COLOR_WATER);
     
-    terrainWaterMesh.drawWireframe();
+    terrainWaterMesh.draw();
     
     ofPopMatrix();
 }
@@ -374,18 +374,17 @@ void testApp::drawTerrain(bool transparent, bool wireframe) {
     ofPushMatrix();
     ofTranslate(terrainSW + terrainExtents / 2);
     ofScale(terrainToHeightMapScale.x, terrainToHeightMapScale.y, terrainToHeightMapScale.z); 
-    ofSetColor(255, 255, 255, 5);
-    
-    if (transparent && !wireframe) terrainTexAlpha.bind(); else terrainTexAlpha.bind();
     
     if (!wireframe) {
+        ofSetColor(255);
+        if (transparent) terrainTexAlpha.bind(); else terrainTex.bind();
         terrainVboMesh.draw();
+        if (transparent) terrainTexAlpha.unbind(); else terrainTex.unbind();
     } else {
-        ofSetColor(100, 100, 100, 100);
+        ofSetColor(100, 100, 100, 20);
         terrainVboMesh.drawWireframe(); 
     }
     
-    if (transparent && !wireframe) terrainTexAlpha.unbind(); else terrainTexAlpha.unbind();
     ofPopMatrix();
 }
 
@@ -396,12 +395,7 @@ void testApp::drawMapFeatures()
 
 void testApp::draw()
 {
-    //glEnable(GL_DEPTH_TEST);
-    //ofEnableLighting();
-    //pointLight.enable();
-    //directionalLight.enable();
-    
-#if (USE_QCAR)
+    #if (USE_QCAR)
     ofxQCAR * qcar = ofxQCAR::getInstance();
     qcar->draw();
     
@@ -420,125 +414,129 @@ void testApp::draw()
     }
     
     bool useARMatrix = noMarkerSince > -NO_MARKER_TOLERANCE_FRAMES;
-#else
+    #else
     bool useARMatrix = false;
     ofBackground(0);
-#endif
+    #endif
     
     ofPushView();
-    
-#if (USE_QCAR)
-    if (useARMatrix) {
-        glMatrixMode(GL_PROJECTION);
-        glLoadMatrixf(modelViewMatrix.getPtr());
         
-        glMatrixMode(GL_MODELVIEW );
-        glLoadMatrixf(projectionMatrix.getPtr());
-    }
-#else
-    cam.begin();
-#endif
+        #if (USE_QCAR)
+        if (useARMatrix) {
+            glMatrixMode(GL_PROJECTION);
+            glLoadMatrixf(modelViewMatrix.getPtr());
+            
+            glMatrixMode(GL_MODELVIEW );
+            glLoadMatrixf(projectionMatrix.getPtr());
+        }
+        #else
+        cam.begin();
+        #endif
     
-    ofPushMatrix();
-    
-#if (!USE_QCAR)
-    if (cam.getOrtho()) {
-        ofTranslate(ofGetWidth() / 2, ofGetHeight() / 2, 0);
-    }
-#endif
-    
-    ofTranslate(reliefOffset);
-    ofScale(globalScale, globalScale, globalScale);
-    
-#if (IS_TOP_DOWN_CLIENT)
-#endif
-    
-    ofPushMatrix();
-    ofScale(1 / terrainUnitToScreenUnit, 1 / terrainUnitToScreenUnit, 1 / terrainUnitToScreenUnit);
-    
-    ofPushMatrix();
-    ofTranslate(-mapCenter);
-    
-    if (drawTerrainEnabled && !calibrationMode) {
-#if !(TARGET_OS_IPHONE)
-        ofDisableBlendMode(); // TODO: for some reason mesh is not textured on OSX if alpha blending enabled
-#else
-        ofEnableBlendMode(OF_BLENDMODE_ALPHA);
-#endif
-        glEnable(GL_DEPTH_TEST);
-        drawTerrain(true /*useARMatrix*/, false);
-        glDisable(GL_DEPTH_TEST);
-        ofDisableBlendMode(); 
-    }
-    
-    if (drawDebugEnabled || calibrationMode) {
-        ofEnableBlendMode(OF_BLENDMODE_ALPHA);
-        drawTerrain(false, true);
-        ofDisableBlendMode(); 
-    }
-    
-    if (drawMapFeaturesEnabled && !calibrationMode) {
-        ofEnableBlendMode(OF_BLENDMODE_ALPHA);
-        //glEnable(GL_DEPTH_TEST);
-        drawMapFeatures();
-        //glDisable(GL_DEPTH_TEST);
-        ofDisableBlendMode(); 
-    }
-    
-    if (drawTerrainGridEnabled || calibrationMode) {
-        ofEnableBlendMode(OF_BLENDMODE_ALPHA);
-        drawTerrainGrid();
-        ofDisableBlendMode(); 
-    }
-    
-    if (drawWaterEnabled && !calibrationMode) {
-        terrainWaterMesh = waterMeshFromImage(heightMap, 1, terrainPeakHeight, waterLevel, waterSW, waterNE, ofGetElapsedTimef(), startTime);
+        ofPushMatrix();
         
-        ofEnableAlphaBlending();
-        glEnable(GL_DEPTH_TEST);
-        drawWater(waterLevel);
-        glDisable(GL_DEPTH_TEST);
-        ofDisableAlphaBlending();
-    }
+            #if (!USE_QCAR)
+            if (cam.getOrtho()) {
+                ofTranslate(ofGetWidth() / 2, ofGetHeight() / 2, 0);
+            }
+            #endif
+            
+            ofTranslate(reliefOffset);
+            ofScale(globalScale, globalScale, globalScale);
+            
+            #if (IS_TOP_DOWN_CLIENT)
+            #endif
+            
+            ofPushMatrix();
+                ofScale(1 / terrainUnitToScreenUnit, 1 / terrainUnitToScreenUnit, 1 / terrainUnitToScreenUnit);
+                
+                ofPushMatrix();
+                    ofTranslate(-mapCenter);
+                    ofEnableLighting();
+                    pointLight.enable();
+                    ofEnableBlendMode(OF_BLENDMODE_ALPHA);
+                    glEnable(GL_DEPTH_TEST);
+
+                    if (drawTerrainEnabled && !calibrationMode) {
+                        drawTerrain(useARMatrix, false);
+                        ofDisableBlendMode(); 
+                    }
+                    
+                    if (drawDebugEnabled || calibrationMode) {
+                        glDisable(GL_DEPTH_TEST);
+                        drawTerrain(false, true);
+                        glEnable(GL_DEPTH_TEST);
+                    }
+                    
+                    if (drawMapFeaturesEnabled && !calibrationMode) {
+                        drawMapFeatures();
+                    }
+                    
+                    if (drawTerrainGridEnabled || calibrationMode) {
+                        drawTerrainGrid();
+                    }
+                    
+                    if (drawWaterEnabled && !calibrationMode) {
+                        terrainWaterMesh = waterMeshFromImage(heightMap, 1, terrainPeakHeight, waterLevel, waterSW, waterNE, ofGetElapsedTimef(), startTime);
+                        drawWater(waterLevel);
+                    }
+
     
-    ofPopMatrix();
+    ofVec3f pos;
+    
+    ofSetColor(128, 128, 128, 200);
+    pos = mapCenter;
+    //ofSphere(pos.x, pos.y, pos.z, 1);
     
     
-    if (drawDebugEnabled || calibrationMode) {
-        drawIdentity();
-    }
+                    pointLight.disable();
+                    ofDisableLighting();
+                    ofDisableAlphaBlending();
     
-    ofPopMatrix();
+                    pos = pointLight.getPosition();
+                    ofSetColor(255, 255, 0);
+                    ofSphere(pos.x, pos.y, pos.z, .25);
     
-    if (drawDebugEnabled || calibrationMode) {
-        drawReliefGrid();
-    }
+                    glDisable(GL_DEPTH_TEST);
+                ofPopMatrix();
+
+
     
-#if (IS_TOP_DOWN_CLIENT)
-    drawReliefFrame();
-#endif
+                if (drawDebugEnabled || calibrationMode) {
+                    drawIdentity();
+                }
     
-    ofPopMatrix();
+            ofPopMatrix();
+    
+            if ((drawDebugEnabled && reliefSendMode != RELIEF_SEND_OFF) || calibrationMode) {
+                drawReliefGrid();
+            }
+            
+            #if (IS_TOP_DOWN_CLIENT)
+            drawReliefFrame();
+            #endif
+        
+        ofPopMatrix();
     
     ofPopView();
     
-#if (USE_QCAR)
+    #if (USE_QCAR)
     if (qcar->hasFoundMarker() && (drawDebugEnabled || calibrationMode)) {
         ofSetColor(255);
         qcar->drawMarkerCenter();
     }
-#else
+    #else
     cam.end();
-#endif 
+    #endif
     
     
     if (!calibrationMode) {
         testApp::drawGUI();
     }
-    ofDisableLighting();
-    
-    pointLight.draw();
-    directionalLight.draw();
+
+    //ofDisableLighting();
+    //pointLight.draw();
+    //directionalLight.draw();
 }
 
 void testApp::drawGUI() 
@@ -1022,6 +1020,19 @@ void testApp::keyPressed  (int key){
         case 99:
         case 67:
             setCalibrationMode(!calibrationMode);
+            break;
+        case OF_KEY_UP:
+            pointLight.setPosition(pointLight.getPosition() + ofVec3f(0, LIGHT_POS_INC, 0));
+            break;
+        case OF_KEY_DOWN:
+            pointLight.setPosition(pointLight.getPosition() - ofVec3f(0, LIGHT_POS_INC, 0));
+            break;
+        case OF_KEY_RIGHT:
+            pointLight.setPosition(pointLight.getPosition() + ofVec3f(LIGHT_POS_INC, 0, 0));
+            break;
+        case OF_KEY_LEFT:
+            pointLight.setPosition(pointLight.getPosition() - ofVec3f(LIGHT_POS_INC, 0, 0));
+            break;
     }
 }
 

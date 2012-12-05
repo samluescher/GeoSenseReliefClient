@@ -116,7 +116,7 @@ ofMesh meshFromImage(ofImage& img, int skip, float maxHeight) {
                 
                 addFace(mesh, nw, ne, se, sw);
                 addTexCoords(mesh, nwi, nei, sei, swi);
-                mesh.addNormal(normal);
+                //mesh.addNormal(normal);
                 
                 numFaces += 1;
 			}
@@ -167,7 +167,7 @@ ofMesh waterMeshFromImage(ofImage& img, float skip, float maxHeight, float water
                     ofVec3f normalBot = diagBot1.perpendicular(diagBot2);
                     
                     addFace(mesh, nwBot, neBot, seBot, swBot);
-                    mesh.addNormal(normalBot);
+                    //mesh.addNormal(normalBot);
                     
                     ofVec3f nwTop(nw.x, nw.y, waterLevelAfterOffset);
                     ofVec3f neTop(ne.x, ne.y, waterLevelAfterOffsetSkip);
@@ -181,7 +181,7 @@ ofMesh waterMeshFromImage(ofImage& img, float skip, float maxHeight, float water
                     ofVec3f normalTop = diagTop1.perpendicular(diagTop2);
                     
                     addFace(mesh, nwTop, neTop, seTop, swTop);
-                    mesh.addNormal(normalTop);
+                    //mesh.addNormal(normalTop);
                     
                     numFaces += 2;
                     
