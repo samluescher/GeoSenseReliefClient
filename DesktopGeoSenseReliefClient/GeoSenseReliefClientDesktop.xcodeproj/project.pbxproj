@@ -181,7 +181,7 @@
 		22AA59961606E08300E88EF8 /* ofxXmlSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxXmlSettings.h; sourceTree = "<group>"; };
 		22E14200164D862A00CA0A44 /* main.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = main.mm; sourceTree = "<group>"; };
 		22E14202164D866F00CA0A44 /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = config.h; path = ../../src/config.h; sourceTree = "<group>"; };
-		22E14203164D866F00CA0A44 /* ImageMesh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ImageMesh.h; path = ../../src/ImageMesh.h; sourceTree = "<group>"; };
+		22E14203164D866F00CA0A44 /* ImageMesh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = ImageMesh.h; path = ../../src/ImageMesh.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		22E14204164D866F00CA0A44 /* MapFeature.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MapFeature.cpp; path = ../../src/MapFeature.cpp; sourceTree = "<group>"; };
 		22E14205164D866F00CA0A44 /* MapFeature.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MapFeature.h; path = ../../src/MapFeature.h; sourceTree = "<group>"; };
 		22E14206164D866F00CA0A44 /* MouseController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MouseController.cpp; path = ../../src/MouseController.cpp; sourceTree = "<group>"; };
