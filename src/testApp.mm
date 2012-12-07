@@ -464,8 +464,10 @@ void testApp::draw()
                     
                     if (drawDebugEnabled || calibrationMode) {
                         glDisable(GL_DEPTH_TEST);
+                        ofEnableBlendMode(OF_BLENDMODE_ALPHA);
                         drawTerrain(false, true);
                         glEnable(GL_DEPTH_TEST);
+                        ofDisableBlendMode();
                     }
 
                     if (drawWaterEnabled && !calibrationMode) {
@@ -487,9 +489,7 @@ void testApp::draw()
                     if (drawTerrainGridEnabled || calibrationMode) {
                         drawTerrainGrid();
                     }
-    
-                    ofDisableAlphaBlending();
-    
+        
                     if (drawDebugEnabled) {
                         // draw sun
                         ofVec3f pos = pointLight.getPosition();
