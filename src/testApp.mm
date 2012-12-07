@@ -76,7 +76,7 @@ void testApp::setup()
 #endif
     
     ofLog() << "Loading maps";
-    heightMap.loadImage("maps/heightmap.ASTGTM2_128,28,149,45-900.png");
+    heightMap.loadImage("maps/heightmap.ASTGTM2_128,28,149,45-1600.png");
     //heightMap.loadImage("maps/testmap-200x200.png");
     
 	terrainTex.loadImage("maps/srtm.ASTGTM2_128,28,149,45-14400.png");
@@ -117,7 +117,7 @@ void testApp::setup()
     terrainToHeightMapScale = ofVec3f(terrainExtents.x / heightMap.width, terrainExtents.y / heightMap.height, 1);
     terrainToHeightMapScale.z = (terrainToHeightMapScale.x + terrainToHeightMapScale.y) / 2;
     ofLog() << "terrainToHeightMapScale: " << terrainToHeightMapScale;
-    terrainPeakHeight = terrainToHeightMapScale.z * 300.0f;
+    terrainPeakHeight = terrainToHeightMapScale.z * 350.0f;
     featureHeight = .5f;
     
     //int heightMapStepPixels = (heightMap.width * heightMap.height) / 1000000 * .8;
@@ -127,7 +127,7 @@ void testApp::setup()
     ofSetSmoothLighting(true);
 	pointLight.setPointLight();
     pointLight.setAttenuation(.1);
-    pointLight.setPosition(mapCenter + ofVec3f(-1, 1, 2));
+    pointLight.setPosition(mapCenter + ofVec3f(3, 1, 5));
     
     numLoading = 0;
     ofRegisterURLNotification(this);  
@@ -242,11 +242,11 @@ void testApp::setup()
 
 void testApp::resetCam() 
 {
-    cam.setNearClip(1);
-    cam.setFarClip(100000);
+    //cam.setNearClip(1);
+    //cam.setFarClip(100000);
     cam.setPosition(mapCenter + ofVec3f(0, 0, 4));
     cam.lookAt(mapCenter);
-    cam.setDistance(2000); // tmp -- for light debugging
+//    cam.setDistance(2000); // tmp -- for light debugging
     updateVisibleMap(true);
 }
 
@@ -454,12 +454,12 @@ void testApp::draw()
                     ofTranslate(-mapCenter);
                     ofEnableLighting();
                     pointLight.enable();
-                    ofEnableBlendMode(OF_BLENDMODE_ALPHA);
                     glEnable(GL_DEPTH_TEST);
 
                     if (drawTerrainEnabled && !calibrationMode) {
+                        ofEnableBlendMode(OF_BLENDMODE_ALPHA);
                         drawTerrain(useARMatrix, false);
-                        ofDisableBlendMode(); 
+                        ofDisableBlendMode();
                     }
                     
                     if (drawDebugEnabled || calibrationMode) {
@@ -467,35 +467,35 @@ void testApp::draw()
                         drawTerrain(false, true);
                         glEnable(GL_DEPTH_TEST);
                     }
-                    
+
+                    if (drawWaterEnabled && !calibrationMode) {
+                        ofEnableBlendMode(OF_BLENDMODE_ALPHA);
+                        terrainWaterMesh = waterMeshFromImage(heightMap, 1, terrainPeakHeight, waterLevel, waterSW, waterNE, ofGetElapsedTimef(), startTime);
+                        drawWater(waterLevel);
+                        ofDisableBlendMode();
+                    }
+    
+                    pointLight.disable();
+                    ofDisableLighting();
+
                     if (drawMapFeaturesEnabled && !calibrationMode) {
+                        ofEnableBlendMode(OF_BLENDMODE_ADD);
                         drawMapFeatures();
+                        ofDisableBlendMode();
                     }
                     
                     if (drawTerrainGridEnabled || calibrationMode) {
                         drawTerrainGrid();
                     }
-                    
-                    if (drawWaterEnabled && !calibrationMode) {
-                        terrainWaterMesh = waterMeshFromImage(heightMap, 1, terrainPeakHeight, waterLevel, waterSW, waterNE, ofGetElapsedTimef(), startTime);
-                        drawWater(waterLevel);
-                    }
-
     
-    ofVec3f pos;
-    
-    ofSetColor(128, 128, 128, 200);
-    pos = mapCenter;
-    //ofSphere(pos.x, pos.y, pos.z, 1);
-    
-    
-                    pointLight.disable();
-                    ofDisableLighting();
                     ofDisableAlphaBlending();
     
-                    pos = pointLight.getPosition();
-                    ofSetColor(255, 255, 0);
-                    ofSphere(pos.x, pos.y, pos.z, .25);
+                    if (drawDebugEnabled) {
+                        // draw sun
+                        ofVec3f pos = pointLight.getPosition();
+                        ofSetColor(255, 255, 0);
+                        ofSphere(pos.x, pos.y, pos.z, .25);
+                    }
     
                     glDisable(GL_DEPTH_TEST);
                 ofPopMatrix();

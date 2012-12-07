@@ -13,7 +13,7 @@ void MapFeature::customDraw() {
     ofTranslate(-pos);
     setScale(width, width, height);
     ofFill();
-    ofSetColor(min(normVal * 255, 255.0f), 128, 200, 255);
+    ofSetColor(min(normVal * 255, 255.0f), 128, 200, 128);
     ofTranslate(0, 0, 0.5);
     ofBox(1);
     ofPopMatrix();
