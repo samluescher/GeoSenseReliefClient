@@ -4,27 +4,19 @@
 #include <vector>
 const float AMPLITUDE = 1.0;
 const float DURATION = 2.0;
-const float SPEED = 3.5;
+const float SPEED = 0.2;
 const bool INFINITE = false;
 const int CYCLES = 5;
-/*
- This code demonstrates the difference between using an ofMesh and an ofVboMesh.
- The ofMesh is uploaded to the GPU once per frame, while the ofVboMesh is
- uploaded once. This makes it much faster to draw multiple copies of an
- ofVboMesh than multiple copies of an ofMesh.
- */
-
 /*
  These functions are for adding quads and triangles to an ofMesh -- either
  vertices, or texture coordinates.
  */
-//--------------------------------------------------------------
 struct Face {
     ofVec3f nw, ne, sw, se;
     ofVec2f nwi, nei, swi, sei;
     ofVec3f normal;
     Face() {
-        normal = ofVec3f(0.0,0.0,0.0);
+        normal = ofVec3f(0, 0, 0);
     }
 };
 struct Vertex {
@@ -44,20 +36,17 @@ void addFace(ofMesh& mesh, Vertex a, Vertex b, Vertex c) {
     mesh.addNormal(c.normal);
 }
 
-//--------------------------------------------------------------
 void addFace(ofMesh& mesh, Vertex a, Vertex b, Vertex c, Vertex d) {
     addFace(mesh, a, b, c);
     addFace(mesh, a, c, d);
 }
 
-//--------------------------------------------------------------
 void addTexCoords(ofMesh& mesh, ofVec2f a, ofVec2f b, ofVec2f c) {
     mesh.addTexCoord(a);
     mesh.addTexCoord(b);
     mesh.addTexCoord(c);
 }
 
-//--------------------------------------------------------------
 void addTexCoords(ofMesh& mesh, ofVec2f a, ofVec2f b, ofVec2f c, ofVec2f d) {
     addTexCoords(mesh, a, b, c);
     addTexCoords(mesh, a, c, d);
@@ -67,7 +56,6 @@ void addTexCoords(ofMesh& mesh, ofVec2f a, ofVec2f b, ofVec2f c, ofVec2f d) {
  The 3d data is stored in an image where alpha represents depth. Here we create
  a 3d point from the current x,y image position.
  */
-//--------------------------------------------------------------
 ofVec3f getVertexFromImg(ofImage& img, int x, int y, float maxHeight) {
     ofColor color = img.getColor(x, y);
     if(color.a > 0) {
@@ -77,18 +65,16 @@ ofVec3f getVertexFromImg(ofImage& img, int x, int y, float maxHeight) {
         return ofVec3f(0, 0, 0);
     }
 }
-float calcZOffset(float time, float startTime, float xCurrent, float xMin, float xMax) {
-    float timeOffset = (xCurrent - xMin) / (xMax - xMin) * SPEED;
+float calcZOffset(float time, float current, float origin) {
+    float timeOffset = (current - origin) * SPEED;
     
-    time -= timeOffset + startTime;
+    time -= timeOffset;
     
     if((time < 0 || time > CYCLES*DURATION) && !INFINITE)
         return 0.0;
-    else {
+    else
         return AMPLITUDE * sin(time * 2 * PI / DURATION);
-    }
 }
-//--------------------------------------------------------------
 ofMesh meshFromImage(ofImage& img, int skip, float maxHeight) {
     ofMesh mesh;
     // OF_PRIMITIVE_TRIANGLES means every three vertices create a triangle
@@ -133,7 +119,7 @@ ofMesh meshFromImage(ofImage& img, int skip, float maxHeight) {
                     numFaces += 1;
                     continue;
                 }
-                ofVec3f nwNormal(0.0, 0.0, 0.0);
+                ofVec3f nwNormal(0, 0, 0);
                 nwNormal += face.normal;
                 nwNormal += meshFaces[x-1][y].normal;
                 nwNormal += meshFaces[x-1][y-1].normal;
@@ -141,7 +127,7 @@ ofMesh meshFromImage(ofImage& img, int skip, float maxHeight) {
                 nwNormal /= 4.0;
                 nwNormal.normalize();
                 
-                ofVec3f neNormal(0.0, 0.0, 0.0);
+                ofVec3f neNormal(0, 0, 0);
                 neNormal += face.normal;
                 neNormal += meshFaces[x+1][y].normal;
                 neNormal += meshFaces[x+1][y-1].normal;
@@ -149,7 +135,7 @@ ofMesh meshFromImage(ofImage& img, int skip, float maxHeight) {
                 neNormal /= 4.0;
                 neNormal.normalize();
                 
-                ofVec3f seNormal(0.0, 0.0, 0.0);
+                ofVec3f seNormal(0, 0, 0);
                 seNormal += face.normal;
                 seNormal += meshFaces[x+1][y].normal;
                 seNormal += meshFaces[x+1][y+1].normal;
@@ -157,7 +143,7 @@ ofMesh meshFromImage(ofImage& img, int skip, float maxHeight) {
                 seNormal /= 4.0;
                 seNormal.normalize();
                 
-                ofVec3f swNormal(0.0, 0.0, 0.0);
+                ofVec3f swNormal(0, 0, 0);
                 swNormal += face.normal;
                 swNormal += meshFaces[x-1][y].normal;
                 swNormal += meshFaces[x-1][y+1].normal;
@@ -200,9 +186,9 @@ ofMesh waterMeshFromImage(ofImage& img, float skip, float maxHeight, float water
             ofVec3f se = getVertexFromImg(img, x + skip, y + skip, maxHeight);
             
             if(nw != zero && ne != zero && sw != zero && se != zero) {
-                float waterLevelAfterOffset = waterLevel + calcZOffset(time, startTime, x, xStart, xEnd);
-                float waterLevelAfterOffsetSkip = waterLevel + calcZOffset(time, startTime, x+skip, xStart, xEnd);
-                if(nw.z < waterLevelAfterOffset || ne.z < waterLevelAfterOffset || sw.z < waterLevelAfterOffset || se.z < waterLevelAfterOffset) {
+                float waterLevelAfterOffset = waterLevel + calcZOffset(time - startTime, x, xStart);
+                float waterLevelAfterOffsetSkip = waterLevel + calcZOffset(time - startTime, x+skip, xStart);
+                //if(nw.z < waterLevelAfterOffset || ne.z < waterLevelAfterOffset || sw.z < waterLevelAfterOffset || se.z < waterLevelAfterOffset) {
                     ofVec3f nwBot(nw.x, nw.y, min(nw.z, waterLevel));
                     ofVec3f neBot(ne.x, ne.y, min(ne.z, waterLevel));
                     ofVec3f swBot(sw.x, sw.y, min(sw.z, waterLevel));
@@ -276,16 +262,15 @@ ofMesh waterMeshFromImage(ofImage& img, float skip, float maxHeight, float water
                         addFace(mesh, Vertex(seTop, normal), Vertex(swTop, normal), Vertex(sw, normal), Vertex(se, normal));
                         numFaces++;
                     }
-                }
+                //}
             }
         }
         
-        ofVec3f zero(0.0, 0.0, 0.0);
         for(float y = yStart; y < yEnd; y += skip) { //north to south
             for(float x = xStart; x < xEnd; x += skip) { //west to east
                 Face face = topFaces[x][y];
                 if(face.normal != zero) {
-                    ofVec3f nwNormal(0.0, 0.0, 0.0);
+                    ofVec3f nwNormal(0, 0, 0);
                     nwNormal += face.normal;
                     nwNormal += topFaces[x-1][y].normal;
                     nwNormal += topFaces[x-1][y-1].normal;
@@ -293,7 +278,7 @@ ofMesh waterMeshFromImage(ofImage& img, float skip, float maxHeight, float water
                     nwNormal /= 4.0;
                     nwNormal.normalize();
                     
-                    ofVec3f neNormal(0.0, 0.0, 0.0);
+                    ofVec3f neNormal(0, 0, 0);
                     neNormal += face.normal;
                     neNormal += topFaces[x+1][y].normal;
                     neNormal += topFaces[x+1][y-1].normal;
@@ -301,7 +286,7 @@ ofMesh waterMeshFromImage(ofImage& img, float skip, float maxHeight, float water
                     neNormal /= 4.0;
                     neNormal.normalize();
                     
-                    ofVec3f seNormal(0.0, 0.0, 0.0);
+                    ofVec3f seNormal(0, 0, 0);
                     seNormal += face.normal;
                     seNormal += topFaces[x+1][y].normal;
                     seNormal += topFaces[x+1][y+1].normal;
@@ -309,7 +294,7 @@ ofMesh waterMeshFromImage(ofImage& img, float skip, float maxHeight, float water
                     seNormal /= 4.0;
                     seNormal.normalize();
                     
-                    ofVec3f swNormal(0.0, 0.0, 0.0);
+                    ofVec3f swNormal(0, 0, 0);
                     swNormal += face.normal;
                     swNormal += topFaces[x-1][y].normal;
                     swNormal += topFaces[x-1][y+1].normal;
