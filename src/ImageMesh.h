@@ -2,9 +2,11 @@
 #include <math.h>
 #include "ofxEasingFunc.h"
 #include <vector>
-const float AMPLITUDE = 2.0;
+const float AMPLITUDE = 1.0;
 const float DURATION = 2.0;
-const float SPEED = 0.8;
+const float SPEED = 3.5;
+const bool INFINITE = false;
+const int CYCLES = 5;
 /*
  This code demonstrates the difference between using an ofMesh and an ofVboMesh.
  The ofMesh is uploaded to the GPU once per frame, while the ofVboMesh is
@@ -21,6 +23,9 @@ struct Face {
     ofVec3f nw, ne, sw, se;
     ofVec2f nwi, nei, swi, sei;
     ofVec3f normal;
+    Face() {
+        normal = ofVec3f(0.0,0.0,0.0);
+    }
 };
 struct Vertex {
     ofVec3f position;
@@ -73,23 +78,14 @@ ofVec3f getVertexFromImg(ofImage& img, int x, int y, float maxHeight) {
     }
 }
 float calcZOffset(float time, float startTime, float xCurrent, float xMin, float xMax) {
-    float timeOffset = (xCurrent - xMin) / (xMax - xMin) * DURATION / SPEED;
+    float timeOffset = (xCurrent - xMin) / (xMax - xMin) * SPEED;
     
     time -= timeOffset + startTime;
     
-    if(time < 0 || time > 4*DURATION)
+    if((time < 0 || time > CYCLES*DURATION) && !INFINITE)
         return 0.0;
-    else if(time <= DURATION) {
-        return AMPLITUDE * ofxEasingFunc::Sine::easeInOut(time / DURATION);
-    }
-    else if(time <= 2*DURATION) {
-        return AMPLITUDE * (1.0 - ofxEasingFunc::Sine::easeInOut(time / DURATION - 1.0));
-    }
-    else if(time <= 3*DURATION) {
-        return -AMPLITUDE * ofxEasingFunc::Sine::easeInOut(time / DURATION - 2.0);
-    }
     else {
-        return -AMPLITUDE * (1.0 - ofxEasingFunc::Sine::easeInOut(time / DURATION - 3.0));
+        return AMPLITUDE * sin(time * 2 * PI / DURATION);
     }
 }
 //--------------------------------------------------------------
@@ -194,6 +190,8 @@ ofMesh waterMeshFromImage(ofImage& img, float skip, float maxHeight, float water
     float xEnd = waterNE.x + ws/2.0;
     float yStart = -waterNE.y + hs/2.0;
     float yEnd = -waterSW.y + hs/2.0;
+    
+    vector< vector<Face> > topFaces(xEnd+1, vector<Face>(yEnd+1));
     for(float y = yStart; y < yEnd; y += skip) { //north to south
         for(float x = xStart; x < xEnd; x += skip) { //west to east
             ofVec3f nw = getVertexFromImg(img, x, y, maxHeight);
@@ -229,7 +227,11 @@ ofMesh waterMeshFromImage(ofImage& img, float skip, float maxHeight, float water
                     diagTop2.normalize();
                     ofVec3f normalTop = diagTop1.perpendicular(diagTop2);
                     
-                    addFace(mesh, Vertex(nwTop, normalTop), Vertex(neTop, normalTop), Vertex(seTop, normalTop), Vertex(swTop, normalTop));
+                    topFaces[x][y].nw = nwTop;
+                    topFaces[x][y].ne = neTop;
+                    topFaces[x][y].sw = swTop;
+                    topFaces[x][y].se = seTop;
+                    topFaces[x][y].normal = normalTop;
                     
                     numFaces += 2;
                     
@@ -274,6 +276,47 @@ ofMesh waterMeshFromImage(ofImage& img, float skip, float maxHeight, float water
                         addFace(mesh, Vertex(seTop, normal), Vertex(swTop, normal), Vertex(sw, normal), Vertex(se, normal));
                         numFaces++;
                     }
+                }
+            }
+        }
+        
+        ofVec3f zero(0.0, 0.0, 0.0);
+        for(float y = yStart; y < yEnd; y += skip) { //north to south
+            for(float x = xStart; x < xEnd; x += skip) { //west to east
+                Face face = topFaces[x][y];
+                if(face.normal != zero) {
+                    ofVec3f nwNormal(0.0, 0.0, 0.0);
+                    nwNormal += face.normal;
+                    nwNormal += topFaces[x-1][y].normal;
+                    nwNormal += topFaces[x-1][y-1].normal;
+                    nwNormal += topFaces[x][y-1].normal;
+                    nwNormal /= 4.0;
+                    nwNormal.normalize();
+                    
+                    ofVec3f neNormal(0.0, 0.0, 0.0);
+                    neNormal += face.normal;
+                    neNormal += topFaces[x+1][y].normal;
+                    neNormal += topFaces[x+1][y-1].normal;
+                    neNormal += topFaces[x][y-1].normal;
+                    neNormal /= 4.0;
+                    neNormal.normalize();
+                    
+                    ofVec3f seNormal(0.0, 0.0, 0.0);
+                    seNormal += face.normal;
+                    seNormal += topFaces[x+1][y].normal;
+                    seNormal += topFaces[x+1][y+1].normal;
+                    seNormal += topFaces[x][y+1].normal;
+                    seNormal /= 4.0;
+                    seNormal.normalize();
+                    
+                    ofVec3f swNormal(0.0, 0.0, 0.0);
+                    swNormal += face.normal;
+                    swNormal += topFaces[x-1][y].normal;
+                    swNormal += topFaces[x-1][y+1].normal;
+                    swNormal += topFaces[x][y+1].normal;
+                    swNormal /= 4.0;
+                    swNormal.normalize();
+                    addFace(mesh, Vertex(face.nw, nwNormal), Vertex(face.ne, neNormal), Vertex(face.se, seNormal), Vertex(face.sw, swNormal));
                 }
             }
         }

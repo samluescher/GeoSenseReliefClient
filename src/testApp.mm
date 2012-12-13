@@ -90,7 +90,7 @@ void testApp::setup()
     terrainSW = ofVec2f(128, 28);
     terrainNE = ofVec2f(150, 46);
     waterSW = ofVec2f(20, 10);
-    waterNE = ofVec2f(30, 25);
+    waterNE = ofVec2f(40, 40);
     terrainExtents = ofVec2f(terrainNE.x - terrainSW.x, terrainNE.y - terrainSW.y);
     ofLog() << "terrainExtents: " << terrainExtents.x << "," << terrainExtents.y;
     ofVec2f center = terrainSW + terrainExtents / 2;
@@ -189,7 +189,7 @@ void testApp::setup()
 	layersGUI->addToggle("FEATURES", drawMapFeaturesEnabled, dim, dim);
 	layersGUI->addToggle("MINIMAP", drawMiniMapEnabled, dim, dim);
 	layersGUI->addToggle("WATER", drawWaterEnabled, dim, dim);
-    layersGUI->addSlider("WATER LEVEL", 0, terrainPeakHeight/3, waterLevel, guiW - spacing * 2, dim);
+    layersGUI->addSlider("WATER LEVEL", 0, 5.0, waterLevel, guiW - spacing * 2, dim);
 	layersGUI->addToggle("DEBUG", drawDebugEnabled, dim, dim);
     
 	layersGUI->addWidgetDown(new ofxUILabel("", OFX_UI_FONT_LARGE)); 
@@ -533,10 +533,6 @@ void testApp::draw()
     if (!calibrationMode) {
         testApp::drawGUI();
     }
-
-    //ofDisableLighting();
-    //pointLight.draw();
-    //directionalLight.draw();
 }
 
 void testApp::drawGUI() 
