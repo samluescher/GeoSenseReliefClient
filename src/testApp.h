@@ -59,7 +59,7 @@ public:
     void setCalibrationMode(bool state);
     
     ofVboMesh terrainVboMesh, terrainWaterMesh;
-    ofImage terrainTex, terrainTexAlpha, heightMap, terrainCrop, sendMap, featureMap, featureMapCrop, featureHeightMap;
+    ofImage terrainTex, heightMap, terrainCrop, sendMap, featureMap, featureMapCrop, featureHeightMap;
     ofVec2f terrainSW, terrainNE, terrainCenterOffset, waterSW, waterNE;
     ofVec3f terrainToHeightMapScale;
     float sendMapResampledValues[RELIEF_SIZE_X * RELIEF_SIZE_Y];
@@ -110,7 +110,7 @@ public:
     void drawGUI();
     void updateVisibleMap(bool updateServer);
     
-    bool drawTerrainEnabled, drawTerrainGridEnabled, drawDebugEnabled, drawMapFeaturesEnabled, drawMiniMapEnabled, drawWaterEnabled, tetherWaterEnabled, fullscreenEnabled;
+    bool drawTerrainEnabled, drawTerrainGridEnabled, drawDebugEnabled, drawMapFeaturesEnabled, drawMiniMapEnabled, drawWaterEnabled, tetherWaterEnabled, fullscreenEnabled, lightingEnabled;
     
     void reliefMessageReceived(ofxOscMessage m);
     void updateRelief();

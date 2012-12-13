@@ -6,6 +6,8 @@
 #define MAX_VAL 500.0f // for normalizing val -- this will come from db later
 #define MINI_MAP_W 350
 #define LIGHT_POS_INC .2
+#define PAN_POS_INC .05
+#define WATER_POS_INC 1
 
 #define fukushima ofVec2f(141.033247, 37.425252)
 
@@ -77,11 +79,11 @@ void testApp::setup()
     
     ofLog() << "Loading maps";
     heightMap.loadImage("maps/heightmap.ASTGTM2_128,28,149,45-1600.png");
-    //heightMap.loadImage("maps/testmap-200x200.png");
-    
 	terrainTex.loadImage("maps/srtm.ASTGTM2_128,28,149,45-14400.png");
-	terrainTexAlpha.loadImage("maps/srtm.ASTGTM2_128,28,149,45-14400-a65.png");
-    
+
+//    heightMap.loadImage("maps/heightmap.ASTGTM2_3,43,17,49-5625.png");
+//	terrainTex.loadImage("maps/srtm.ASTGTM2_3,43,17,49-10000.png");
+
     /*terrainTexAlpha.allocate(terrainTex.width, terrainTex.height, OF_IMAGE_COLOR_ALPHA);
      copyImageWithScaledColors(terrainTex, terrainTexAlpha, .8, .8);
      terrainTexAlpha.reloadTexture();*/
@@ -154,6 +156,7 @@ void testApp::setup()
     prevWaterLevel = 0.0;
     reliefSendMode = RELIEF_SEND_OFF;
     fullscreenEnabled = true;
+    lightingEnabled = true;
     ofSetFullscreen(fullscreenEnabled);
 
 #if (IS_TOP_DOWN_CLIENT)
@@ -177,6 +180,7 @@ void testApp::setup()
     layersGUI = new ofxUICanvas(spacing, spacing, guiW, ofGetHeight() * .6);     
 #if !(TARGET_OS_IPHONE)
 	layersGUI->addToggle("FULLSCREEN", fullscreenEnabled, dim, dim);
+	layersGUI->addToggle("LIGHTING", lightingEnabled, dim, dim);
 	layersGUI->addToggle("ORTHOGONAL", cam.getOrtho(), dim, dim);
     //    layersGUI->addButton("RESET CAMERA", false, dim, dim);
 	layersGUI->addWidgetDown(new ofxUILabel("", OFX_UI_FONT_LARGE)); 
@@ -265,6 +269,9 @@ void testApp::guiEvent(ofxUIEventArgs &e)
         if (name == "FULLSCREEN") {
             fullscreenEnabled = value;
             ofSetFullscreen(fullscreenEnabled);
+        }
+        if (name == "LIGHTING") {
+            lightingEnabled = value;
         }
         if (name == "ORTHOGONAL") {
             if (value) {
@@ -376,10 +383,14 @@ void testApp::drawTerrain(bool transparent, bool wireframe) {
     ofScale(terrainToHeightMapScale.x, terrainToHeightMapScale.y, terrainToHeightMapScale.z); 
     
     if (!wireframe) {
-        ofSetColor(255);
-        if (transparent) terrainTexAlpha.bind(); else terrainTex.bind();
+        if (transparent) {
+            ofSetColor(255, 255, 255, 128);
+        } else {
+            ofSetColor(255);
+        }
+        terrainTex.bind();
         terrainVboMesh.draw();
-        if (transparent) terrainTexAlpha.unbind(); else terrainTex.unbind();
+        terrainTex.unbind();
     } else {
         ofSetColor(100, 100, 100, 20);
         terrainVboMesh.drawWireframe(); 
@@ -452,8 +463,12 @@ void testApp::draw()
                 
                 ofPushMatrix();
                     ofTranslate(-mapCenter);
-                    ofEnableLighting();
-                    pointLight.enable();
+                    if (lightingEnabled) {
+                        ofEnableLighting();
+                        pointLight.enable();
+                    } else {
+                        ofDisableLighting();
+                    }
                     glEnable(GL_DEPTH_TEST);
 
                     if (drawTerrainEnabled && !calibrationMode) {
@@ -1016,12 +1031,72 @@ void testApp::exit(){
 //--------------------------------------------------------------
 void testApp::keyPressed  (int key){
     ofLog() << key;
+    bool guiVisible;
+    time_t rawtime;
+    struct tm * timeinfo;
+    time ( &rawtime );
+    timeinfo = localtime ( &rawtime );
+    char filename[40];
+    strftime(filename, 40, "%Y-%m-%d %H-%M-%S", timeinfo );
+    std::stringstream ss;
+    
     switch (key) {
         case 99:
         case 67:
             setCalibrationMode(!calibrationMode);
             break;
+            
+        case 112:
+            guiVisible = layersGUI->isVisible();
+            layersGUI->setVisible(false);
+            draw();
+            ss.str("");
+            ss << "screenshot" << filename << ".png";
+            ofSaveScreen(ss.str());
+            layersGUI->setVisible(guiVisible);
+            break;
         case OF_KEY_UP:
+            mapCenter += ofVec3f(0, PAN_POS_INC, 0);
+            break;
+        case OF_KEY_DOWN:
+            mapCenter -= ofVec3f(0, PAN_POS_INC, 0);
+            break;
+        case OF_KEY_RIGHT:
+            mapCenter += ofVec3f(PAN_POS_INC, 0, 0);
+            break;
+        case OF_KEY_LEFT:
+            mapCenter -= ofVec3f(PAN_POS_INC, 0, 0);
+            break;
+
+        // WSAD
+        case 119:
+            waterSW += ofVec3f(0, WATER_POS_INC, 0);
+            break;
+        case 115:
+            waterSW -= ofVec3f(0, WATER_POS_INC, 0);
+            break;
+        case 97:
+            waterSW -= ofVec3f(WATER_POS_INC, 0, 0);
+            break;
+        case 100:
+            waterSW += ofVec3f(WATER_POS_INC, 0, 0);
+            break;
+            
+        // IKJL
+        case 105:
+            waterNE += ofVec3f(0, WATER_POS_INC, 0);
+            break;
+        case 107:
+            waterNE -= ofVec3f(0, WATER_POS_INC, 0);
+            break;
+        case 106:
+            waterNE -= ofVec3f(WATER_POS_INC, 0, 0);
+            break;
+        case 108:
+            waterNE += ofVec3f(WATER_POS_INC, 0, 0);
+            break;
+
+        /*case OF_KEY_UP:
             pointLight.setPosition(pointLight.getPosition() + ofVec3f(0, LIGHT_POS_INC, 0));
             break;
         case OF_KEY_DOWN:
@@ -1032,7 +1107,7 @@ void testApp::keyPressed  (int key){
             break;
         case OF_KEY_LEFT:
             pointLight.setPosition(pointLight.getPosition() - ofVec3f(LIGHT_POS_INC, 0, 0));
-            break;
+            break;*/
     }
 }
 
