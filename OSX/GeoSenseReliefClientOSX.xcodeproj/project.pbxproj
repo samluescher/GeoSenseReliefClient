@@ -82,6 +82,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		229751FF16E6901700323FB3 /* util.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = util.h; path = ../../src/util.h; sourceTree = "<group>"; };
 		22AA59121606DF8D00E88EF8 /* ofxUI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxUI.h; sourceTree = "<group>"; };
 		22AA59131606DF8D00E88EF8 /* ofxUI2DPad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxUI2DPad.h; sourceTree = "<group>"; };
 		22AA59141606DF8D00E88EF8 /* ofxUIBiLabelSlider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxUIBiLabelSlider.h; sourceTree = "<group>"; };
@@ -604,6 +605,7 @@
 				22E1420B164D866F00CA0A44 /* mainApp.h */,
 				22E1420C164D866F00CA0A44 /* mainApp.mm */,
 				22E14200164D862A00CA0A44 /* main.mm */,
+				229751FF16E6901700323FB3 /* util.h */,
 			);
 			path = src;
 			sourceTree = SOURCE_ROOT;

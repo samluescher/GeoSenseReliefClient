@@ -1,4 +1,5 @@
 #include "mainApp.h"
+#include "util.h"
 #include "ImageMesh.h"
 
 #define NO_MARKER_TOLERANCE_FRAMES 10
@@ -15,44 +16,6 @@
 #define RELIEF_SEND_FEATURES 2
 #define RELIEF_SEND_OFF 0
 
-
-
-int getBrightness(ofColor c) {
-    return MAX(MAX(c.r,c.g),c.b);
-}
-
-int getLightness(ofColor c) {
-    return (c.r + c.g + c.b) / 3.f;
-}
-
-int getHue(ofColor c) {
-    float max = MAX(MAX(c.r, c.g), c.b);
-    float min = MIN(MIN(c.r, c.g), c.b);
-    float delta = max-min;
-    if (c.r==max) return (0 + (c.g-c.b) / delta) * 42.5;  //yellow...magenta
-    if (c.g==max) return (2 + (c.b-c.r) / delta) * 42.5;  //cyan...yellow
-    if (c.b==max) return (4 + (c.r-c.g) / delta) * 42.5;  //magenta...cyan
-    return 0;
-}
-
-int getSaturation(ofColor c) {
-    float min = MIN(MIN(c.r, c.g), c.b);
-    float max = MAX(MAX(c.r, c.g), c.b);
-    float delta = max-min;
-    if (max!=0) return int(delta/max*255);
-    return 0;
-}
-
-void copyImageWithScaledColors(ofImage &from, ofImage &to, float alphaScale, float saturationScale) {
-    for (int y = 0; y < from.height; y++) {
-        for (int x = 0; x < from.height; x++) {
-            ofColor c = from.getColor(x, y);
-            ofColor targetC = ofColor::fromHsb(getHue(c), getSaturation(c) * saturationScale, getBrightness(c));
-            targetC.a = alphaScale * c.a;
-            to.setColor(x, y, targetC);
-        }
-    }
-}
 
 ofVec3f mainApp::surfaceAt(ofVec2f pos) {
     /*
@@ -81,12 +44,17 @@ void mainApp::setup()
     heightMap.loadImage("maps/heightmap.ASTGTM2_128,28,149,45-1600.png");
 	terrainTex.loadImage("maps/srtm.ASTGTM2_128,28,149,45-14400.png");
 
-//    heightMap.loadImage("maps/heightmap.ASTGTM2_3,43,17,49-5625.png");
+//  heightMap.loadImage("maps/heightmap.ASTGTM2_3,43,17,49-5625.png");
 //	terrainTex.loadImage("maps/srtm.ASTGTM2_3,43,17,49-10000.png");
 
-    /*terrainTexAlpha.allocate(terrainTex.width, terrainTex.height, OF_IMAGE_COLOR_ALPHA);
-     copyImageWithScaledColors(terrainTex, terrainTexAlpha, .8, .8);
-     terrainTexAlpha.reloadTexture();*/
+    /*
+    // desaturate terrain texture 
+    ofImage terrainTexDesat;
+    terrainTexDesat.allocate(terrainTex.width, terrainTex.height, OF_IMAGE_COLOR_ALPHA);
+    copyImageWithScaledColors(terrainTex, terrainTexDesat, 1, .5);
+    terrainTexDesat.reloadTexture();
+    terrainTex = terrainTexDesat;*/
+    
     startTime = ofGetElapsedTimef();
     
     terrainSW = ofVec2f(128, 28);
