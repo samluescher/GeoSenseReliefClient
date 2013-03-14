@@ -10,6 +10,7 @@
 #define LIGHT_POS_INC .2
 #define PAN_POS_INC .05
 #define WATER_POS_INC 1
+#define TERRAIN_OPACITY 200
 
 #define MIN_ZOOM 50 //300
 #define MAX_ZOOM 1600
@@ -111,7 +112,6 @@ void mainApp::setup()
     //loadFeaturesFromFile("json/earthquakes.json");
     
     loadFeaturesFromGeoJSONFile("json/japan-prefectures.json");
-    loadFeaturesFromGeoJSONFile("json/JapanFlood.json");
     
 #if (TARGET_OS_IPHONE)
     EAGLView *view = ofxiPhoneGetGLView();  
@@ -121,7 +121,7 @@ void mainApp::setup()
     
     drawDebugEnabled = false;
     calibrationMode = false;
-    drawTerrainEnabled = false;
+    drawTerrainEnabled = true;
     drawTerrainGridEnabled = false;
     drawMapFeaturesEnabled = true;
     drawMiniMapEnabled = true;
@@ -359,7 +359,7 @@ void mainApp::drawTerrain(bool transparent, bool wireframe) {
     
     if (!wireframe) {
         if (transparent) {
-            ofSetColor(255, 255, 255, 128);
+            ofSetColor(255, 255, 255, TERRAIN_OPACITY);
         } else {
             ofSetColor(255);
         }

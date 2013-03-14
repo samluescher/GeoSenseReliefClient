@@ -21,7 +21,7 @@ ofVec3f getVecFromCoordinates(Json::Value coordinates) {
             vec.x = coordinates[0U].asDouble();
             return vec;
         case 0:
-            return;
+            return vec;
     }
 }
 

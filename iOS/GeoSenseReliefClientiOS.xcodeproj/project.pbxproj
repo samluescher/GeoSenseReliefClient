@@ -15,6 +15,7 @@
 		2206932816E695500033720A /* GeoSenseIcon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2206932716E695500033720A /* GeoSenseIcon@2x.png */; };
 		2206932A16E696590033720A /* Default-Portrait~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 2206932916E696590033720A /* Default-Portrait~ipad.png */; };
 		2206932C16E6965E0033720A /* Default-Portrait@2x~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 2206932B16E6965E0033720A /* Default-Portrait@2x~ipad.png */; };
+		223CDEBE16F15216003560A6 /* MapFeatureLayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 223CDEBD16F15216003560A6 /* MapFeatureLayer.cpp */; };
 		226023E916066EA40082606C /* ofPinchGestureRecognizer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 226023E216066EA40082606C /* ofPinchGestureRecognizer.mm */; };
 		226023EA16066EA40082606C /* ofSwipeGestureRecognizer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 226023E416066EA40082606C /* ofSwipeGestureRecognizer.mm */; };
 		226023EB16066EA40082606C /* ofTapGestureRecognizer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 226023E616066EA40082606C /* ofTapGestureRecognizer.mm */; };
@@ -97,6 +98,9 @@
 		2206932716E695500033720A /* GeoSenseIcon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "GeoSenseIcon@2x.png"; path = "../../GeoSenseIcon@2x.png"; sourceTree = "<group>"; };
 		2206932916E696590033720A /* Default-Portrait~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-Portrait~ipad.png"; sourceTree = "<group>"; };
 		2206932B16E6965E0033720A /* Default-Portrait@2x~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-Portrait@2x~ipad.png"; sourceTree = "<group>"; };
+		223CDEB916F151FC003560A6 /* GeoJSONMesh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GeoJSONMesh.h; path = ../../src/GeoJSONMesh.h; sourceTree = "<group>"; };
+		223CDEBB16F151FC003560A6 /* MapFeatureLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MapFeatureLayer.h; path = ../../src/MapFeatureLayer.h; sourceTree = "<group>"; };
+		223CDEBD16F15216003560A6 /* MapFeatureLayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MapFeatureLayer.cpp; path = ../../src/MapFeatureLayer.cpp; sourceTree = "<group>"; };
 		226023E116066EA40082606C /* ofPinchGestureRecognizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofPinchGestureRecognizer.h; sourceTree = "<group>"; };
 		226023E216066EA40082606C /* ofPinchGestureRecognizer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofPinchGestureRecognizer.mm; sourceTree = "<group>"; };
 		226023E316066EA40082606C /* ofSwipeGestureRecognizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofSwipeGestureRecognizer.h; sourceTree = "<group>"; };
@@ -807,6 +811,9 @@
 		E4D8936A11527B74007E1F53 /* src */ = {
 			isa = PBXGroup;
 			children = (
+				223CDEB916F151FC003560A6 /* GeoJSONMesh.h */,
+				223CDEBD16F15216003560A6 /* MapFeatureLayer.cpp */,
+				223CDEBB16F151FC003560A6 /* MapFeatureLayer.h */,
 				22FC30A516E68B360017D8A1 /* config.h */,
 				22FC30A616E68B360017D8A1 /* ImageMesh.h */,
 				22FC30A716E68B360017D8A1 /* mainApp.h */,
@@ -961,6 +968,7 @@
 				22FC30B116E68B360017D8A1 /* MapFeature.cpp in Sources */,
 				22FC30B216E68B360017D8A1 /* MouseController.cpp in Sources */,
 				22FC30B316E68B360017D8A1 /* ReliefClientBase.cpp in Sources */,
+				223CDEBE16F15216003560A6 /* MapFeatureLayer.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
