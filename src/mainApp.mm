@@ -1,6 +1,7 @@
 #include "mainApp.h"
 #include "util.h"
 #include "ImageMesh.h"
+#include "GeoJSONMesh.h"
 
 #define NO_MARKER_TOLERANCE_FRAMES 10
 #define GRID_SUBDIVISIONS 10
@@ -9,6 +10,9 @@
 #define LIGHT_POS_INC .2
 #define PAN_POS_INC .05
 #define WATER_POS_INC 1
+
+#define MIN_ZOOM 50 //300
+#define MAX_ZOOM 1600
 
 #define fukushima ofVec2f(141.033247, 37.425252)
 
@@ -103,8 +107,11 @@ void mainApp::setup()
     ofRegisterURLNotification(this);  
     //loadFeaturesFromURL("http://map.safecast.org/api/mappoints/4ff47bc60aea6a01ec00000f?b=&"+ofToString(terrainSW.x)+"b="+ofToString(terrainSW.y)+"&b="+ofToString(terrainNE.x)+"&b="+ofToString(terrainNE.y)+"&z=8");
     
-    loadFeaturesFromFile("json/safecast.8.json");
+    //loadFeaturesFromFile("json/safecast.8.json");
     //loadFeaturesFromFile("json/earthquakes.json");
+    
+    loadFeaturesFromGeoJSONFile("json/japan-prefectures.json");
+    loadFeaturesFromGeoJSONFile("json/JapanFlood.json");
     
 #if (TARGET_OS_IPHONE)
     EAGLView *view = ofxiPhoneGetGLView();  
@@ -114,16 +121,16 @@ void mainApp::setup()
     
     drawDebugEnabled = false;
     calibrationMode = false;
-    drawTerrainEnabled = true;
+    drawTerrainEnabled = false;
     drawTerrainGridEnabled = false;
-    drawMapFeaturesEnabled = false;
+    drawMapFeaturesEnabled = true;
     drawMiniMapEnabled = true;
     drawWaterEnabled = false;
     tetherWaterEnabled = false;
     waterLevel = 0.3;
     prevWaterLevel = 0.0;
     reliefSendMode = RELIEF_SEND_OFF;
-    fullscreenEnabled = true;
+    fullscreenEnabled = false;
     lightingEnabled = true;
     ofSetFullscreen(fullscreenEnabled);
 
@@ -153,7 +160,7 @@ void mainApp::setup()
 	layersGUI->addWidgetDown(new ofxUILabel("", OFX_UI_FONT_LARGE)); 
 #endif
 	layersGUI->addToggle("LIGHTING", lightingEnabled, dim, dim);
-    layersGUI->addSlider("ZOOM", 300, 1600, 1 / terrainUnitToScreenUnit, guiW - spacing * 2, dim);
+    layersGUI->addSlider("ZOOM", MIN_ZOOM, MAX_ZOOM, 1 / terrainUnitToScreenUnit, guiW - spacing * 2, dim);
 	layersGUI->addWidgetDown(new ofxUILabel("", OFX_UI_FONT_LARGE)); 
 	layersGUI->addWidgetDown(new ofxUILabel("", OFX_UI_FONT_LARGE)); 
 	layersGUI->addToggle("TERRAIN", drawTerrainEnabled, dim, dim);
@@ -367,10 +374,18 @@ void mainApp::drawTerrain(bool transparent, bool wireframe) {
     ofPopMatrix();
 }
 
-void mainApp::drawMapFeatures() 
+void mainApp::drawMapFeatures()
 {
-    mapFeaturesMesh.draw();
+    glLineWidth(LINE_WIDTH_GRID_WHOLE);
+    ofEnableBlendMode(OF_BLENDMODE_ALPHA);
+    ofSetColor(200, 250, 250, 150);
+    
+    for (int i = 0; i < featureLayers.size(); i++) {
+        MapFeatureLayer layer = featureLayers.at(i);
+        layer.draw();
+    }
 }
+
 
 void mainApp::draw()
 {
@@ -835,6 +850,38 @@ void mainApp::drawIdentity() {
     ofSetColor(0, 0, 255);
     ofLine(ofVec3f(0, 0, 0), ofVec3f(0, 0, 1));
 }
+
+void mainApp::loadFeaturesFromGeoJSONFile(string filePath) {
+	ofFile file(filePath);
+	if(!file.exists()){
+		ofLogError("The file " + filePath + " is missing");
+	}
+	ofBuffer buffer(file);
+	
+	//Read file line by line
+    string jsonStr;
+	while (!buffer.isLastLine()) {
+		jsonStr += buffer.getNextLine();
+    }
+    
+    addFeatureLayerFromGeoJSONString(jsonStr);
+}
+
+//Parses a json string into map features
+void mainApp::addFeatureLayerFromGeoJSONString(string jsonStr) {
+    ofxJSONElement json;
+    if (json.parse(jsonStr)) {
+        MapFeatureLayer layer;
+        layer.featureMeshes = geoJSONFeatureCollectionToMeshes(json);
+        featureLayers.push_back(layer);
+    } else {
+        ofLog() << "Error parsing JSON";
+    }
+}
+
+
+
+
 
 
 //Loads json data from a file

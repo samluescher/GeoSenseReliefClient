@@ -15,6 +15,7 @@
 #endif
 
 #include "MapFeature.h"
+#include "MapFeatureLayer.h"
 #include "ofxJSONElement.h"
 #include "ReliefClientBase.h"
 #include "ofxOsc.h"
@@ -79,6 +80,13 @@ public:
     void loadFeaturesFromFile(string filePath);
     float gridSize;
     
+    
+    std::vector<MapFeatureLayer> featureLayers;
+    
+
+    void loadFeaturesFromGeoJSONFile(string filePath);
+    void addFeatureLayerFromGeoJSONString(string jsonStr);    
+
     ofLight pointLight, directionalLight;
     
     ofVec2f touchPoint;
