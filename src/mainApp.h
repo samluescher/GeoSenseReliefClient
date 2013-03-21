@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ofMain.h"
+#include "ofEvents.h"
 #include "TargetConditionals.h"
 
 #if (TARGET_OS_IPHONE)
@@ -14,6 +15,7 @@
 #define USE_QCAR false
 #endif
 
+#include "MouseController.h"
 #include "MapFeature.h"
 #include "ofxJSONElement.h"
 #include "ReliefClientBase.h"
@@ -23,6 +25,8 @@
 #include "config.h"
 
 #include <time.h>
+
+//class MouseController;
 
 class mainApp : public ReliefClientBase{
 	
@@ -54,9 +58,12 @@ public:
 	void windowResized(int w, int h);
 	void dragEvent(ofDragInfo dragInfo);
 	void gotMessage(ofMessage msg);
+    void moved();
 #endif
     
     void setCalibrationMode(bool state);
+    
+    MouseController sceneController;
     
     ofVboMesh terrainVboMesh, terrainWaterMesh;
     ofImage terrainTex, heightMap, terrainCrop, sendMap, featureMap, featureMapCrop, featureHeightMap;
@@ -95,8 +102,9 @@ public:
     int noMarkerSince;
     
     ofVec3f mapCenter, newMapCenter;
-    ofEasyCam cam;
-    void resetCam(); 
+    ofCamera cam;
+//    ofEasyCam cam;
+    void resetCam();
     
     void drawIdentity();
     void drawWater(float waterLevel);

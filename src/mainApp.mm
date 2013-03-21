@@ -206,6 +206,9 @@ void mainApp::setup()
     resetCam();
 #if !(TARGET_OS_IPHONE)
     ofEnableSmoothing();
+
+    sceneController = MouseController();
+        
 #endif
     
     cursorNotMovedSince = 0;
@@ -214,12 +217,16 @@ void mainApp::setup()
 
 void mainApp::resetCam() 
 {
+    //cout << "RESETTING CAMERA" << endl;
     //cam.setNearClip(1);
     //cam.setFarClip(100000);
     cam.setPosition(mapCenter + ofVec3f(0, 0, 4));
     cam.lookAt(mapCenter);
 //    cam.setDistance(2000); // tmp -- for light debugging
     updateVisibleMap(true);
+    //cout << cam.getPosition() << endl;
+//    cam.setNearClip(5);
+//    cam.enableMouseInput();
 }
 
 void mainApp::guiEvent(ofxUIEventArgs &e)
@@ -322,6 +329,7 @@ void mainApp::guiEvent(ofxUIEventArgs &e)
 
 void mainApp::update() 
 {   
+    sceneController.update(cam);//(&this);
     reliefUpdate();
 #if (USE_QCAR)
     ofxQCAR::getInstance()->update();
@@ -330,6 +338,7 @@ void mainApp::update()
     if (!calibrationMode) {
         layersGUI->setVisible(cursorNotMovedSince < GUI_DISAPPEAR_FRAMES);
     }
+    
 }
 
 //--------------------------------------------------------------
@@ -409,7 +418,7 @@ void mainApp::draw()
             glLoadMatrixf(projectionMatrix.getPtr());
         }
         #else
-        cam.begin();
+//        cam.begin();
         #endif
     
         ofPushMatrix();
@@ -509,7 +518,7 @@ void mainApp::draw()
         qcar->drawMarkerCenter();
     }
     #else
-    cam.end();
+//    cam.end();
     #endif
     
     
@@ -1019,6 +1028,7 @@ void mainApp::keyPressed  (int key){
             ofSaveScreen(ss.str());
             layersGUI->setVisible(guiVisible);
             break;
+        /*
         case OF_KEY_UP:
             mapCenter += ofVec3f(0, PAN_POS_INC, 0);
             break;
@@ -1031,7 +1041,8 @@ void mainApp::keyPressed  (int key){
         case OF_KEY_LEFT:
             mapCenter -= ofVec3f(PAN_POS_INC, 0, 0);
             break;
-
+         */
+         
         // WSAD
         case 119:
             waterSW += ofVec3f(0, WATER_POS_INC, 0);
@@ -1112,6 +1123,11 @@ void mainApp::gotMessage(ofMessage msg){
 //--------------------------------------------------------------
 void mainApp::dragEvent(ofDragInfo dragInfo){ 
     
+}
+
+//--------------------------------------------------------------
+void mainApp::moved() {
+    cout << "got to moved" << endl;
 }
 
 #else

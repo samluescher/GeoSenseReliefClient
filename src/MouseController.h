@@ -4,6 +4,8 @@
 #include "ofxEasingFunc.h"
 #include "ofEvents.h"
 #include "SceneController.h"
+class mainApp;
+//#include "mainApp.h"
 
 //--------------------------------------------------------
 class MouseController : public SceneController{
@@ -14,7 +16,8 @@ class MouseController : public SceneController{
         void mouseDragged(ofMouseEventArgs & args);
         void mousePressed(ofMouseEventArgs & args);
         void mouseReleased(ofMouseEventArgs & args);
-        void update(ofCamera* camera);
+        void update(ofCamera & camera);
+//        void update(mainApp *main);
 
         float easeStartTime;
         ofVec3f previousMousePosition;

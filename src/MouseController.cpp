@@ -10,13 +10,15 @@ MouseController::MouseController() {
 }
 
 //--------------------------------------------------------------
-void MouseController::update(ofCamera * camera) {
+void MouseController::update(ofCamera & camera) {//(mainApp *main) {
     dragVelocity *= 1-(VELOCITY_DECAY);
     float scaled = ofMap(ofGetElapsedTimef(),easeStartTime,easeStartTime+EASING_TIME,1,0,1);
-    camera->move(dragVelocity*ofxEasingFunc::Quad::easeOut(scaled));  
+    camera.move(dragVelocity*ofxEasingFunc::Quad::easeOut(scaled));
+//    main->cam.move(dragVelocity*ofxEasingFunc::Quad::easeOut(scaled));  
 }
 
-void MouseController::keyPressed(ofKeyEventArgs & args){ 
+void MouseController::keyPressed(ofKeyEventArgs & args){
+//    ofLog() << "KEY:" << args.key;
     switch (args.key) {
         case 356:
             dragVelocity.set(MAP_MOVE_INC,0,0);
@@ -52,6 +54,7 @@ void MouseController::mouseDragged(ofMouseEventArgs & args){
 
 //--------------------------------------------------------------
 void MouseController::mousePressed(ofMouseEventArgs & args){
+    cout << "penis" << endl;
 	previousMousePosition.set(args.x,args.y,0);
 }
 
