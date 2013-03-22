@@ -214,7 +214,7 @@ void mainApp::setup()
 #if !(TARGET_OS_IPHONE)
     ofEnableSmoothing();
 
-    sceneController = MouseController();
+//    sceneController = MouseController(this);
         
 #endif
     
@@ -336,7 +336,7 @@ void mainApp::guiEvent(ofxUIEventArgs &e)
 
 void mainApp::update() 
 {   
-    sceneController.update(cam);//(&this);
+    sceneController.update();
     reliefUpdate();
 #if (USE_QCAR)
     ofxQCAR::getInstance()->update();

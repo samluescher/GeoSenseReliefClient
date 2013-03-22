@@ -1,39 +1,44 @@
 #include "MouseController.h"
+#include "mainApp.h"
 
 #define MAP_MOVE_INC 0.1f
 #define VELOCITY_DECAY 0.15
 #define EASING_TIME 2.0f
 
-MouseController::MouseController() {
+MouseController::MouseController(mainApp* ma) {
     ofAddListener(ofEvents().keyPressed,this,&MouseController::keyPressed);
     ofRegisterMouseEvents(this);
+    main = ma;
 }
 
 //--------------------------------------------------------------
-void MouseController::update(ofCamera & camera) {//(mainApp *main) {
+void MouseController::update(){
     dragVelocity *= 1-(VELOCITY_DECAY);
     float scaled = ofMap(ofGetElapsedTimef(),easeStartTime,easeStartTime+EASING_TIME,1,0,1);
-    camera.move(dragVelocity*ofxEasingFunc::Quad::easeOut(scaled));
-//    main->cam.move(dragVelocity*ofxEasingFunc::Quad::easeOut(scaled));  
+    main->cam.move(dragVelocity*ofxEasingFunc::Quad::easeOut(scaled));  
 }
 
 void MouseController::keyPressed(ofKeyEventArgs & args){
 //    ofLog() << "KEY:" << args.key;
     switch (args.key) {
-        case 356:
-            dragVelocity.set(MAP_MOVE_INC,0,0);
+        case OF_KEY_LEFT:
+//            dragVelocity.set(MAP_MOVE_INC,0,0);
+            main->mapCenter += (MAP_MOVE_INC,0,0);
             easeStartTime = ofGetElapsedTimef();
             break;
-        case 357:
-            dragVelocity.set(0,0,MAP_MOVE_INC);
+        case OF_KEY_UP:
+//            dragVelocity.set(0,0,MAP_MOVE_INC);
+            main->mapCenter += (0,0,MAP_MOVE_INC);
             easeStartTime = ofGetElapsedTimef();
             break;
-        case 358:
-            dragVelocity.set(-MAP_MOVE_INC,0,0);
+        case OF_KEY_RIGHT:
+//            dragVelocity.set(-MAP_MOVE_INC,0,0);
+            main->mapCenter += (-MAP_MOVE_INC,0,0);
             easeStartTime = ofGetElapsedTimef();
             break;
-        case 359:
-            dragVelocity.set(0,0,-MAP_MOVE_INC);
+        case OF_KEY_DOWN:
+//            dragVelocity.set(0,0,-MAP_MOVE_INC);
+            main->mapCenter += (0,0,-MAP_MOVE_INC);
             easeStartTime = ofGetElapsedTimef();
             break;
     }; 
@@ -62,6 +67,5 @@ void MouseController::mouseReleased(ofMouseEventArgs & args){
 }
 
 void MouseController::mouseMoved(ofMouseEventArgs & args){
-    
 }
 
