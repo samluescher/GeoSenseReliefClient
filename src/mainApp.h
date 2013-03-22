@@ -110,8 +110,8 @@ public:
     int noMarkerSince;
     
     ofVec3f mapCenter, newMapCenter;
-    ofCamera cam;
-//    ofEasyCam cam;
+//    ofCamera cam;
+    ofEasyCam cam;
     void resetCam();
     
     void drawIdentity();

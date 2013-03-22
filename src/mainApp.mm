@@ -224,16 +224,16 @@ void mainApp::setup()
 
 void mainApp::resetCam() 
 {
-    //cout << "RESETTING CAMERA" << endl;
     //cam.setNearClip(1);
     //cam.setFarClip(100000);
-    cam.setPosition(mapCenter + ofVec3f(0, 0, 4));
+    
+    cam.setPosition(mapCenter + ofVec3f(0, 0, -4));
     cam.lookAt(mapCenter);
+        
 //    cam.setDistance(2000); // tmp -- for light debugging
     updateVisibleMap(true);
-    //cout << cam.getPosition() << endl;
 //    cam.setNearClip(5);
-//    cam.enableMouseInput();
+//    cam.disableMouseInput();
 }
 
 void mainApp::guiEvent(ofxUIEventArgs &e)
@@ -433,7 +433,8 @@ void mainApp::draw()
             glLoadMatrixf(projectionMatrix.getPtr());
         }
         #else
-//        cam.begin();
+//        cam.enableMouseInput();
+        cam.begin();
         #endif
     
         ofPushMatrix();
@@ -533,7 +534,8 @@ void mainApp::draw()
         qcar->drawMarkerCenter();
     }
     #else
-//    cam.end();
+    cam.end();
+//    cam.disableMouseInput();
     #endif
     
     
