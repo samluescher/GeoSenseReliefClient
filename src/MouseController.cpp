@@ -16,7 +16,8 @@ void MouseController::update(){
     dragVelocity *= 1-(VELOCITY_DECAY);
 //    dragVelocity *= 2.2;
     float scaled = ofMap(ofGetElapsedTimef(),easeStartTime,easeStartTime+EASING_TIME,1,0,1);
-    main->cam.move(22*dragVelocity*ofxEasingFunc::Quad::easeOut(scaled));  
+//    main->cam.move(22*dragVelocity*ofxEasingFunc::Quad::easeOut(scaled));  
+    main->mapCenter += 0.22*dragVelocity*ofxEasingFunc::Quad::easeOut(scaled);
 }
 
 void MouseController::keyPressed(ofKeyEventArgs & args){
@@ -24,22 +25,18 @@ void MouseController::keyPressed(ofKeyEventArgs & args){
     switch (args.key) {
         case OF_KEY_LEFT:
             dragVelocity.set(MAP_MOVE_INC,0,0);
-//            main->mapCenter += (MAP_MOVE_INC,0,0);
             easeStartTime = ofGetElapsedTimef();
             break;
         case OF_KEY_UP:
-            dragVelocity.set(0,0,MAP_MOVE_INC);
-//            main->mapCenter += (0,0,MAP_MOVE_INC);
+            dragVelocity.set(0,-MAP_MOVE_INC,0);
             easeStartTime = ofGetElapsedTimef();
             break;
         case OF_KEY_RIGHT:
             dragVelocity.set(-MAP_MOVE_INC,0,0);
-//            main->mapCenter += (-MAP_MOVE_INC,0,0);
             easeStartTime = ofGetElapsedTimef();
             break;
         case OF_KEY_DOWN:
-            dragVelocity.set(0,0,-MAP_MOVE_INC);
-//            main->mapCenter += (0,0,-MAP_MOVE_INC);
+            dragVelocity.set(0,MAP_MOVE_INC,0);
             easeStartTime = ofGetElapsedTimef();
             break;
     }; 
@@ -52,12 +49,11 @@ void MouseController::mouseDragged(ofMouseEventArgs & args){
         dragVelocity = (ofVec3f(args.x,args.y,0)-previousMousePosition)*0.01;    
         dragVelocity.x = -dragVelocity.x;
     } if(args.button == 2) {
-        dragVelocity.z += (args.y - previousMousePosition.y)*0.001;
+        dragVelocity.z += (args.y - previousMousePosition.y)*0.01;
     }
     
     easeStartTime = ofGetElapsedTimef();
     previousMousePosition.set(args.x,args.y,0);
-//    main->cam.enableMouseInput();
 }
 
 //--------------------------------------------------------------
