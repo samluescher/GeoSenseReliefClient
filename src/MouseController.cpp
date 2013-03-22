@@ -22,22 +22,22 @@ void MouseController::keyPressed(ofKeyEventArgs & args){
 //    ofLog() << "KEY:" << args.key;
     switch (args.key) {
         case OF_KEY_LEFT:
-//            dragVelocity.set(MAP_MOVE_INC,0,0);
+            dragVelocity.set(MAP_MOVE_INC,0,0);
             main->mapCenter += (MAP_MOVE_INC,0,0);
             easeStartTime = ofGetElapsedTimef();
             break;
         case OF_KEY_UP:
-//            dragVelocity.set(0,0,MAP_MOVE_INC);
+            dragVelocity.set(0,0,MAP_MOVE_INC);
             main->mapCenter += (0,0,MAP_MOVE_INC);
             easeStartTime = ofGetElapsedTimef();
             break;
         case OF_KEY_RIGHT:
-//            dragVelocity.set(-MAP_MOVE_INC,0,0);
+            dragVelocity.set(-MAP_MOVE_INC,0,0);
             main->mapCenter += (-MAP_MOVE_INC,0,0);
             easeStartTime = ofGetElapsedTimef();
             break;
         case OF_KEY_DOWN:
-//            dragVelocity.set(0,0,-MAP_MOVE_INC);
+            dragVelocity.set(0,0,-MAP_MOVE_INC);
             main->mapCenter += (0,0,-MAP_MOVE_INC);
             easeStartTime = ofGetElapsedTimef();
             break;
@@ -49,6 +49,7 @@ void MouseController::mouseDragged(ofMouseEventArgs & args){
     if(args.button == 0) {
         dragVelocity = (ofVec3f(args.x,args.y,0)-previousMousePosition)*0.01;    
         dragVelocity.x = -dragVelocity.x;
+        main->mapCenter += (dragVelocity.x,0,dragVelocity.y);
     } if(args.button == 2) {
         dragVelocity.z += (args.y - previousMousePosition.y)*0.001;
     }
