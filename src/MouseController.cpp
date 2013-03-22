@@ -54,7 +54,6 @@ void MouseController::mouseDragged(ofMouseEventArgs & args){
 
 //--------------------------------------------------------------
 void MouseController::mousePressed(ofMouseEventArgs & args){
-    cout << "penis" << endl;
 	previousMousePosition.set(args.x,args.y,0);
 }
 
