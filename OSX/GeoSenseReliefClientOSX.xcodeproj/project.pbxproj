@@ -9,6 +9,9 @@
 /* Begin PBXBuildFile section */
 		22320EE317035FD00029872F /* KeyboardController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22320EE217035FD00029872F /* KeyboardController.cpp */; };
 		22320EE61703744E0029872F /* SceneController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22320EE51703744E0029872F /* SceneController.cpp */; };
+		22320EE9170378980029872F /* ARTKController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22320EE7170378980029872F /* ARTKController.cpp */; };
+		22320EF017037E760029872F /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22320EEF17037E760029872F /* CoreVideo.framework */; };
+		22320EF217037E7B0029872F /* QTKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22320EF117037E7B0029872F /* QTKit.framework */; };
 		2261512217027D1400290F86 /* ofxARToolkitPlus.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 226150FE17027D1400290F86 /* ofxARToolkitPlus.cpp */; };
 		2261512317027D1400290F86 /* libARToolKitPlus.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2261511617027D1400290F86 /* libARToolKitPlus.a */; };
 		2261512417027D1400290F86 /* libARToolKitPlus.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2261511817027D1400290F86 /* libARToolKitPlus.a */; };
@@ -104,6 +107,10 @@
 		22320EE117035F200029872F /* KeyboardController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = KeyboardController.h; path = ../../src/KeyboardController.h; sourceTree = "<group>"; };
 		22320EE217035FD00029872F /* KeyboardController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = KeyboardController.cpp; path = ../../src/KeyboardController.cpp; sourceTree = "<group>"; };
 		22320EE51703744E0029872F /* SceneController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SceneController.cpp; path = ../../src/SceneController.cpp; sourceTree = "<group>"; };
+		22320EE7170378980029872F /* ARTKController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ARTKController.cpp; path = ../../src/ARTKController.cpp; sourceTree = "<group>"; };
+		22320EE8170378980029872F /* ARTKController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ARTKController.h; path = ../../src/ARTKController.h; sourceTree = "<group>"; };
+		22320EEF17037E760029872F /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
+		22320EF117037E7B0029872F /* QTKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QTKit.framework; path = System/Library/Frameworks/QTKit.framework; sourceTree = SDKROOT; };
 		223F4FB516EAB25E0025FB63 /* MapFeatureLayer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MapFeatureLayer.h; path = ../../src/MapFeatureLayer.h; sourceTree = "<group>"; };
 		223F4FB616EAB34D0025FB63 /* GeoJSONMesh.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = GeoJSONMesh.h; path = ../../src/GeoJSONMesh.h; sourceTree = "<group>"; };
 		226150FE17027D1400290F86 /* ofxARToolkitPlus.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxARToolkitPlus.cpp; sourceTree = "<group>"; };
@@ -367,6 +374,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				22320EF217037E7B0029872F /* QTKit.framework in Frameworks */,
+				22320EF017037E760029872F /* CoreVideo.framework in Frameworks */,
 				E4EB6799138ADC1D00A09F29 /* GLUT.framework in Frameworks */,
 				E4328149138ABC9F0047C5CB /* openFrameworksDebug.a in Frameworks */,
 				E45BE97B0E8CC7DD009D7055 /* AGL.framework in Frameworks */,
@@ -404,6 +413,8 @@
 				22E14207164D866F00CA0A44 /* MouseController.h */,
 				22E1420A164D866F00CA0A44 /* SceneController.h */,
 				22320EE51703744E0029872F /* SceneController.cpp */,
+				22320EE7170378980029872F /* ARTKController.cpp */,
+				22320EE8170378980029872F /* ARTKController.h */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -1168,6 +1179,8 @@
 		E4B69B4A0A3A1720003C02F2 = {
 			isa = PBXGroup;
 			children = (
+				22320EF117037E7B0029872F /* QTKit.framework */,
+				22320EEF17037E760029872F /* CoreVideo.framework */,
 				E4B6FCAD0C3E899E008CF71C /* openFrameworks-Info.plist */,
 				E4EB6923138AFD0F00A09F29 /* Project.xcconfig */,
 				E4B69E1C0A3A1BDC003C02F2 /* src */,
@@ -1333,6 +1346,7 @@
 				226151AB17027D1F00290F86 /* ofxCvShortImage.cpp in Sources */,
 				22320EE317035FD00029872F /* KeyboardController.cpp in Sources */,
 				22320EE61703744E0029872F /* SceneController.cpp in Sources */,
+				22320EE9170378980029872F /* ARTKController.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

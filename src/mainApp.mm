@@ -38,7 +38,7 @@ ofVec3f mainApp::surfaceAt(ofVec2f pos) {
 void mainApp::setup() 
 {
 #if (USE_QCAR)
-    ofLog() << "Initializing QCAR";
+    ofLog() << "*** Initializing QCAR";
     [ofxQCAR_Utils getInstance].targetType = TYPE_FRAMEMARKERS;
     ofxQCAR * qcar = ofxQCAR::getInstance();
     qcar->autoFocusOn();
@@ -46,7 +46,13 @@ void mainApp::setup()
     noMarkerSince = -NO_MARKER_TOLERANCE_FRAMES;
 #endif
     
-    ofLog() << "Loading maps";
+    #if (USE_ARTK)
+    artkEnabled = true;
+    ofLog() << "artkEnabled = " << artkEnabled;
+    #endif
+    
+    
+    ofLog() << " *** Loading maps";
     heightMap.loadImage("maps/heightmap.ASTGTM2_128,28,149,45-1600.png");
 	terrainTex.loadImage("maps/srtm.ASTGTM2_128,28,149,45-14400.png");
 
@@ -357,9 +363,16 @@ void mainApp::update()
     keyboardController.update();
     reliefUpdate();
 
-#if (USE_QCAR)
+    #if (USE_QCAR)
     ofxQCAR::getInstance()->update();
-#endif
+    #endif
+    
+    #if (USE_ARTK)
+    if (artkEnabled) {
+        artkController.update();
+    }
+    #endif
+    
     cursorNotMovedSince++;
     if (!calibrationMode) {
         layersGUI->setVisible(cursorNotMovedSince < GUI_DISAPPEAR_FRAMES);
@@ -396,7 +409,7 @@ void mainApp::drawTerrain(bool transparent, bool wireframe) {
         terrainTex.unbind();
     } else {
         ofSetColor(100, 100, 100, 20);
-        terrainVboMesh.drawWireframe(); 
+        terrainVboMesh.drawWireframe();
     }
     
     ofPopMatrix();
@@ -441,6 +454,12 @@ void mainApp::draw()
     ofBackground(0);
     #endif
     
+    #if (USE_ARTK)
+    if (artkEnabled) {
+        artkController.draw(drawDebugEnabled);
+    }
+    #endif
+    
     ofPushView();
         
         #if (USE_QCAR)
@@ -451,12 +470,13 @@ void mainApp::draw()
             glMatrixMode(GL_MODELVIEW );
             glLoadMatrixf(projectionMatrix.getPtr());
         }
+        #elif (USE_ARTK)
+        artkController.applyMatrix();
         #else
-//        cam.enableMouseInput();
         cam.begin();
         #endif
     
-        ofPushMatrix();
+    /*    ofPushMatrix();
         
             #if (!USE_QCAR)
             if (cam.getOrtho()) {
@@ -543,7 +563,7 @@ void mainApp::draw()
             drawReliefFrame();
             #endif
         
-        ofPopMatrix();
+        ofPopMatrix();*/
     
     ofPopView();
     
@@ -552,9 +572,9 @@ void mainApp::draw()
         ofSetColor(255);
         qcar->drawMarkerCenter();
     }
+    #elif (USE_ARTK)
     #else
     cam.end();
-//    cam.disableMouseInput();
     #endif
     
     
@@ -1071,7 +1091,7 @@ void mainApp::exit(){
 
 //--------------------------------------------------------------
 void mainApp::keyPressed  (int key){
-    ofLog() << key;
+    ofLog() << "KEY " << key;
     bool guiVisible;
     time_t rawtime;
     struct tm * timeinfo;
@@ -1138,6 +1158,13 @@ void mainApp::keyPressed  (int key){
         case 108:
             waterNE += ofVec3f(WATER_POS_INC, 0, 0);
             break;
+            
+        #if (USE_ARTK)
+        // t
+        case 116:
+            artkEnabled = !artkEnabled;
+            break;
+        #endif
 
         /*case OF_KEY_UP:
             pointLight.setPosition(pointLight.getPosition() + ofVec3f(0, LIGHT_POS_INC, 0));

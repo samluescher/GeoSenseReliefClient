@@ -38,3 +38,6 @@
 #define GUI_DISAPPEAR_FRAMES 1400
 
 #endif
+
+#define VIDEO_WIDTH 960
+#define VIDEO_HEIGHT 540

@@ -10,9 +10,15 @@
 #include "ofxiPhone.h"
 #include "ofxiPhoneExtras.h"
 #include "ofPinchGestureRecognizer.h"
-#define USE_QCAR true
+#define USE_ARTK true
+#define USE_QCAR !(USE_ARTK)
 #else
 #define USE_QCAR false
+#define USE_ARTK true
+#endif
+
+#if (USE_ARTK)
+#include "ARTKController.h"
 #endif
 
 #include "MouseController.h"
@@ -62,6 +68,11 @@ public:
 	void gotMessage(ofMessage msg);
     void moved();
 #endif
+
+    #if (USE_ARTK)
+    ARTKController artkController;
+    bool artkEnabled;
+    #endif
     
     void setCalibrationMode(bool state);
     
