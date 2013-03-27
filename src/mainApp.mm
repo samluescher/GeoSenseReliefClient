@@ -111,7 +111,7 @@ void mainApp::setup()
     //loadFeaturesFromFile("json/earthquakes.json");
     
     loadFeaturesFromGeoJSONFile("json/japan-prefectures.json");
-    loadFeaturesFromGeoJSONFile("json/JapanFlood.json");
+    loadFeaturesFromGeoJSONFile("json/tsunamiinundationmerge_jpf.json");
     
 #if (TARGET_OS_IPHONE)
     EAGLView *view = ofxiPhoneGetGLView();  
