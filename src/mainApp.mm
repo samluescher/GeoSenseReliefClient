@@ -335,8 +335,13 @@ void mainApp::guiEvent(ofxUIEventArgs &e)
 }
 
 void mainApp::update() 
-{   
-    sceneController.update();
+{
+    ofVec3f prevCenter = mapCenter;
+    sceneController.updateCenter(mapCenter);
+    if (prevCenter != mapCenter) {
+        updateVisibleMap(true);
+    }
+    
     reliefUpdate();
 #if (USE_QCAR)
     ofxQCAR::getInstance()->update();
@@ -1202,7 +1207,7 @@ void mainApp::touchDown(ofTouchEventArgs & touch) {
 //--------------------------------------------------------------
 void mainApp::touchMoved(ofTouchEventArgs & touch)
 {
-    cursorNotMovedSince = 0;
+    /*cursorNotMovedSince = 0;
     ofVec2f lastTouchPoint = ofVec2f(touch.x, touch.y);
     ofVec2f delta = lastTouchPoint - touchPoint;
     
@@ -1225,12 +1230,12 @@ void mainApp::touchMoved(ofTouchEventArgs & touch)
     if (isPanning) {
         mapCenter += delta * terrainUnitToScreenUnit;      
         updateVisibleMap(true);
-    }
+    }*/
 }
 
 //--------------------------------------------------------------
 void mainApp::touchUp(ofTouchEventArgs & touch){
-    isPanning = false;
+    //isPanning = false;
 }
 
 //--------------------------------------------------------------

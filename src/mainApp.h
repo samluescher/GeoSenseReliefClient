@@ -64,7 +64,7 @@ public:
     
     void setCalibrationMode(bool state);
     
-    MouseController sceneController = MouseController(this);
+    MouseController sceneController = MouseController();
     
     ofVboMesh terrainVboMesh, terrainWaterMesh;
     ofImage terrainTex, heightMap, terrainCrop, sendMap, featureMap, featureMapCrop, featureHeightMap;

@@ -4,20 +4,18 @@
 #include "ofxEasingFunc.h"
 #include "ofEvents.h"
 #include "SceneController.h"
-class mainApp;
-//#include "mainApp.h"
 
 //--------------------------------------------------------
 class MouseController : public SceneController{
 	public:
 //        MouseController() {};
-        MouseController(mainApp* ma);
+        MouseController();
         void keyPressed(ofKeyEventArgs & args);
         void mouseMoved(ofMouseEventArgs & args);
         void mouseDragged(ofMouseEventArgs & args);
         void mousePressed(ofMouseEventArgs & args);
         void mouseReleased(ofMouseEventArgs & args);
-        void update();
+        void updateCenter(ofVec3f &center);
 //        void update(ofCamera & camera);
 //        void update(mainApp *main);
 
@@ -25,6 +23,5 @@ class MouseController : public SceneController{
         ofVec3f previousMousePosition;
         ofVec3f dragVelocity;
     
-    mainApp* main;
 };
 

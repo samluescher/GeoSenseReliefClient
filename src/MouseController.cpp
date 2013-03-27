@@ -1,23 +1,21 @@
 #include "MouseController.h"
-#include "mainApp.h"
 
 #define MAP_MOVE_INC 0.1f
 #define VELOCITY_DECAY 0.15
 #define EASING_TIME 2.0f
 
-MouseController::MouseController(mainApp* ma) {
+MouseController::MouseController() {
     ofAddListener(ofEvents().keyPressed,this,&MouseController::keyPressed);
     ofRegisterMouseEvents(this);
-    main = ma;
 }
 
 //--------------------------------------------------------------
-void MouseController::update(){
+void MouseController::updateCenter(ofVec3f &center){
     dragVelocity *= 1-(VELOCITY_DECAY);
 //    dragVelocity *= 2.2;
     float scaled = ofMap(ofGetElapsedTimef(),easeStartTime,easeStartTime+EASING_TIME,1,0,1);
 //    main->cam.move(22*dragVelocity*ofxEasingFunc::Quad::easeOut(scaled));  
-    main->mapCenter += 0.22*dragVelocity*ofxEasingFunc::Quad::easeOut(scaled);
+    center += 0.22*dragVelocity*ofxEasingFunc::Quad::easeOut(scaled);
 }
 
 void MouseController::keyPressed(ofKeyEventArgs & args){
@@ -44,7 +42,7 @@ void MouseController::keyPressed(ofKeyEventArgs & args){
 
 //--------------------------------------------------------------
 void MouseController::mouseDragged(ofMouseEventArgs & args){
-    main->cam.disableMouseInput();
+    //main->cam.disableMouseInput();
     if(args.button == 0) {
         dragVelocity = (ofVec3f(args.x,args.y,0)-previousMousePosition)*0.01;    
         dragVelocity.x = -dragVelocity.x;
