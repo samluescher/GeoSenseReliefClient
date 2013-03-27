@@ -10,6 +10,7 @@
 #define LIGHT_POS_INC .2
 #define PAN_POS_INC .05
 #define WATER_POS_INC 1
+#define TERRAIN_OPACITY 200
 
 #define MIN_ZOOM 50 //300
 #define MAX_ZOOM 1600
@@ -110,7 +111,6 @@ void mainApp::setup()
     //loadFeaturesFromFile("json/safecast.8.json");
     //loadFeaturesFromFile("json/earthquakes.json");
     
-    loadFeaturesFromGeoJSONFile("json/japan-prefectures.json");
     loadFeaturesFromGeoJSONFile("json/tsunamiinundationmerge_jpf.json");
     
 #if (TARGET_OS_IPHONE)
@@ -121,7 +121,7 @@ void mainApp::setup()
     
     drawDebugEnabled = false;
     calibrationMode = false;
-    drawTerrainEnabled = false;
+    drawTerrainEnabled = true;
     drawTerrainGridEnabled = false;
     drawMapFeaturesEnabled = true;
     drawMiniMapEnabled = true;
@@ -213,6 +213,9 @@ void mainApp::setup()
     resetCam();
 #if !(TARGET_OS_IPHONE)
     ofEnableSmoothing();
+
+//    sceneController = MouseController(this);
+        
 #endif
     
     cursorNotMovedSince = 0;
@@ -223,10 +226,14 @@ void mainApp::resetCam()
 {
     //cam.setNearClip(1);
     //cam.setFarClip(100000);
+    
     cam.setPosition(mapCenter + ofVec3f(0, 0, 4));
     cam.lookAt(mapCenter);
+        
 //    cam.setDistance(2000); // tmp -- for light debugging
     updateVisibleMap(true);
+//    cam.setNearClip(5);
+//    cam.disableMouseInput();
 }
 
 void mainApp::guiEvent(ofxUIEventArgs &e)
@@ -329,6 +336,7 @@ void mainApp::guiEvent(ofxUIEventArgs &e)
 
 void mainApp::update() 
 {   
+    sceneController.update();
     reliefUpdate();
 #if (USE_QCAR)
     ofxQCAR::getInstance()->update();
@@ -337,6 +345,7 @@ void mainApp::update()
     if (!calibrationMode) {
         layersGUI->setVisible(cursorNotMovedSince < GUI_DISAPPEAR_FRAMES);
     }
+    
 }
 
 //--------------------------------------------------------------
@@ -359,7 +368,7 @@ void mainApp::drawTerrain(bool transparent, bool wireframe) {
     
     if (!wireframe) {
         if (transparent) {
-            ofSetColor(255, 255, 255, 128);
+            ofSetColor(255, 255, 255, TERRAIN_OPACITY);
         } else {
             ofSetColor(255);
         }
@@ -424,6 +433,7 @@ void mainApp::draw()
             glLoadMatrixf(projectionMatrix.getPtr());
         }
         #else
+//        cam.enableMouseInput();
         cam.begin();
         #endif
     
@@ -525,6 +535,7 @@ void mainApp::draw()
     }
     #else
     cam.end();
+//    cam.disableMouseInput();
     #endif
     
     
@@ -1066,6 +1077,7 @@ void mainApp::keyPressed  (int key){
             ofSaveScreen(ss.str());
             layersGUI->setVisible(guiVisible);
             break;
+        /*
         case OF_KEY_UP:
             mapCenter += ofVec3f(0, PAN_POS_INC, 0);
             break;
@@ -1078,7 +1090,8 @@ void mainApp::keyPressed  (int key){
         case OF_KEY_LEFT:
             mapCenter -= ofVec3f(PAN_POS_INC, 0, 0);
             break;
-
+         */
+         
         // WSAD
         case 119:
             waterSW += ofVec3f(0, WATER_POS_INC, 0);
@@ -1159,6 +1172,11 @@ void mainApp::gotMessage(ofMessage msg){
 //--------------------------------------------------------------
 void mainApp::dragEvent(ofDragInfo dragInfo){ 
     
+}
+
+//--------------------------------------------------------------
+void mainApp::moved() {
+    cout << "got to moved" << endl;
 }
 
 #else
