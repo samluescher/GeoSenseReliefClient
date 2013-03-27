@@ -211,6 +211,7 @@ void mainApp::setup()
     
     //cam.disableMouseInput();
     resetCam();
+
 #if !(TARGET_OS_IPHONE)
     ofEnableSmoothing();
 
@@ -227,9 +228,10 @@ void mainApp::resetCam()
     //cam.setNearClip(1);
     //cam.setFarClip(100000);
     
-    cam.setPosition(mapCenter + ofVec3f(0, 0, 4));
+    cam.setPosition(mapCenter + ofVec3f(0, 0, 1 / terrainUnitToScreenUnit));
     cam.lookAt(mapCenter);
-        
+    //cam.disableMouseInput();
+    
 //    cam.setDistance(2000); // tmp -- for light debugging
     updateVisibleMap(true);
 //    cam.setNearClip(5);

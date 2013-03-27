@@ -14,7 +14,6 @@ void MouseController::updateCenter(ofVec3f &center){
     dragVelocity *= 1-(VELOCITY_DECAY);
 //    dragVelocity *= 2.2;
     float scaled = ofMap(ofGetElapsedTimef(),easeStartTime,easeStartTime+EASING_TIME,1,0,1);
-//    main->cam.move(22*dragVelocity*ofxEasingFunc::Quad::easeOut(scaled));  
     center += 0.22*dragVelocity*ofxEasingFunc::Quad::easeOut(scaled);
 }
 

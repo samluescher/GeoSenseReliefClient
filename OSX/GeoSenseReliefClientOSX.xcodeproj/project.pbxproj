@@ -1447,6 +1447,7 @@
 				INFOPLIST_FILE = "openFrameworks-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				OTHER_LDFLAGS = "$(inherited)";
 				PRODUCT_NAME = GeoSenseReliefClientOSXDebug;
 				SDKROOT = macosx;
@@ -1472,6 +1473,7 @@
 				INFOPLIST_FILE = "openFrameworks-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				OTHER_LDFLAGS = "$(inherited)";
 				PRODUCT_NAME = GeoSenseReliefClientOSX;
 				SDKROOT = macosx;

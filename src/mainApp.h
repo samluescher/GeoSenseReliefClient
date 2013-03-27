@@ -111,7 +111,7 @@ public:
     
     ofVec3f mapCenter, newMapCenter;
 //    ofCamera cam;
-    ofEasyCam cam;
+    ofCamera cam;
     void resetCam();
     
     void drawIdentity();
