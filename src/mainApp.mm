@@ -1,4 +1,5 @@
 #include "mainApp.h"
+#include "ofEvents.h"
 #include "util.h"
 #include "ImageMesh.h"
 #include "GeoJSONMesh.h"
@@ -123,7 +124,7 @@ void mainApp::setup()
     calibrationMode = false;
     drawTerrainEnabled = true;
     drawTerrainGridEnabled = false;
-    drawMapFeaturesEnabled = true;
+    drawMapFeaturesEnabled = false;
     drawMiniMapEnabled = true;
     drawWaterEnabled = false;
     tetherWaterEnabled = false;
@@ -209,21 +210,35 @@ void mainApp::setup()
     calibrationGUI->addSlider("RELIEF OFFSET Z", -200, 200, reliefOffset.z, guiW - spacing * 2, dim);
 	ofAddListener(calibrationGUI->newGUIEvent,this,&mainApp::guiEvent);
     
-    //cam.disableMouseInput();
     resetCam();
 
-#if !(TARGET_OS_IPHONE)
+    #if !(TARGET_OS_IPHONE)
     ofEnableSmoothing();
+    #endif
 
-//    sceneController = MouseController(this);
-        
-#endif
+    mouseController.registerEvents(this);
+    keyboardController.registerEvents(this);
     
     cursorNotMovedSince = 0;
-    
 }
 
-void mainApp::resetCam() 
+void mainApp::onPan(const void* sender, ofVec3f & distance) {
+    //cout << "onPan: " << distance << "\n";
+    mapCenter += distance;
+    updateVisibleMap(true);
+}
+
+void mainApp::onZoom(const void* sender, float & factor) {
+    cout << "onZoom: " << factor << "\n";
+    updateVisibleMap(true);
+}
+
+void mainApp::onViewpointChange(const void* sender, ofNode & viewpoint) {
+    //cout << "onViewpointChange: " << viewpoint.getOrientationEuler() << "\n";
+}
+
+
+void mainApp::resetCam()
 {
     //cam.setNearClip(1);
     //cam.setFarClip(100000);
@@ -338,13 +353,10 @@ void mainApp::guiEvent(ofxUIEventArgs &e)
 
 void mainApp::update() 
 {
-    ofVec3f prevCenter = mapCenter;
-    sceneController.updateCenter(mapCenter);
-    if (prevCenter != mapCenter) {
-        updateVisibleMap(true);
-    }
-    
+    mouseController.update();
+    keyboardController.update();
     reliefUpdate();
+
 #if (USE_QCAR)
     ofxQCAR::getInstance()->update();
 #endif
@@ -761,7 +773,7 @@ void mainApp::updateVisibleMap(bool updateServer)
         m.addFloatArg(mapCenter.x);
         m.addFloatArg(mapCenter.y);
         m.addFloatArg(terrainUnitToScreenUnit);
-        ofLog() << "broadcast new map position";
+        //ofLog() << "broadcast new map position";
         reliefMessageSend(m);
     }
 #endif

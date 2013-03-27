@@ -1,27 +1,19 @@
 #pragma once
 
 #include "ofMain.h"
-#include "ofxEasingFunc.h"
 #include "ofEvents.h"
 #include "SceneController.h"
 
 //--------------------------------------------------------
 class MouseController : public SceneController{
-	public:
-//        MouseController() {};
+	private:
+        ofVec3f previousMousePosition;
+    public:
         MouseController();
-        void keyPressed(ofKeyEventArgs & args);
+        //virtual void update();
         void mouseMoved(ofMouseEventArgs & args);
         void mouseDragged(ofMouseEventArgs & args);
         void mousePressed(ofMouseEventArgs & args);
         void mouseReleased(ofMouseEventArgs & args);
-        void updateCenter(ofVec3f &center);
-//        void update(ofCamera & camera);
-//        void update(mainApp *main);
-
-        float easeStartTime;
-        ofVec3f previousMousePosition;
-        ofVec3f dragVelocity;
-    
 };
 

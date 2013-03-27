@@ -16,6 +16,7 @@
 #endif
 
 #include "MouseController.h"
+#include "KeyboardController.h"
 #include "MapFeature.h"
 #include "MapFeatureLayer.h"
 #include "ofxJSONElement.h"
@@ -64,7 +65,11 @@ public:
     
     void setCalibrationMode(bool state);
     
-    MouseController sceneController = MouseController();
+    MouseController mouseController;
+    KeyboardController keyboardController;
+    void onPan(const void* sender, ofVec3f & distance);
+    void onZoom(const void* sender, float & factor);
+    void onViewpointChange(const void* sender, ofNode & viewpoint);
     
     ofVboMesh terrainVboMesh, terrainWaterMesh;
     ofImage terrainTex, heightMap, terrainCrop, sendMap, featureMap, featureMapCrop, featureHeightMap;
