@@ -27,7 +27,7 @@ void OscReceiverController::setup(){
 void OscReceiverController::oscMessageReceived(ofxOscMessage m) {
 //    ofLog() << "osc message: " << m.getAddress();
     
-    if (m.getAddress() == "/relief/broadcast/leap") {
+    if (m.getAddress() == "/camtracker/pan") {
         float dx = m.getArgAsFloat(0);
         float dy = m.getArgAsFloat(1);
         float dz = m.getArgAsFloat(2);
