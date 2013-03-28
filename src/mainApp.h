@@ -10,11 +10,12 @@
 #include "ofxiPhone.h"
 #include "ofxiPhoneExtras.h"
 #include "ofPinchGestureRecognizer.h"
-#define USE_ARTK true
+#define USE_ARTK false
 #define USE_QCAR !(USE_ARTK)
 #else
 #define USE_QCAR false
 #define USE_ARTK true
+#include "KeyboardController.h"
 #endif
 
 #if (USE_ARTK)
@@ -24,7 +25,6 @@
 #include "OscReceiverController.h"
 
 #include "MouseController.h"
-#include "KeyboardController.h"
 #include "MapFeature.h"
 #include "MapFeatureLayer.h"
 #include "ofxJSONElement.h"
@@ -79,8 +79,11 @@ public:
     void setCalibrationMode(bool state);
     
     MouseController mouseController;
-    KeyboardController keyboardController;
     OscReceiverController oscReceiverController;
+    
+    #if !(TARGET_OS_IPHONE)
+    KeyboardController keyboardController;
+    #endif
     
     void onPan(const void* sender, ofVec3f & distance);
     void onZoom(const void* sender, float & factor);
