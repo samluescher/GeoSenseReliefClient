@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		221D41BA1704BC7300163123 /* OscReceiverController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 221D41B81704BC7300163123 /* OscReceiverController.cpp */; };
 		22320EE317035FD00029872F /* KeyboardController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22320EE217035FD00029872F /* KeyboardController.cpp */; };
 		22320EE61703744E0029872F /* SceneController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22320EE51703744E0029872F /* SceneController.cpp */; };
 		22320EE9170378980029872F /* ARTKController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22320EE7170378980029872F /* ARTKController.cpp */; };
@@ -104,6 +105,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		221D41B81704BC7300163123 /* OscReceiverController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = OscReceiverController.cpp; path = ../../src/OscReceiverController.cpp; sourceTree = "<group>"; };
+		221D41B91704BC7300163123 /* OscReceiverController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OscReceiverController.h; path = ../../src/OscReceiverController.h; sourceTree = "<group>"; };
 		22320EE117035F200029872F /* KeyboardController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = KeyboardController.h; path = ../../src/KeyboardController.h; sourceTree = "<group>"; };
 		22320EE217035FD00029872F /* KeyboardController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = KeyboardController.cpp; path = ../../src/KeyboardController.cpp; sourceTree = "<group>"; };
 		22320EE51703744E0029872F /* SceneController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SceneController.cpp; path = ../../src/SceneController.cpp; sourceTree = "<group>"; };
@@ -415,6 +418,8 @@
 				22320EE51703744E0029872F /* SceneController.cpp */,
 				22320EE7170378980029872F /* ARTKController.cpp */,
 				22320EE8170378980029872F /* ARTKController.h */,
+				221D41B81704BC7300163123 /* OscReceiverController.cpp */,
+				221D41B91704BC7300163123 /* OscReceiverController.h */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -1347,6 +1352,7 @@
 				22320EE317035FD00029872F /* KeyboardController.cpp in Sources */,
 				22320EE61703744E0029872F /* SceneController.cpp in Sources */,
 				22320EE9170378980029872F /* ARTKController.cpp in Sources */,
+				221D41BA1704BC7300163123 /* OscReceiverController.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

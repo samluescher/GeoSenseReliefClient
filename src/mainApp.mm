@@ -361,6 +361,7 @@ void mainApp::update()
 {
     mouseController.update();
     keyboardController.update();
+    oscReceiverController.update();
     reliefUpdate();
 
     #if (USE_QCAR)
@@ -803,6 +804,8 @@ void mainApp::reliefMessageReceived(ofxOscMessage m)
 {
     ofxUIToggle *indicator = (ofxUIToggle *)calibrationGUI->getWidget("RECEIVING");
     indicator->setValue(!indicator->getValue());
+ 
+    oscReceiverController.oscMessageReceived(m);
     
     if (m.getAddress() == "/relief/broadcast/map/position") {
         ofLog() << "reliefMessageReceived from " << m.getRemoteIp() << ": " << m.getAddress();

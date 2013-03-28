@@ -21,6 +21,8 @@
 #include "ARTKController.h"
 #endif
 
+#include "OscReceiverController.h"
+
 #include "MouseController.h"
 #include "KeyboardController.h"
 #include "MapFeature.h"
@@ -78,6 +80,8 @@ public:
     
     MouseController mouseController;
     KeyboardController keyboardController;
+    OscReceiverController oscReceiverController;
+    
     void onPan(const void* sender, ofVec3f & distance);
     void onZoom(const void* sender, float & factor);
     void onViewpointChange(const void* sender, ofNode & viewpoint);
