@@ -223,7 +223,10 @@ void mainApp::setup()
     #endif
 
     mouseController.registerEvents(this);
+
+    #if !(TARGET_OS_IPHONE)
     keyboardController.registerEvents(this);
+    #endif
     
     cursorNotMovedSince = 0;
 }
@@ -359,9 +362,12 @@ void mainApp::guiEvent(ofxUIEventArgs &e)
 
 void mainApp::update() 
 {
-    mouseController.update();
-    keyboardController.update();
     reliefUpdate();
+    mouseController.update();
+
+    #if !(TARGET_OS_IPHONE)
+    keyboardController.update();
+    #endif
 
     #if (USE_QCAR)
     ofxQCAR::getInstance()->update();
@@ -476,7 +482,7 @@ void mainApp::draw()
         cam.begin();
         #endif
     
-    /*    ofPushMatrix();
+        ofPushMatrix();
         
             #if (!USE_QCAR)
             if (cam.getOrtho()) {
@@ -563,7 +569,7 @@ void mainApp::draw()
             drawReliefFrame();
             #endif
         
-        ofPopMatrix();*/
+        ofPopMatrix();
     
     ofPopView();
     
