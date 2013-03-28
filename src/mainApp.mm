@@ -223,6 +223,7 @@ void mainApp::setup()
     #endif
 
     mouseController.registerEvents(this);
+    oscReceiverController.registerEvents(this);
 
     #if !(TARGET_OS_IPHONE)
     keyboardController.registerEvents(this);
