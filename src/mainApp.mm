@@ -101,7 +101,6 @@ void mainApp::setup()
     layer = addTerrainLayer("PLATES", "maps/bathymetry_128,28,149,45-1600.png", "maps/ocean.blue_128,28,149,45-1600.png", seaFloorPeakHeight);
     layer->move(ofVec3f(0, 0, -(seaFloorPeakHeight + terrainPeakHeight * .1)));
     layer->setScale(ofVec3f(focusLayer->heightMap.getWidth() / layer->heightMap.getWidth(), focusLayer->heightMap.getHeight() / layer->heightMap.getHeight(), 1));
-    layer->drawTexture = false;
     
     layer = addTerrainLayer("MANTLE", "maps/heightmap.mantle.png", "maps/mantle.png", terrainPeakHeight);
     layer->move(ofVec3f(0, 0, -(terrainPeakHeight + seaFloorPeakHeight + terrainPeakHeight * .1)));
@@ -145,7 +144,7 @@ void mainApp::setup()
     prevWaterLevel = 0.0;
     reliefSendMode = RELIEF_SEND_OFF;
     fullscreenEnabled = false;
-    lightingEnabled = true;
+    lightingEnabled = false;
     ofSetFullscreen(fullscreenEnabled);
 
 #if (IS_TOP_DOWN_CLIENT)
@@ -443,8 +442,10 @@ void mainApp::drawTerrain(bool wireframe) {
     
     ofEnableBlendMode(OF_BLENDMODE_ALPHA);
     
-    ofEnableLighting();
-    pointLight.enable();
+    if (lightingEnabled) {
+        ofEnableLighting();
+        pointLight.enable();
+    }
 
     if (drawDebugEnabled) {
         ofSetColor(255, 255, 0);
@@ -462,8 +463,10 @@ void mainApp::drawTerrain(bool wireframe) {
         }
     }
     
-    pointLight.disable();
-    ofDisableLighting();
+    if (lightingEnabled) {
+        pointLight.disable();
+        ofDisableLighting();
+    }
 
     ofDisableBlendMode();
     
