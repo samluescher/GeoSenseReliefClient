@@ -13,6 +13,9 @@
 		22320EE9170378980029872F /* ARTKController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22320EE7170378980029872F /* ARTKController.cpp */; };
 		22320EF017037E760029872F /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22320EEF17037E760029872F /* CoreVideo.framework */; };
 		22320EF217037E7B0029872F /* QTKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22320EF117037E7B0029872F /* QTKit.framework */; };
+		223CE0E61704F6800007533D /* TerrainLayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 223CE0E41704F6800007533D /* TerrainLayer.cpp */; };
+		223CE0EA1704F69E0007533D /* WorldLayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 223CE0E81704F69E0007533D /* WorldLayer.cpp */; };
+		223CE0ED1705004A0007533D /* ViewPoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 223CE0EB1705004A0007533D /* ViewPoint.cpp */; };
 		2261512217027D1400290F86 /* ofxARToolkitPlus.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 226150FE17027D1400290F86 /* ofxARToolkitPlus.cpp */; };
 		2261512317027D1400290F86 /* libARToolKitPlus.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2261511617027D1400290F86 /* libARToolKitPlus.a */; };
 		2261512417027D1400290F86 /* libARToolKitPlus.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2261511817027D1400290F86 /* libARToolKitPlus.a */; };
@@ -114,6 +117,12 @@
 		22320EE8170378980029872F /* ARTKController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ARTKController.h; path = ../../src/ARTKController.h; sourceTree = "<group>"; };
 		22320EEF17037E760029872F /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
 		22320EF117037E7B0029872F /* QTKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QTKit.framework; path = System/Library/Frameworks/QTKit.framework; sourceTree = SDKROOT; };
+		223CE0E41704F6800007533D /* TerrainLayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TerrainLayer.cpp; path = ../../src/TerrainLayer.cpp; sourceTree = "<group>"; };
+		223CE0E51704F6800007533D /* TerrainLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TerrainLayer.h; path = ../../src/TerrainLayer.h; sourceTree = "<group>"; };
+		223CE0E81704F69E0007533D /* WorldLayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WorldLayer.cpp; path = ../../src/WorldLayer.cpp; sourceTree = "<group>"; };
+		223CE0E91704F69E0007533D /* WorldLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WorldLayer.h; path = ../../src/WorldLayer.h; sourceTree = "<group>"; };
+		223CE0EB1705004A0007533D /* ViewPoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ViewPoint.cpp; path = ../../src/ViewPoint.cpp; sourceTree = "<group>"; };
+		223CE0EC1705004A0007533D /* ViewPoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewPoint.h; path = ../../src/ViewPoint.h; sourceTree = "<group>"; };
 		223F4FB516EAB25E0025FB63 /* MapFeatureLayer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MapFeatureLayer.h; path = ../../src/MapFeatureLayer.h; sourceTree = "<group>"; };
 		223F4FB616EAB34D0025FB63 /* GeoJSONMesh.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = GeoJSONMesh.h; path = ../../src/GeoJSONMesh.h; sourceTree = "<group>"; };
 		226150FE17027D1400290F86 /* ofxARToolkitPlus.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxARToolkitPlus.cpp; sourceTree = "<group>"; };
@@ -1207,12 +1216,18 @@
 				22E1420B164D866F00CA0A44 /* mainApp.h */,
 				22E1420C164D866F00CA0A44 /* mainApp.mm */,
 				22E14204164D866F00CA0A44 /* MapFeature.cpp */,
+				223CE0EB1705004A0007533D /* ViewPoint.cpp */,
+				223CE0EC1705004A0007533D /* ViewPoint.h */,
 				22E14205164D866F00CA0A44 /* MapFeature.h */,
 				2298A9C116EAD9CE006D1CED /* MapFeatureLayer.cpp */,
 				223F4FB516EAB25E0025FB63 /* MapFeatureLayer.h */,
 				22E14208164D866F00CA0A44 /* ReliefClientBase.cpp */,
 				22E14209164D866F00CA0A44 /* ReliefClientBase.h */,
 				229751FF16E6901700323FB3 /* util.h */,
+				223CE0E41704F6800007533D /* TerrainLayer.cpp */,
+				223CE0E51704F6800007533D /* TerrainLayer.h */,
+				223CE0E81704F69E0007533D /* WorldLayer.cpp */,
+				223CE0E91704F69E0007533D /* WorldLayer.h */,
 			);
 			path = src;
 			sourceTree = SOURCE_ROOT;
@@ -1353,6 +1368,9 @@
 				22320EE61703744E0029872F /* SceneController.cpp in Sources */,
 				22320EE9170378980029872F /* ARTKController.cpp in Sources */,
 				221D41BA1704BC7300163123 /* OscReceiverController.cpp in Sources */,
+				223CE0E61704F6800007533D /* TerrainLayer.cpp in Sources */,
+				223CE0EA1704F69E0007533D /* WorldLayer.cpp in Sources */,
+				223CE0ED1705004A0007533D /* ViewPoint.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

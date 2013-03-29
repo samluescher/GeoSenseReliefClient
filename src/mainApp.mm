@@ -1,7 +1,6 @@
 #include "mainApp.h"
 #include "ofEvents.h"
 #include "util.h"
-#include "ImageMesh.h"
 #include "GeoJSONMesh.h"
 
 #define NO_MARKER_TOLERANCE_FRAMES 10
@@ -12,6 +11,9 @@
 #define PAN_POS_INC .05
 #define WATER_POS_INC 1
 #define TERRAIN_OPACITY 200
+
+#define KEYBOARD_INC .2f
+
 
 #define MIN_ZOOM 50 //300
 #define MAX_ZOOM 1600
@@ -51,22 +53,6 @@ void mainApp::setup()
     ofLog() << "artkEnabled = " << artkEnabled;
     #endif
     
-    
-    ofLog() << " *** Loading maps";
-    heightMap.loadImage("maps/heightmap.ASTGTM2_128,28,149,45-1600.png");
-	terrainTex.loadImage("maps/srtm.ASTGTM2_128,28,149,45-14400.png");
-
-//  heightMap.loadImage("maps/heightmap.ASTGTM2_3,43,17,49-5625.png");
-//	terrainTex.loadImage("maps/srtm.ASTGTM2_3,43,17,49-10000.png");
-
-    /*
-    // desaturate terrain texture 
-    ofImage terrainTexDesat;
-    terrainTexDesat.allocate(terrainTex.width, terrainTex.height, OF_IMAGE_COLOR_ALPHA);
-    copyImageWithScaledColors(terrainTex, terrainTexDesat, 1, .5);
-    terrainTexDesat.reloadTexture();
-    terrainTex = terrainTexDesat;*/
-    
     startTime = ofGetElapsedTimef();
     
     terrainSW = ofVec2f(128, 28);
@@ -81,35 +67,54 @@ void mainApp::setup()
     
     terrainUnitToScreenUnit = 1 / 400.0f;    
     reliefUnitToScreenUnit = 40.0f;
-    globalScale = 1.0f;
+    globalScale = .25f;
     
     // offset of physical Relief to physical marker
     reliefOffset = ofVec3f(0, 0, 0);
     reliefToMarker1Offset = ofVec3f(0, 265, 0);
     reliefToMarker2Offset = ofVec3f(-275, 0, 0);
 
-#if (IS_TOP_DOWN_CLIENT)
+    #if (IS_TOP_DOWN_CLIENT)
     reliefOffset.x = -30.5;
     reliefOffset.y = 94.25;
     globalScale = 1.27;
-#endif
+    #endif
     
     ofEnableNormalizedTexCoords();
     
-    terrainToHeightMapScale = ofVec3f(terrainExtents.x / heightMap.width, terrainExtents.y / heightMap.height, 1);
+    float s = terrainExtents.x / 880; //heightMap.width;
+    terrainToHeightMapScale = ofVec3f(s, s, 1);
     terrainToHeightMapScale.z = (terrainToHeightMapScale.x + terrainToHeightMapScale.y) / 2;
     ofLog() << "terrainToHeightMapScale: " << terrainToHeightMapScale;
+
     terrainPeakHeight = terrainToHeightMapScale.z * 350.0f;
     featureHeight = .5f;
+
     
-    //int heightMapStepPixels = (heightMap.width * heightMap.height) / 1000000 * .8;
-	//terrainVboMesh = meshFromImage(heightMap, heightMapStepPixels, terrainPeakHeight);
-    terrainVboMesh = meshFromImage(heightMap, 1, terrainPeakHeight);
+    ofLog() << " *** Creating terrain layers";
+    float seaFloorPeakHeight = terrainPeakHeight * 10;
+    TerrainLayer *layer;
+    
+    layer = addTerrainLayer("CRUST", "maps/heightmap.ASTGTM2_128,28,149,45-1600.png", "maps/srtm.ASTGTM2_128,28,149,45-14400.png", terrainPeakHeight);
+    layer->setScale(1);
+
+    layer = addTerrainLayer("PLATES", "maps/bathymetry_128,28,149,45-1600.png", "maps/ocean.blue_128,28,149,45-1600.png", seaFloorPeakHeight);
+    layer->move(ofVec3f(0, 0, -(seaFloorPeakHeight + terrainPeakHeight * .1)));
+    layer->setScale(ofVec3f(focusLayer->heightMap.getWidth() / layer->heightMap.getWidth(), focusLayer->heightMap.getHeight() / layer->heightMap.getHeight(), 1));
+    layer->drawTexture = false;
+    
+    layer = addTerrainLayer("MANTLE", "maps/heightmap.mantle.png", "maps/mantle.png", terrainPeakHeight);
+    layer->move(ofVec3f(0, 0, -(terrainPeakHeight + seaFloorPeakHeight + terrainPeakHeight * .1)));
+    layer->setScale(ofVec3f(focusLayer->heightMap.getWidth() / layer->heightMap.getWidth(), focusLayer->heightMap.getHeight() / layer->heightMap.getHeight(), 1));
+    layer->lighting = false;
+ 
     
     ofSetSmoothLighting(true);
+    ofDisableArbTex();
 	pointLight.setPointLight();
-    pointLight.setAttenuation(.1);
     pointLight.setPosition(mapCenter + ofVec3f(3, 1, 5));
+    pointLight.setDiffuseColor( ofColor(255.f, 255.f, 255.f));
+	pointLight.setSpecularColor( ofColor(255.f, 255.f, 255.f));
     
     numLoading = 0;
     ofRegisterURLNotification(this);  
@@ -118,7 +123,7 @@ void mainApp::setup()
     //loadFeaturesFromFile("json/safecast.8.json");
     //loadFeaturesFromFile("json/earthquakes.json");
     
-    loadFeaturesFromGeoJSONFile("json/tsunamiinundationmerge_jpf.json");
+    //loadFeaturesFromGeoJSONFile("json/tsunamiinundationmerge_jpf.json");
     
 #if (TARGET_OS_IPHONE)
     EAGLView *view = ofxiPhoneGetGLView();  
@@ -126,12 +131,14 @@ void mainApp::setup()
     ofAddListener(pinchRecognizer->ofPinchEvent,this, &mainApp::handlePinch);
 #endif
     
-    drawDebugEnabled = false;
+    drawDebugEnabled = true;
+    drawWireframesEnabled = false;
     calibrationMode = false;
     drawTerrainEnabled = true;
+    drawTexturesEnabled = true;
     drawTerrainGridEnabled = false;
     drawMapFeaturesEnabled = false;
-    drawMiniMapEnabled = true;
+    drawMiniMapEnabled = false;
     drawWaterEnabled = false;
     tetherWaterEnabled = false;
     waterLevel = 0.3;
@@ -160,23 +167,32 @@ void mainApp::setup()
 #endif
     
     layersGUI = new ofxUICanvas(spacing, spacing, guiW, ofGetHeight() * .6);     
+    for (int i = 0; i < terrainLayers.size(); i++) {
+        TerrainLayer *layer = terrainLayers.at(i);
+        layersGUI->addToggle(layer->layerName, true, dim, dim);
+    }
+	layersGUI->addWidgetDown(new ofxUILabel("", OFX_UI_FONT_LARGE));
+
 #if !(TARGET_OS_IPHONE)
 	layersGUI->addToggle("FULLSCREEN", fullscreenEnabled, dim, dim);
 	layersGUI->addToggle("ORTHOGONAL", cam.getOrtho(), dim, dim);
     //    layersGUI->addButton("RESET CAMERA", false, dim, dim);
-	layersGUI->addWidgetDown(new ofxUILabel("", OFX_UI_FONT_LARGE)); 
 #endif
-	layersGUI->addToggle("LIGHTING", lightingEnabled, dim, dim);
+    layersGUI->addToggle("LIGHTING", lightingEnabled, dim, dim);
+	layersGUI->addWidgetDown(new ofxUILabel("", OFX_UI_FONT_LARGE));
     layersGUI->addSlider("ZOOM", MIN_ZOOM, MAX_ZOOM, 1 / terrainUnitToScreenUnit, guiW - spacing * 2, dim);
-	layersGUI->addWidgetDown(new ofxUILabel("", OFX_UI_FONT_LARGE)); 
+    layersGUI->addSlider("GLOBAL SCALE", .1, 4, globalScale, guiW - spacing * 2, dim);
+	layersGUI->addWidgetDown(new ofxUILabel("", OFX_UI_FONT_LARGE));
 	layersGUI->addWidgetDown(new ofxUILabel("", OFX_UI_FONT_LARGE)); 
 	layersGUI->addToggle("TERRAIN", drawTerrainEnabled, dim, dim);
+	layersGUI->addToggle("TEXTURES", drawTexturesEnabled, dim, dim);
 	layersGUI->addToggle("GRID", drawTerrainGridEnabled, dim, dim);
 	layersGUI->addToggle("FEATURES", drawMapFeaturesEnabled, dim, dim);
 	layersGUI->addToggle("MINIMAP", drawMiniMapEnabled, dim, dim);
 	layersGUI->addToggle("WATER", drawWaterEnabled, dim, dim);
     layersGUI->addSlider("WATER LEVEL", 0, 5.0, waterLevel, guiW - spacing * 2, dim);
 	layersGUI->addToggle("DEBUG", drawDebugEnabled, dim, dim);
+	layersGUI->addToggle("WIREFRAMES", drawWireframesEnabled, dim, dim);
     
 	layersGUI->addWidgetDown(new ofxUILabel("", OFX_UI_FONT_LARGE)); 
 	layersGUI->addWidgetDown(new ofxUILabel("", OFX_UI_FONT_LARGE)); 
@@ -274,6 +290,17 @@ void mainApp::guiEvent(ofxUIEventArgs &e)
     if (kind == OFX_UI_WIDGET_TOGGLE) {
         ofxUIToggle *toggle = (ofxUIToggle *) e.widget; 
         bool value = toggle->getValue(); 
+
+        if (name == "CRUST" || name == "PLATES" || name == "MANTLE") {
+            for (int i = 0; i < terrainLayers.size(); i++) {
+                TerrainLayer *layer = terrainLayers.at(i);
+                if (layer->layerName == name) {
+                    layer->visible = value;
+                    break;
+                }
+            }
+        }
+        
         if (name == "FULLSCREEN") {
             fullscreenEnabled = value;
             ofSetFullscreen(fullscreenEnabled);
@@ -292,6 +319,9 @@ void mainApp::guiEvent(ofxUIEventArgs &e)
         if (name == "TERRAIN") {
             drawTerrainEnabled = value;
         }
+        if (name == "TEXTURES") {
+            drawTexturesEnabled = value;
+        }
         if (name == "WATER") {
             drawWaterEnabled = value;
             startTime = ofGetElapsedTimef();
@@ -307,6 +337,9 @@ void mainApp::guiEvent(ofxUIEventArgs &e)
         }
         if (name == "DEBUG") {
             drawDebugEnabled = value;
+        }
+        if (name == "WIREFRAMES") {
+            drawWireframesEnabled = value;
         }
         
         if (name == "SEND TERRAIN") {
@@ -401,24 +434,38 @@ void mainApp::drawWater(float waterLevel) {
     
     ofPopMatrix();
 }
-void mainApp::drawTerrain(bool transparent, bool wireframe) {
+
+void mainApp::drawTerrain(bool wireframe) {
     ofPushMatrix();
     ofTranslate(terrainSW + terrainExtents / 2);
     ofScale(terrainToHeightMapScale.x, terrainToHeightMapScale.y, terrainToHeightMapScale.z); 
+    int s = terrainLayers.size();
     
-    if (!wireframe) {
-        if (transparent) {
-            ofSetColor(255, 255, 255, TERRAIN_OPACITY);
-        } else {
-            ofSetColor(255);
-        }
-        terrainTex.bind();
-        terrainVboMesh.draw();
-        terrainTex.unbind();
-    } else {
-        ofSetColor(100, 100, 100, 20);
-        terrainVboMesh.drawWireframe();
+    ofEnableBlendMode(OF_BLENDMODE_ALPHA);
+    
+    ofEnableLighting();
+    pointLight.enable();
+
+    if (drawDebugEnabled) {
+        ofSetColor(255, 255, 0);
+        ofSphere(mapCenter.x, mapCenter.y, 0, 10);
     }
+    
+    for (int i = s - 1; i >= 0; i--) {
+        TerrainLayer *layer = terrainLayers.at(i);
+        if (layer->visible) {
+            bool drawTexture = layer->drawTexture;
+            layer->drawTexture = drawTexture && drawTexturesEnabled && !wireframe;
+            layer->drawWireframe = wireframe;
+            layer->draw();
+            layer->drawTexture = drawTexture;
+        }
+    }
+    
+    pointLight.disable();
+    ofDisableLighting();
+
+    ofDisableBlendMode();
     
     ofPopMatrix();
 }
@@ -430,8 +477,8 @@ void mainApp::drawMapFeatures()
     ofSetColor(200, 250, 250, 150);
     
     for (int i = 0; i < featureLayers.size(); i++) {
-        MapFeatureLayer layer = featureLayers.at(i);
-        layer.draw();
+        MapFeatureLayer *layer = featureLayers.at(i);
+        layer->draw();
     }
 }
 
@@ -459,7 +506,7 @@ void mainApp::draw()
     bool useARMatrix = noMarkerSince > -NO_MARKER_TOLERANCE_FRAMES;
     #else
     bool useARMatrix = false;
-    ofBackground(0);
+    ofBackground(COLOR_BACKGROUND);
     #endif
     
     #if (USE_ARTK)
@@ -503,38 +550,23 @@ void mainApp::draw()
                 
                 ofPushMatrix();
                     ofTranslate(-mapCenter);
-                    if (lightingEnabled) {
-                        ofEnableLighting();
-                        pointLight.enable();
-                    } else {
-                        ofDisableLighting();
-                    }
-                    glEnable(GL_DEPTH_TEST);
 
                     if (drawTerrainEnabled && !calibrationMode) {
-                        ofEnableBlendMode(OF_BLENDMODE_ALPHA);
-                        drawTerrain(useARMatrix, false);
-                        ofDisableBlendMode();
+                        glEnable(GL_DEPTH_TEST);
+                        drawTerrain(false);
+                        glDisable(GL_DEPTH_TEST);
                     }
                     
-                    if (drawDebugEnabled || calibrationMode) {
-                        glDisable(GL_DEPTH_TEST);
-                        ofEnableBlendMode(OF_BLENDMODE_ALPHA);
-                        drawTerrain(false, true);
-                        glEnable(GL_DEPTH_TEST);
-                        ofDisableBlendMode();
+                    if (drawTerrainEnabled && (drawWireframesEnabled || calibrationMode)) {
+                        drawTerrain(true);
                     }
 
                     if (drawWaterEnabled && !calibrationMode) {
                         ofEnableBlendMode(OF_BLENDMODE_ALPHA);
-                        terrainWaterMesh = waterMeshFromImage(heightMap, 1, terrainPeakHeight, waterLevel, waterSW, waterNE, ofGetElapsedTimef(), startTime);
-                        drawWater(waterLevel);
-                        ofDisableBlendMode();
+                        //terrainWaterMesh = waterMeshFromImage(heightMap, 1, terrainPeakHeight, waterLevel, waterSW, waterNE, ofGetElapsedTimef(), startTime);
+                        //drawWater(waterLevel);
                     }
     
-                    pointLight.disable();
-                    ofDisableLighting();
-
                     if (drawMapFeaturesEnabled && !calibrationMode) {
                         ofEnableBlendMode(OF_BLENDMODE_ADD);
                         drawMapFeatures();
@@ -552,7 +584,6 @@ void mainApp::draw()
                         ofSphere(pos.x, pos.y, pos.z, .25);
                     }
     
-                    glDisable(GL_DEPTH_TEST);
                 ofPopMatrix();
 
 
@@ -605,15 +636,15 @@ void mainApp::drawGUI()
         glLineWidth(1);
         
         float miniMapW = MINI_MAP_W;
-        float miniMapUnitsToHeightMapUnits = miniMapW / (float)heightMap.width;
-        float miniMapH = miniMapUnitsToHeightMapUnits * heightMap.height;
+        float miniMapUnitsToHeightMapUnits = miniMapW / (float)focusLayer->heightMap.width;
+        float miniMapH = miniMapUnitsToHeightMapUnits * focusLayer->heightMap.height;
         ofVec2f p = ofVec2f(ofGetWidth() - miniMapW - OFX_UI_GLOBAL_WIDGET_SPACING, OFX_UI_GLOBAL_WIDGET_SPACING);
         ofFill();
         ofSetColor(COLOR_WATER);
         ofRect(p, miniMapW, miniMapH);
         ofSetColor(255);
         
-        terrainTex.draw(p, miniMapW, miniMapH);
+        focusLayer->textureImage.draw(p, miniMapW, miniMapH);
         if (drawMapFeaturesEnabled && featureMap.isAllocated()) {
             featureMap.draw(p, miniMapW, miniMapH);
         }
@@ -738,16 +769,16 @@ void mainApp::updateVisibleMap(bool updateServer)
     normalizedMapCenter.y = 1 - normalizedMapCenter.y;
     normalizedReliefSize = ofVec2f(RELIEF_SIZE_X * reliefUnitToTerrainUnit / terrainExtents.x, RELIEF_SIZE_Y * reliefUnitToTerrainUnit / terrainExtents.y);
     
-    terrainCrop.allocate(normalizedReliefSize.x * terrainTex.width, normalizedReliefSize.y * terrainTex.height, OF_IMAGE_COLOR);
+    terrainCrop.allocate(normalizedReliefSize.x * focusLayer->textureImage.width, normalizedReliefSize.y * focusLayer->textureImage.height, OF_IMAGE_COLOR);
     featureMapCrop.allocate(normalizedReliefSize.x * featureMap.width, normalizedReliefSize.y * featureMap.height, OF_IMAGE_COLOR_ALPHA);
     
-    terrainCrop.cropFrom(terrainTex, -terrainCrop.width / 2 + normalizedMapCenter.x * terrainTex.width, -terrainCrop.height / 2 + normalizedMapCenter.y * terrainTex.height, terrainCrop.width, terrainCrop.height);
+    terrainCrop.cropFrom(focusLayer->textureImage, -terrainCrop.width / 2 + normalizedMapCenter.x * focusLayer->textureImage.width, -terrainCrop.height / 2 + normalizedMapCenter.y * focusLayer->textureImage.height, terrainCrop.width, terrainCrop.height);
     featureMapCrop.cropFrom(featureMap, -featureMapCrop.width / 2 + normalizedMapCenter.x * featureMap.width, -featureMapCrop.height / 2 + normalizedMapCenter.y * featureMap.height, featureMapCrop.width, featureMapCrop.height);
     
     if (reliefSendMode != RELIEF_SEND_OFF) {
         ofImage sendMapFrom;
         if (reliefSendMode == RELIEF_SEND_TERRAIN) {
-            sendMapFrom = heightMap;
+            sendMapFrom = focusLayer->heightMap;
         } else if (reliefSendMode == RELIEF_SEND_FEATURES) {
             sendMapFrom = featureHeightMap;
         }
@@ -911,6 +942,20 @@ void mainApp::drawIdentity() {
     ofLine(ofVec3f(0, 0, 0), ofVec3f(0, 0, 1));
 }
 
+
+TerrainLayer * mainApp::addTerrainLayer(string name, string heightmap, string texture, float peakHeight) {
+    TerrainLayer *layer = new TerrainLayer();
+    layer->layerName = name;
+    layer->loadHeightMap(heightmap, peakHeight);
+    layer->loadTexture(texture);
+    terrainLayers.push_back(layer);
+    if (terrainLayers.size() == 1) {
+        focusLayer = layer;
+    }
+    return layer;
+}
+
+
 void mainApp::loadFeaturesFromGeoJSONFile(string filePath) {
 	ofFile file(filePath);
 	if(!file.exists()){
@@ -931,8 +976,8 @@ void mainApp::loadFeaturesFromGeoJSONFile(string filePath) {
 void mainApp::addFeatureLayerFromGeoJSONString(string jsonStr) {
     ofxJSONElement json;
     if (json.parse(jsonStr)) {
-        MapFeatureLayer layer;
-        layer.featureMeshes = geoJSONFeatureCollectionToMeshes(json);
+        MapFeatureLayer *layer = new MapFeatureLayer();
+        layer->addMeshes(geoJSONFeatureCollectionToMeshes(json));
         featureLayers.push_back(layer);
     } else {
         ofLog() << "Error parsing JSON";
@@ -1000,7 +1045,7 @@ void mainApp::addItemsFromJSONString(string jsonStr) {
         mapFeaturesMesh = getMeshFromFeatures(mapFeatures);
         
         featureMap.allocate(terrainExtents.x / gridSize, terrainExtents.y / gridSize, OF_IMAGE_COLOR_ALPHA);
-        featureHeightMap.allocate(heightMap.width, heightMap.height, OF_IMAGE_COLOR_ALPHA);
+        featureHeightMap.allocate(focusLayer->heightMap.width, focusLayer->heightMap.height, OF_IMAGE_COLOR_ALPHA);
         for (int i = 0; i < mapFeatures.size(); i++) {
             ofVec2f normPos = (mapFeatures[i]->getPosition() - terrainSW) / terrainExtents;
             normPos.y = 1 - normPos.y;
@@ -1140,9 +1185,32 @@ void mainApp::keyPressed  (int key){
             mapCenter -= ofVec3f(PAN_POS_INC, 0, 0);
             break;
          */
-         
+
         // WSAD
         case 119:
+            pointLight.setPosition(pointLight.getPosition() + ofVec3f(0, KEYBOARD_INC, 0));
+            break;
+        case 115:
+            pointLight.setPosition(pointLight.getPosition() - ofVec3f(0, KEYBOARD_INC, 0));
+            break;
+        case 97:
+            pointLight.setPosition(pointLight.getPosition() - ofVec3f(KEYBOARD_INC, 0, 0));
+            break;
+        case 100:
+            pointLight.setPosition(pointLight.getPosition() + ofVec3f(KEYBOARD_INC, 0, 0));
+            break;
+
+            // IK
+        case 105:
+            pointLight.setPosition(pointLight.getPosition() + ofVec3f(0, 0, KEYBOARD_INC));
+            break;
+        case 107:
+            pointLight.setPosition(pointLight.getPosition() - ofVec3f(0, 0, KEYBOARD_INC));
+            break;
+            
+            
+        // WSAD
+/*        case 119:
             waterSW += ofVec3f(0, WATER_POS_INC, 0);
             break;
         case 115:
@@ -1167,7 +1235,7 @@ void mainApp::keyPressed  (int key){
             break;
         case 108:
             waterNE += ofVec3f(WATER_POS_INC, 0, 0);
-            break;
+            break;*/
             
         #if (USE_ARTK)
         // t

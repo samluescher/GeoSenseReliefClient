@@ -6,11 +6,12 @@
 //
 //
 
-#include "ofMain.h"
+#include "WorldLayer.h"
 
-class MapFeatureLayer: public ofNode {
+class MapFeatureLayer: public WorldLayer {
     
 public:
-    std::vector<ofMesh> featureMeshes;
+    std::vector<ofVboMesh> featureVboMeshes;
+    void addMeshes(std::vector<ofMesh>);
     void customDraw();
 };

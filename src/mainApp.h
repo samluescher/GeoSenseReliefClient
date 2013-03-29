@@ -3,6 +3,7 @@
 #include "ofMain.h"
 #include "ofEvents.h"
 #include "TargetConditionals.h"
+#include "ofEasyCam.h"
 
 #if (TARGET_OS_IPHONE)
 #include "ofxQCAR.h"
@@ -14,7 +15,7 @@
 #define USE_QCAR !(USE_ARTK)
 #else
 #define USE_QCAR false
-#define USE_ARTK true
+#define USE_ARTK false
 #include "KeyboardController.h"
 #endif
 
@@ -27,6 +28,7 @@
 #include "MouseController.h"
 #include "MapFeature.h"
 #include "MapFeatureLayer.h"
+#include "TerrainLayer.h"
 #include "ofxJSONElement.h"
 #include "ReliefClientBase.h"
 #include "ofxOsc.h"
@@ -90,7 +92,7 @@ public:
     void onViewpointChange(const void* sender, ofNode & viewpoint);
     
     ofVboMesh terrainVboMesh, terrainWaterMesh;
-    ofImage terrainTex, heightMap, terrainCrop, sendMap, featureMap, featureMapCrop, featureHeightMap;
+    ofImage terrainCrop, sendMap, featureMap, featureMapCrop, featureHeightMap;
     ofVec2f terrainSW, terrainNE, terrainCenterOffset, waterSW, waterNE;
     ofVec3f terrainToHeightMapScale;
     float sendMapResampledValues[RELIEF_SIZE_X * RELIEF_SIZE_Y];
@@ -111,11 +113,13 @@ public:
     float gridSize;
     
     
-    std::vector<MapFeatureLayer> featureLayers;
-    
+    std::vector<MapFeatureLayer *> featureLayers;
+    std::vector<TerrainLayer *> terrainLayers;
 
+    TerrainLayer *addTerrainLayer(string name, string heightmap, string texture, float peakHeight);
+    TerrainLayer *focusLayer;
     void loadFeaturesFromGeoJSONFile(string filePath);
-    void addFeatureLayerFromGeoJSONString(string jsonStr);    
+    void addFeatureLayerFromGeoJSONString(string jsonStr);
 
     ofLight pointLight, directionalLight;
     
@@ -134,12 +138,12 @@ public:
     
     ofVec3f mapCenter, newMapCenter;
 //    ofCamera cam;
-    ofCamera cam;
+    ofEasyCam cam;
     void resetCam();
     
     void drawIdentity();
     void drawWater(float waterLevel);
-    void drawTerrain(bool transparent, bool wireframe);
+    void drawTerrain(bool wireframe);
     void drawGrid(ofVec2f sw, ofVec2f ne, int subdivisionsX, int subdivisionsY, ofColor line);
     void drawGrid(ofVec2f sw, ofVec2f ne, int subdivisionsX, int subdivisionsY, ofColor line, ofColor background);
     void drawReliefGrid();
@@ -149,7 +153,7 @@ public:
     void drawGUI();
     void updateVisibleMap(bool updateServer);
     
-    bool drawTerrainEnabled, drawTerrainGridEnabled, drawDebugEnabled, drawMapFeaturesEnabled, drawMiniMapEnabled, drawWaterEnabled, tetherWaterEnabled, fullscreenEnabled, lightingEnabled;
+    bool drawTerrainEnabled, drawTexturesEnabled, drawTerrainGridEnabled, drawDebugEnabled, drawWireframesEnabled, drawMapFeaturesEnabled, drawMiniMapEnabled, drawWaterEnabled, tetherWaterEnabled, fullscreenEnabled, lightingEnabled;
     
     void reliefMessageReceived(ofxOscMessage m);
     void updateRelief();
