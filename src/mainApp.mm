@@ -109,7 +109,6 @@ void mainApp::setup()
  
     
     ofSetSmoothLighting(true);
-    ofDisableArbTex();
 	pointLight.setPointLight();
     pointLight.setPosition(mapCenter + ofVec3f(3, 1, 5));
     pointLight.setDiffuseColor( ofColor(255.f, 255.f, 255.f));
@@ -239,6 +238,7 @@ void mainApp::setup()
 
     mouseController.registerEvents(this);
     oscReceiverController.registerEvents(this);
+    oscReceiverController.verticalPan = true;
 
     #if !(TARGET_OS_IPHONE)
     keyboardController.registerEvents(this);

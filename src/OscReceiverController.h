@@ -5,17 +5,16 @@
 #include "SceneController.h"
 #include "ofxOsc.h"
 
-#define EASING_TIME .5f
 #define MIN_EASE_VELOCITY .005f
 
 #define RELIEF_PORT 78746
 
+#define PAN_SCALE 6.0f
+
 //--------------------------------------------------------
 class OscReceiverController : public SceneController{
 public:
-    void setup();
     void oscMessageReceived(ofxOscMessage m);
-    
-    ofxOscReceiver receiver;
+    bool horizontalPan, verticalPan;
 };
 
