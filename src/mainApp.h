@@ -15,7 +15,7 @@
 #define USE_QCAR !(USE_ARTK)
 #else
 #define USE_QCAR false
-#define USE_ARTK false
+#define USE_ARTK true
 #include "KeyboardController.h"
 #endif
 
@@ -137,8 +137,8 @@ public:
     int noMarkerSince;
     
     ofVec3f mapCenter, newMapCenter;
-//    ofCamera cam;
-    ofEasyCam cam;
+    ofCamera cam;
+    //ofEasyCam cam;
     void resetCam();
     
     void drawIdentity();
