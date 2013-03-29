@@ -112,7 +112,7 @@ ofMesh meshFromImage(ofImage& img, int skip, float maxHeight) {
     for(int y = 0; y < height - skip; y += skip) {
         for(int x = 0; x < width - skip; x += skip) {
             Face face = meshFaces[x][y];
-            if(face.nw != zero && face.ne != zero && face.sw != zero && face.se != zero) {
+            if (face.nw != zero && face.ne != zero && face.sw != zero && face.se != zero) {
                 if(x == 0 || y == 0 || x == width - 2*skip || y == height - 2*skip) {
                     addFace(mesh, Vertex(face.nw, face.normal), Vertex(face.ne, face.normal), Vertex(face.se, face.normal), Vertex(face.sw, face.normal));
                     addTexCoords(mesh, face.nwi, face.nei, face.sei, face.swi);

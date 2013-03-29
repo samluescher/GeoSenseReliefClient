@@ -63,18 +63,18 @@ void mainApp::setup()
     ofLog() << "terrainExtents: " << terrainExtents.x << "," << terrainExtents.y;
     ofVec2f center = terrainSW + terrainExtents / 2;
     terrainCenterOffset = ofVec3f(center.x, center.y, 0); 
-    mapCenter = ofVec3f(141, 37.4, 0); // initially center on Fukushima
+    mapCenter = fukushima + ofVec3f(2.5, 0, 0); // initially center on off-shore Fukushima
     
-    terrainUnitToScreenUnit = 1 / 400.0f;    
+    terrainUnitToScreenUnit = 1 / SCREEN_UNIT_TO_TERRAIN_UNIT_INITIAL;
     reliefUnitToScreenUnit = 40.0f;
-    globalScale = .25f;
+    globalScale = 1.f;
     
     // offset of physical Relief to physical marker
     reliefOffset = ofVec3f(0, 0, 0);
     reliefToMarker1Offset = ofVec3f(0, 265, 0);
     reliefToMarker2Offset = ofVec3f(-275, 0, 0);
 
-    #if (IS_TOP_DOWN_CLIENT)
+    #if (IS_RELIEF_CEILING)
     reliefOffset.x = -30.5;
     reliefOffset.y = 94.25;
     globalScale = 1.27;
@@ -95,11 +95,11 @@ void mainApp::setup()
     float seaFloorPeakHeight = terrainPeakHeight * 10;
     TerrainLayer *layer;
     
-    layer = addTerrainLayer("CRUST", "maps/heightmap.ASTGTM2_128,28,149,45-1600.png", "maps/srtm.ASTGTM2_128,28,149,45-14400.png", terrainPeakHeight);
+    layer = addTerrainLayer("CRUST", "maps/heightmap.ASTGTM2_128,28,149,45-1600-with-water.png", "maps/srtm.ASTGTM2_128,28,149,45-14400-with-water.png", terrainPeakHeight);
     layer->setScale(1);
 
     layer = addTerrainLayer("PLATES", "maps/bathymetry_128,28,149,45-1600.png", "maps/ocean.blue_128,28,149,45-1600.png", seaFloorPeakHeight);
-    layer->move(ofVec3f(0, 0, -(seaFloorPeakHeight + terrainPeakHeight * .1)));
+    layer->move(ofVec3f(0, 0, -(seaFloorPeakHeight + terrainPeakHeight * .2)));
     layer->setScale(ofVec3f(focusLayer->heightMap.getWidth() / layer->heightMap.getWidth(), focusLayer->heightMap.getHeight() / layer->heightMap.getHeight(), 1));
     
     layer = addTerrainLayer("MANTLE", "maps/heightmap.mantle.png", "maps/mantle.png", terrainPeakHeight);
@@ -109,11 +109,23 @@ void mainApp::setup()
  
     
     ofSetSmoothLighting(true);
-	pointLight.setPointLight();
-    pointLight.setPosition(mapCenter + ofVec3f(3, 1, 5));
-    pointLight.setDiffuseColor( ofColor(255.f, 255.f, 255.f));
-	pointLight.setSpecularColor( ofColor(255.f, 255.f, 255.f));
+    lightAttenuation = LIGHT_ATTENUATION;
+    animateLight = -1;
     
+    ofLight* pointLight = new ofLight();
+	pointLight->setPointLight();
+    pointLight->setPosition(mapCenter + ofVec3f(3, -4, 5));
+    pointLight->setDiffuseColor( ofColor(255.f, 255.f, 255.f));
+	pointLight->setSpecularColor( ofColor(255.f, 255.f, 255.f));
+    lights.push_back(pointLight);
+
+    pointLight = new ofLight();
+	pointLight->setPointLight();
+    pointLight->setPosition(mapCenter + ofVec3f(-3, 1, 1));
+    pointLight->setDiffuseColor( ofColor(255.f, 255.f, 255.f));
+	pointLight->setSpecularColor( ofColor(255.f, 255.f, 255.f));
+    lights.push_back(pointLight);
+
     numLoading = 0;
     ofRegisterURLNotification(this);  
     //loadFeaturesFromURL("http://map.safecast.org/api/mappoints/4ff47bc60aea6a01ec00000f?b=&"+ofToString(terrainSW.x)+"b="+ofToString(terrainSW.y)+"&b="+ofToString(terrainNE.x)+"&b="+ofToString(terrainNE.y)+"&z=8");
@@ -143,10 +155,10 @@ void mainApp::setup()
     prevWaterLevel = 0.0;
     reliefSendMode = RELIEF_SEND_OFF;
     fullscreenEnabled = false;
-    lightingEnabled = false;
+    lightingEnabled = true;
     ofSetFullscreen(fullscreenEnabled);
-
-#if (IS_TOP_DOWN_CLIENT)
+    
+#if (IS_RELIEF_CEILING)
     drawMiniMapEnabled = false;
     drawWaterEnabled = true;
 #endif
@@ -160,7 +172,7 @@ void mainApp::setup()
     float dim = 16;
 #endif
     
-#if (IS_TOP_DOWN_CLIENT)
+#if (IS_RELIEF_CEILING)
     cam.enableOrtho();
 #endif
     
@@ -177,6 +189,7 @@ void mainApp::setup()
     //    layersGUI->addButton("RESET CAMERA", false, dim, dim);
 #endif
     layersGUI->addToggle("LIGHTING", lightingEnabled, dim, dim);
+    layersGUI->addSlider("ATTENUATION", 0, 1.5, lightAttenuation, guiW - spacing * 2, dim);
 	layersGUI->addWidgetDown(new ofxUILabel("", OFX_UI_FONT_LARGE));
     layersGUI->addSlider("ZOOM", MIN_ZOOM, MAX_ZOOM, 1 / terrainUnitToScreenUnit, guiW - spacing * 2, dim);
     layersGUI->addSlider("GLOBAL SCALE", .1, 4, globalScale, guiW - spacing * 2, dim);
@@ -251,6 +264,16 @@ void mainApp::onPan(const void* sender, ofVec3f & distance) {
     //cout << "onPan: " << distance << "\n";
     mapCenter += distance;
     updateVisibleMap(true);
+    for (int i = terrainLayers.size() - 1; i >= 0; i--) {
+        TerrainLayer* layer = terrainLayers.at(0);
+        float deltaZ = mapCenter.z - layer->getPosition().z;
+        if (deltaZ < 0) {
+            layer->opacity = min(1.f, 1 / abs(deltaZ) * .05f);
+        } else {
+            layer->opacity = 1.f;
+        }
+        layer->visible = layer->opacity > .1;
+    }
 }
 
 void mainApp::onZoom(const void* sender, float & factor) {
@@ -265,17 +288,17 @@ void mainApp::onViewpointChange(const void* sender, ofNode & viewpoint) {
 
 void mainApp::resetCam()
 {
-    //cam.setNearClip(1);
-    //cam.setFarClip(100000);
-    
-    cam.setPosition(mapCenter + ofVec3f(0, 0, 1 / terrainUnitToScreenUnit));
+    cam.reset();
+    cam.setPosition(mapCenter + ofVec3f(0, 0, 2 / terrainUnitToScreenUnit));
     cam.lookAt(mapCenter);
-    //cam.disableMouseInput();
     
-//    cam.setDistance(2000); // tmp -- for light debugging
+    
+    //cam.update();
+    //cam.disableMouseInput();
+     
+    
     updateVisibleMap(true);
-//    cam.setNearClip(5);
-//    cam.disableMouseInput();
+
 }
 
 void mainApp::guiEvent(ofxUIEventArgs &e)
@@ -365,6 +388,9 @@ void mainApp::guiEvent(ofxUIEventArgs &e)
     } else if (kind == OFX_UI_WIDGET_SLIDER_H) {
         ofxUISlider *slider = (ofxUISlider *) e.widget; 
         float value = slider->getScaledValue(); 
+        if (name == "ATTENUATION") {
+            lightAttenuation = value;
+        }
         if (name == "ZOOM") {
             terrainUnitToScreenUnit = 1 / value;
             updateVisibleMap(true);
@@ -436,21 +462,29 @@ void mainApp::drawWater(float waterLevel) {
 }
 
 void mainApp::drawTerrain(bool wireframe) {
+    if (lightingEnabled) {
+        for (int i = lights.size() - 1; i >= 0; i--) {
+            ofLight* light = lights.at(i);
+            light->setAttenuation(lightAttenuation / globalScale);
+            if (i == 0 || i == animateLight) {
+                light->enable();
+            } else {
+                light->disable();
+            }
+            //ofLog() << 1 / terrainUnitToScreenUnit / SCREEN_UNIT_TO_TERRAIN_UNIT_INITIAL;
+        }
+    }
+
     ofPushMatrix();
     ofTranslate(terrainSW + terrainExtents / 2);
     ofScale(terrainToHeightMapScale.x, terrainToHeightMapScale.y, terrainToHeightMapScale.z); 
     int s = terrainLayers.size();
-    
+
     ofEnableBlendMode(OF_BLENDMODE_ALPHA);
     
-    if (lightingEnabled) {
-        ofEnableLighting();
-        pointLight.enable();
-    }
-
     if (drawDebugEnabled) {
-        ofSetColor(255, 255, 0);
-        ofSphere(mapCenter.x, mapCenter.y, 0, 10);
+        ofSetColor(0, 255, 255);
+        //ofSphere(mapCenter.x, mapCenter.y, mapCenter.z, 10);
     }
     
     for (int i = s - 1; i >= 0; i--) {
@@ -459,19 +493,23 @@ void mainApp::drawTerrain(bool wireframe) {
             bool drawTexture = layer->drawTexture;
             layer->drawTexture = drawTexture && drawTexturesEnabled && !wireframe;
             layer->drawWireframe = wireframe;
+            if (lightingEnabled && layer->lighting) {
+                ofEnableLighting();
+            } else {
+                ofDisableLighting();
+            }
             layer->draw();
             layer->drawTexture = drawTexture;
         }
     }
     
-    if (lightingEnabled) {
-        pointLight.disable();
-        ofDisableLighting();
-    }
 
     ofDisableBlendMode();
-    
     ofPopMatrix();
+
+    if (lightingEnabled) {
+        ofDisableLighting();
+    }
 }
 
 void mainApp::drawMapFeatures()
@@ -486,6 +524,33 @@ void mainApp::drawMapFeatures()
     }
 }
 
+void mainApp::drawLights() {
+    float lightR = .25f;
+    for (int i = lights.size() - 1; i >= 0; i--) {
+        if (i == 0 || i == animateLight) {
+            ofLight* light = lights.at(i);
+            ofVec3f pos = light->getPosition();
+            ofSetColor(light->getDiffuseColor());
+    //        ofSphere(pos.x, pos.y, pos.z, lightR / 2);
+            ofSetColor(light->getSpecularColor());
+            ofLine(pos - ofVec3f(lightR, 0, 0), pos + ofVec3f(lightR, 0, 0));
+            ofLine(pos - ofVec3f(0, lightR, 0), pos + ofVec3f(0, lightR, 0));
+            ofLine(pos - ofVec3f(0, 0, lightR), pos + ofVec3f(0, 0, lightR));
+            ofLine(pos - ofVec3f(lightR / 2, lightR / 2, 0), pos + ofVec3f(lightR / 2, lightR / 2, 0));
+            ofLine(pos - ofVec3f(0, lightR / 2, lightR / 2), pos + ofVec3f(0, lightR / 2, lightR / 2));
+
+        
+            if (animateLight == i) {
+                float l = 4;
+                float p = l * sin(ofGetElapsedTimef() - animateLightStart);
+                p -= l / 2;
+                light->setPosition(animateLightStartPos + ofVec3f(0, p, 0));
+            }
+        }
+    
+    }
+    
+}
 
 void mainApp::draw()
 {
@@ -532,6 +597,7 @@ void mainApp::draw()
         #elif (USE_ARTK)
         artkController.applyMatrix();
         #else
+
         cam.begin();
         #endif
     
@@ -543,15 +609,15 @@ void mainApp::draw()
             }
             #endif
             
-            ofTranslate(reliefOffset);
+            /*ofTranslate(reliefOffset);*/
             ofScale(globalScale, globalScale, globalScale);
             
-            #if (IS_TOP_DOWN_CLIENT)
+            #if (IS_RELIEF_CEILING)
             #endif
             
             ofPushMatrix();
                 ofScale(1 / terrainUnitToScreenUnit, 1 / terrainUnitToScreenUnit, 1 / terrainUnitToScreenUnit);
-                
+    
                 ofPushMatrix();
                     ofTranslate(-mapCenter);
 
@@ -582,10 +648,7 @@ void mainApp::draw()
                     }
         
                     if (drawDebugEnabled) {
-                        // draw sun
-                        ofVec3f pos = pointLight.getPosition();
-                        ofSetColor(255, 255, 0);
-                        ofSphere(pos.x, pos.y, pos.z, .25);
+                        drawLights();
                     }
     
                 ofPopMatrix();
@@ -602,7 +665,7 @@ void mainApp::draw()
                 drawReliefGrid();
             }
             
-            #if (IS_TOP_DOWN_CLIENT)
+            #if (IS_RELIEF_CEILING)
             drawReliefFrame();
             #endif
         
@@ -829,7 +892,7 @@ void mainApp::updateVisibleMap(bool updateServer)
         }
     }
     
-#if !(IS_TOP_DOWN_CLIENT)
+#if !(IS_RELIEF_CEILING)
     if (updateServer) {
         ofxOscMessage m;
         m.setAddress("/relief/broadcast/map/position");
@@ -952,6 +1015,7 @@ TerrainLayer * mainApp::addTerrainLayer(string name, string heightmap, string te
     layer->layerName = name;
     layer->loadHeightMap(heightmap, peakHeight);
     layer->loadTexture(texture);
+    layer->opacity = TERRAIN_OPACITY;
     terrainLayers.push_back(layer);
     if (terrainLayers.size() == 1) {
         focusLayer = layer;
@@ -1040,7 +1104,7 @@ void mainApp::addItemsFromJSONString(string jsonStr) {
                 feature->height = min(featureHeight, featureHeight * feature->normVal);
                 feature->width = gridSize *.9;
                 feature->color = ofColor(min(feature->normVal * 190, 255.0f), 128 + min(feature->normVal * 128, 128.0f), 200, 20);
-#if (IS_TOP_DOWN_CLIENT)
+#if (IS_RELIEF_CEILING)
                 feature->color.a = 255;
 #endif
                 mapFeatures.push_back(feature);
@@ -1192,24 +1256,24 @@ void mainApp::keyPressed  (int key){
 
         // WSAD
         case 119:
-            pointLight.setPosition(pointLight.getPosition() + ofVec3f(0, KEYBOARD_INC, 0));
+            lights.at(0)->move(ofVec3f(0, KEYBOARD_INC, 0));
             break;
         case 115:
-            pointLight.setPosition(pointLight.getPosition() - ofVec3f(0, KEYBOARD_INC, 0));
+            lights.at(0)->move(-ofVec3f(0, KEYBOARD_INC, 0));
             break;
         case 97:
-            pointLight.setPosition(pointLight.getPosition() - ofVec3f(KEYBOARD_INC, 0, 0));
+            lights.at(0)->move(-ofVec3f(KEYBOARD_INC, 0, 0));
             break;
         case 100:
-            pointLight.setPosition(pointLight.getPosition() + ofVec3f(KEYBOARD_INC, 0, 0));
+            lights.at(0)->move(ofVec3f(KEYBOARD_INC, 0, 0));
             break;
 
             // IK
         case 105:
-            pointLight.setPosition(pointLight.getPosition() + ofVec3f(0, 0, KEYBOARD_INC));
+            lights.at(0)->move(ofVec3f(0, 0, KEYBOARD_INC));
             break;
         case 107:
-            pointLight.setPosition(pointLight.getPosition() - ofVec3f(0, 0, KEYBOARD_INC));
+            lights.at(0)->move(-ofVec3f(0, 0, KEYBOARD_INC));
             break;
             
             
@@ -1241,6 +1305,15 @@ void mainApp::keyPressed  (int key){
             waterNE += ofVec3f(WATER_POS_INC, 0, 0);
             break;*/
             
+        case 118:
+            if (animateLight < 0) {
+                animateLight = 1;
+                animateLightStart = ofGetElapsedTimef();
+                animateLightStartPos = lights.at(animateLight)->getPosition();
+            } else {
+                animateLight = -1;
+            }
+            
         #if (USE_ARTK)
         // t
         case 116:
@@ -1248,18 +1321,6 @@ void mainApp::keyPressed  (int key){
             break;
         #endif
 
-        /*case OF_KEY_UP:
-            pointLight.setPosition(pointLight.getPosition() + ofVec3f(0, LIGHT_POS_INC, 0));
-            break;
-        case OF_KEY_DOWN:
-            pointLight.setPosition(pointLight.getPosition() - ofVec3f(0, LIGHT_POS_INC, 0));
-            break;
-        case OF_KEY_RIGHT:
-            pointLight.setPosition(pointLight.getPosition() + ofVec3f(LIGHT_POS_INC, 0, 0));
-            break;
-        case OF_KEY_LEFT:
-            pointLight.setPosition(pointLight.getPosition() - ofVec3f(LIGHT_POS_INC, 0, 0));
-            break;*/
     }
 }
 

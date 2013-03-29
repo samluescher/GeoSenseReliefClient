@@ -15,12 +15,15 @@
 #define USE_QCAR !(USE_ARTK)
 #else
 #define USE_QCAR false
-#define USE_ARTK true
+#define USE_ARTK false
 #include "KeyboardController.h"
 #endif
 
 #if (USE_ARTK)
 #include "ARTKController.h"
+#define TERRAIN_OPACITY .75
+#else 
+#define TERRAIN_OPACITY 1.0
 #endif
 
 #include "OscReceiverController.h"
@@ -121,7 +124,8 @@ public:
     void loadFeaturesFromGeoJSONFile(string filePath);
     void addFeatureLayerFromGeoJSONString(string jsonStr);
 
-    ofLight pointLight, directionalLight;
+    float lightAttenuation;
+    std::vector<ofLight *> lights;
     
     ofVec2f touchPoint;
     int deviceOrientation;
@@ -137,8 +141,8 @@ public:
     int noMarkerSince;
     
     ofVec3f mapCenter, newMapCenter;
-    ofCamera cam;
-    //ofEasyCam cam;
+    //ofCamera cam;
+    ofEasyCam cam;
     void resetCam();
     
     void drawIdentity();
@@ -149,9 +153,12 @@ public:
     void drawReliefGrid();
     void drawReliefFrame();
     void drawTerrainGrid();
+    void drawLights();
     void drawMapFeatures();
     void drawGUI();
     void updateVisibleMap(bool updateServer);
+    
+    int animateLight;
     
     bool drawTerrainEnabled, drawTexturesEnabled, drawTerrainGridEnabled, drawDebugEnabled, drawWireframesEnabled, drawMapFeaturesEnabled, drawMiniMapEnabled, drawWaterEnabled, tetherWaterEnabled, fullscreenEnabled, lightingEnabled;
     
@@ -160,6 +167,9 @@ public:
     int reliefSendMode;
     
     int cursorNotMovedSince;
+    
+    float animateLightStart;
+    ofVec3f animateLightStartPos;
     
     
 #if (TARGET_OS_IPHONE)

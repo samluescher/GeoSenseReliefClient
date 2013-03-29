@@ -13,7 +13,8 @@
 
 #if (TARGET_OS_IPHONE)
 
-#define IS_TOP_DOWN_CLIENT false
+#define IS_RELIEF_CEILING false
+#define IS_DESK_CEILING false
 
 #define LINE_WIDTH_GRID_SUBDIV 2
 #define LINE_WIDTH_GRID_WHOLE 4
@@ -21,11 +22,13 @@
 
 #else
 
-#define IS_TOP_DOWN_CLIENT false
+#define IS_RELIEF_CEILING false
+#define IS_DESK_CEILING true
+
 #define LINE_WIDTH_GRID_SUBDIV 1
 #define LINE_WIDTH_GRID_WHOLE 2
 
-#if (IS_TOP_DOWN_CLIENT)
+#if (IS_RELIEF_CEILING)
 #define COLOR_WATER ofColor(0, 100, 120, 255)
 #else
 #define COLOR_WATER ofColor(0, 100, 120, 127)
@@ -40,5 +43,9 @@
 
 #endif
 
-#define VIDEO_WIDTH 960
-#define VIDEO_HEIGHT 540
+#define VIDEO_WIDTH 800
+#define VIDEO_HEIGHT 600
+
+#define SCREEN_UNIT_TO_TERRAIN_UNIT_INITIAL 400.f
+
+#define LIGHT_ATTENUATION .175f

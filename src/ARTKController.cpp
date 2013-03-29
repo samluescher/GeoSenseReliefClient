@@ -11,6 +11,7 @@
 ARTKController::ARTKController() {
     
     ofLog() << "*** Initializing ARTK";
+    videoGrabber.setDeviceID(1);
 	videoGrabber.initGrabber(VIDEO_WIDTH, VIDEO_HEIGHT);
     videoWidth = videoGrabber.getWidth();
     videoHeight = videoGrabber.getHeight();
@@ -31,6 +32,7 @@ void ARTKController::update() {
     videoGrabber.update();
     if (videoGrabber.isFrameNew()) {
 		videoImage.setFromPixels(videoGrabber.getPixels(), videoWidth, videoHeight);
+        videoImage.mirror(true, true);
         grayVideoImage = videoImage;
 		// Pass in the new image pixels to artk
         artk.update(grayVideoImage.getPixels());
@@ -40,7 +42,7 @@ void ARTKController::update() {
 void ARTKController::applyMatrix() {
     //ofTranslate(videoX, videoY);
     //ofScale(videoScale, videoScale);
-    artk.applyProjectionMatrix(ofGetWidth(), ofGetHeight());
+    artk.applyProjectionMatrix(videoWidth * videoScale, videoHeight * videoScale);
     artk.applyModelMatrix(0);
     
     ofSphere(0, 0, 0, 1);
