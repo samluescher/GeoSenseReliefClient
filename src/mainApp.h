@@ -15,7 +15,7 @@
 #define USE_QCAR !(USE_ARTK)
 #else
 #define USE_QCAR false
-#define USE_ARTK true
+#define USE_ARTK false
 #include "KeyboardController.h"
 #endif
 

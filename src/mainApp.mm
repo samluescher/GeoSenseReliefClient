@@ -238,7 +238,7 @@ void mainApp::setup()
 
     mouseController.registerEvents(this);
     oscReceiverController.registerEvents(this);
-    oscReceiverController.verticalPan = true;
+    //oscReceiverController.verticalPan = true;
 
     #if !(TARGET_OS_IPHONE)
     keyboardController.registerEvents(this);
