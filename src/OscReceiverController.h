@@ -9,7 +9,7 @@
 
 #define RELIEF_PORT 78746
 
-#define PAN_SCALE 6.0f
+#define PAN_SCALE 30.0f
 
 //--------------------------------------------------------
 class OscReceiverController : public SceneController{
