@@ -75,6 +75,13 @@
 		E4C2424810CC5A17004149E2 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E4C2424510CC5A17004149E2 /* Cocoa.framework */; };
 		E4C2424910CC5A17004149E2 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E4C2424610CC5A17004149E2 /* IOKit.framework */; };
 		E4EB6799138ADC1D00A09F29 /* GLUT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BBAB23BE13894E4700AA2426 /* GLUT.framework */; };
+		ED96D8621708B86700A3523C /* LeapController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = ED96D8611708B86700A3523C /* LeapController.cpp */; };
+		ED96D8BC1708BAD600A3523C /* libLeap.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = ED96D8BB1708BAD600A3523C /* libLeap.dylib */; };
+		ED96D8BE1708BB0900A3523C /* libLeap.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = ED96D8BB1708BAD600A3523C /* libLeap.dylib */; };
+		ED96D8CF1708BB2E00A3523C /* libLeap.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = ED96D8C61708BB2E00A3523C /* libLeap.dylib */; };
+		ED96D8D01708BB2E00A3523C /* Leap.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = ED96D8C91708BB2E00A3523C /* Leap.lib */; };
+		ED96D8D11708BB2E00A3523C /* Leapd.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = ED96D8CB1708BB2E00A3523C /* Leapd.lib */; };
+		ED96D8D21708BB2E00A3523C /* ofxLeapMotion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = ED96D8CD1708BB2E00A3523C /* ofxLeapMotion.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -102,6 +109,16 @@
 			dstSubfolderSpec = 10;
 			files = (
 				BBAB23CB13894F3D00AA2426 /* GLUT.framework in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		ED96D8BD1708BAF800A3523C /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 6;
+			files = (
+				ED96D8BE1708BB0900A3523C /* libLeap.dylib in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -379,6 +396,18 @@
 		E4C2424610CC5A17004149E2 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = /System/Library/Frameworks/IOKit.framework; sourceTree = "<absolute>"; };
 		E4EB691F138AFCF100A09F29 /* CoreOF.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = CoreOF.xcconfig; path = ../../../libs/openFrameworksCompiled/project/osx/CoreOF.xcconfig; sourceTree = SOURCE_ROOT; };
 		E4EB6923138AFD0F00A09F29 /* Project.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Project.xcconfig; sourceTree = "<group>"; };
+		ED96D8601708B83500A3523C /* LeapController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LeapController.h; path = ../../src/LeapController.h; sourceTree = "<group>"; };
+		ED96D8611708B86700A3523C /* LeapController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LeapController.cpp; path = ../../src/LeapController.cpp; sourceTree = "<group>"; };
+		ED96D8BB1708BAD600A3523C /* libLeap.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libLeap.dylib; path = ../../../addons/ofxLeapMotion/src/ofxLeapMotion/libs/lib/osx/libLeap.dylib; sourceTree = "<group>"; };
+		ED96D8C21708BB2E00A3523C /* Leap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Leap.h; sourceTree = "<group>"; };
+		ED96D8C31708BB2E00A3523C /* LeapMath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LeapMath.h; sourceTree = "<group>"; };
+		ED96D8C61708BB2E00A3523C /* libLeap.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libLeap.dylib; sourceTree = "<group>"; };
+		ED96D8C81708BB2E00A3523C /* Leap.dll */ = {isa = PBXFileReference; lastKnownFileType = file; path = Leap.dll; sourceTree = "<group>"; };
+		ED96D8C91708BB2E00A3523C /* Leap.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = Leap.lib; sourceTree = "<group>"; };
+		ED96D8CA1708BB2E00A3523C /* Leapd.dll */ = {isa = PBXFileReference; lastKnownFileType = file; path = Leapd.dll; sourceTree = "<group>"; };
+		ED96D8CB1708BB2E00A3523C /* Leapd.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = Leapd.lib; sourceTree = "<group>"; };
+		ED96D8CD1708BB2E00A3523C /* ofxLeapMotion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxLeapMotion.cpp; sourceTree = "<group>"; };
+		ED96D8CE1708BB2E00A3523C /* ofxLeapMotion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxLeapMotion.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -410,6 +439,10 @@
 				2261512817027D1400290F86 /* ARToolKitPlus.lib in Frameworks */,
 				2261512917027D1400290F86 /* ARToolKitPlusD.lib in Frameworks */,
 				226151A417027D1F00290F86 /* opencv.a in Frameworks */,
+				ED96D8BC1708BAD600A3523C /* libLeap.dylib in Frameworks */,
+				ED96D8CF1708BB2E00A3523C /* libLeap.dylib in Frameworks */,
+				ED96D8D01708BB2E00A3523C /* Leap.lib in Frameworks */,
+				ED96D8D11708BB2E00A3523C /* Leapd.lib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -429,6 +462,8 @@
 				22320EE8170378980029872F /* ARTKController.h */,
 				221D41B81704BC7300163123 /* OscReceiverController.cpp */,
 				221D41B91704BC7300163123 /* OscReceiverController.h */,
+				ED96D8611708B86700A3523C /* LeapController.cpp */,
+				ED96D8601708B83500A3523C /* LeapController.h */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -1135,6 +1170,7 @@
 		BB4B014C10F69532006C3DED /* addons */ = {
 			isa = PBXGroup;
 			children = (
+				ED96D8BF1708BB2E00A3523C /* ofxLeapMotion */,
 				226150FC17027CF500290F86 /* ofxARtoolkitPlus */,
 				226150FB17027CEB00290F86 /* ofxOpenCv */,
 				22AA598E1606E07300E88EF8 /* ofxXmlSettings */,
@@ -1196,6 +1232,7 @@
 				22320EF117037E7B0029872F /* QTKit.framework */,
 				22320EEF17037E760029872F /* CoreVideo.framework */,
 				E4B6FCAD0C3E899E008CF71C /* openFrameworks-Info.plist */,
+				ED96D8BB1708BAD600A3523C /* libLeap.dylib */,
 				E4EB6923138AFD0F00A09F29 /* Project.xcconfig */,
 				E4B69E1C0A3A1BDC003C02F2 /* src */,
 				E4EEC9E9138DF44700A80321 /* openFrameworks */,
@@ -1241,6 +1278,71 @@
 			name = openFrameworks;
 			sourceTree = "<group>";
 		};
+		ED96D8BF1708BB2E00A3523C /* ofxLeapMotion */ = {
+			isa = PBXGroup;
+			children = (
+				ED96D8C01708BB2E00A3523C /* libs */,
+				ED96D8CC1708BB2E00A3523C /* src */,
+			);
+			name = ofxLeapMotion;
+			path = ../../../addons/ofxLeapMotion/src/ofxLeapMotion;
+			sourceTree = "<group>";
+		};
+		ED96D8C01708BB2E00A3523C /* libs */ = {
+			isa = PBXGroup;
+			children = (
+				ED96D8C11708BB2E00A3523C /* include */,
+				ED96D8C41708BB2E00A3523C /* lib */,
+			);
+			path = libs;
+			sourceTree = "<group>";
+		};
+		ED96D8C11708BB2E00A3523C /* include */ = {
+			isa = PBXGroup;
+			children = (
+				ED96D8C21708BB2E00A3523C /* Leap.h */,
+				ED96D8C31708BB2E00A3523C /* LeapMath.h */,
+			);
+			path = include;
+			sourceTree = "<group>";
+		};
+		ED96D8C41708BB2E00A3523C /* lib */ = {
+			isa = PBXGroup;
+			children = (
+				ED96D8C51708BB2E00A3523C /* osx */,
+				ED96D8C71708BB2E00A3523C /* vs2010 */,
+			);
+			path = lib;
+			sourceTree = "<group>";
+		};
+		ED96D8C51708BB2E00A3523C /* osx */ = {
+			isa = PBXGroup;
+			children = (
+				ED96D8C61708BB2E00A3523C /* libLeap.dylib */,
+			);
+			path = osx;
+			sourceTree = "<group>";
+		};
+		ED96D8C71708BB2E00A3523C /* vs2010 */ = {
+			isa = PBXGroup;
+			children = (
+				ED96D8C81708BB2E00A3523C /* Leap.dll */,
+				ED96D8C91708BB2E00A3523C /* Leap.lib */,
+				ED96D8CA1708BB2E00A3523C /* Leapd.dll */,
+				ED96D8CB1708BB2E00A3523C /* Leapd.lib */,
+			);
+			path = vs2010;
+			sourceTree = "<group>";
+		};
+		ED96D8CC1708BB2E00A3523C /* src */ = {
+			isa = PBXGroup;
+			children = (
+				ED96D8CD1708BB2E00A3523C /* ofxLeapMotion.cpp */,
+				ED96D8CE1708BB2E00A3523C /* ofxLeapMotion.h */,
+			);
+			path = src;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -1252,6 +1354,7 @@
 				E4B69B590A3A1756003C02F2 /* Frameworks */,
 				E4B6FFFD0C3F9AB9008CF71C /* ShellScript */,
 				E4C2427710CC5ABF004149E2 /* CopyFiles */,
+				ED96D8BD1708BAF800A3523C /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -1371,6 +1474,8 @@
 				223CE0E61704F6800007533D /* TerrainLayer.cpp in Sources */,
 				223CE0EA1704F69E0007533D /* WorldLayer.cpp in Sources */,
 				223CE0ED1705004A0007533D /* ViewPoint.cpp in Sources */,
+				ED96D8621708B86700A3523C /* LeapController.cpp in Sources */,
+				ED96D8D21708BB2E00A3523C /* ofxLeapMotion.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1502,7 +1607,11 @@
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = "openFrameworks-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
-				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../../../addons/ofxLeapMotion/src/ofxLeapMotion/libs/lib/osx\"",
+					"\"$(SRCROOT)/../../../addons/ofxLeapMotion/src/ofxLeapMotion/libs/lib/vs2010\"",
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				OTHER_LDFLAGS = "$(inherited)";
 				PRODUCT_NAME = GeoSenseReliefClientOSXDebug;
@@ -1528,7 +1637,11 @@
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = "openFrameworks-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
-				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../../../addons/ofxLeapMotion/src/ofxLeapMotion/libs/lib/osx\"",
+					"\"$(SRCROOT)/../../../addons/ofxLeapMotion/src/ofxLeapMotion/libs/lib/vs2010\"",
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				OTHER_LDFLAGS = "$(inherited)";
 				PRODUCT_NAME = GeoSenseReliefClientOSX;

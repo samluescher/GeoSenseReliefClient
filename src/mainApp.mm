@@ -239,6 +239,7 @@ void mainApp::setup()
     mouseController.registerEvents(this);
     oscReceiverController.registerEvents(this);
     //oscReceiverController.verticalPan = true;
+    leapController.registerEvents(this);
 
     #if !(TARGET_OS_IPHONE)
     keyboardController.registerEvents(this);
@@ -403,6 +404,7 @@ void mainApp::update()
     #endif
     reliefUpdate();
     oscReceiverController.update();
+    leapController.update();
 
     #if (USE_QCAR)
     ofxQCAR::getInstance()->update();

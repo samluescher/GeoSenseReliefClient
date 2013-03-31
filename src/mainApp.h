@@ -24,6 +24,7 @@
 #endif
 
 #include "OscReceiverController.h"
+#include "LeapController.h"
 
 #include "MouseController.h"
 #include "MapFeature.h"
@@ -82,6 +83,7 @@ public:
     
     MouseController mouseController;
     OscReceiverController oscReceiverController;
+    LeapController leapController;
     
     #if !(TARGET_OS_IPHONE)
     KeyboardController keyboardController;
