@@ -15,6 +15,8 @@
 
 #define PAN_SCALE 30.0f
 
+using namespace Leap;
+
 //--------------------------------------------------------
 class LeapController: public SceneController{
 public:
@@ -26,6 +28,12 @@ public:
     bool horizontalPan, verticalPan;
     
     ofxLeapMotion leap;
-    vector <ofxLeapMotionSimpleHand> simpleHands;
-    vector <ofxLeapMotionSimpleHand> simpleHandsPrevious;
+    
+    Controller controller;
+        
+    vector <Hand> hands;
+    vector <Hand> handsPrevious;
+    
+    GestureList gestures;
+    Frame framePrevious;
 };

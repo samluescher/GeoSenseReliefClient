@@ -9,28 +9,30 @@
 #include "LeapController.h"
 
 LeapController::LeapController() {
+    
     ofSetFrameRate(60);
     ofSetVerticalSync(true);
-	//ofSetLogLevel(OF_LOG_VERBOSE);
     
-	leap.open(); 
+    leap.open();
+    leap.setupGestures();
 }
 
 void LeapController::update() {
-    //cout << leap.getSimpleHands().size() << endl;
     
-    simpleHands = leap.getSimpleHands();
+    hands = leap.getLeapHands();
     
-    if( leap.isFrameNew() && simpleHands.size() ){
+    if(leap.isFrameNew() && hands.size()){
         
-        for(int i = 0; i < simpleHands.size(); i++){
+        for(int i = 0; i < hands.size(); i++){
             
-            if (simpleHandsPrevious.size() == simpleHands.size() && simpleHands[i].fingers.size() <= 2){
+            Hand hand = hands[i];
+            
+            if (handsPrevious.size() == hands.size() && hand.fingers().count() <= 2){
                 
-                float dx = simpleHands[i].handPos.x - simpleHandsPrevious[i].handPos.x;
-                float dy = simpleHands[i].handPos.z - simpleHandsPrevious[i].handPos.z;
-                float dz = -simpleHands[i].handPos.y + simpleHandsPrevious[i].handPos.y;
-                int numFingers = simpleHands[i].fingers.size();
+                float dx =  hand.palmPosition().x - handsPrevious[i].palmPosition().x;
+                float dy =  hand.palmPosition().z - handsPrevious[i].palmPosition().z;
+                float dz = -hand.palmPosition().y + handsPrevious[i].palmPosition().y;
+                int numFingers = hands[i].fingers().count();
                 
                 horizontalPan = (numFingers == 2);
                 verticalPan = (numFingers == 0);
@@ -40,7 +42,44 @@ void LeapController::update() {
         }
     }
     
-    simpleHandsPrevious = simpleHands;
+    Frame frame = controller.frame();
+    GestureList gestures =  framePrevious.isValid()       ?
+    frame.gestures(framePrevious) :
+    frame.gestures();
+    framePrevious = frame;
+    
+    for (size_t i=0; i < gestures.count(); i++) {
+        if (gestures[i].type() == Gesture::TYPE_SCREEN_TAP) {
+            ScreenTapGesture tap = gestures[i];
+            
+            cout << "LEAP TYPE GESTURE" << endl;
+            
+            
+        } else if (gestures[i].type() == Gesture::TYPE_KEY_TAP) {
+            KeyTapGesture tap = gestures[i];
+            
+            cout << "LEAP TAP GESTURE" << endl;
+        
+        } else if (gestures[i].type() == Gesture::TYPE_SWIPE) {
+            SwipeGesture swipe = gestures[i];
+            Vector diff = 0.004f*(swipe.position() - swipe.startPosition());
+            
+            cout << "LEAP SWIPE GESTURE" << endl;
+        
+        } else if (gestures[i].type() == Gesture::TYPE_CIRCLE) {
+            CircleGesture circle = gestures[i];
+            float progress = circle.progress();
+            
+            if (progress >= 1.0f) {
+
+                double curAngle = 6.5;
+            }
+            
+            cout << "LEAP CIRCLE GESTURE" << endl;
+        }
+    }
+    
+    handsPrevious = hands;
     
 	leap.markFrameAsOld();
     
@@ -48,8 +87,6 @@ void LeapController::update() {
 }
 
 void LeapController::pan(float dx, float dy, float dz) {
-    
-//    cout << dx << " " << dy << " " << dz << endl;
     
     if (horizontalPan) {
         panVelocity.z = 0;
@@ -60,10 +97,6 @@ void LeapController::pan(float dx, float dy, float dz) {
         panEase = panVelocity.length() > MIN_EASE_VELOCITY;
     }
     if (verticalPan) {
-        
-//        cout << "vertical panning" << endl;
-//        cout << panVelocity.z << endl;
-        
         panVelocity.x = 0;
         panVelocity.y = 0;
         panVelocity.z = dz / ofGetHeight() * PAN_SCALE;
