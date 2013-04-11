@@ -17,18 +17,25 @@ void OscReceiverController::oscMessageReceived(ofxOscMessage m) {
         float dy = m.getArgAsFloat(1);
         float dz = m.getArgAsFloat(2);
         
+        verticalPan = m.getArgAsInt32(3);
+        //horizontalPan = m.getArgAsInt32(5);
+        
         if (horizontalPan) {
+            panVelocity.z = 0;
             panVelocity.x = -dx / ofGetWidth() * PAN_SCALE;
             panVelocity.y = dy / ofGetHeight() * PAN_SCALE;
+            
+            panEaseStart = ofGetElapsedTimef();
+            panEase = panVelocity.length() > MIN_EASE_VELOCITY;
         }
         if (verticalPan) {
+            panVelocity.x = 0;
+            panVelocity.y = 0;
             panVelocity.z = dz / ofGetHeight() * PAN_SCALE;
+            
+            panEaseStart = ofGetElapsedTimef();
+            panEase = panVelocity.length() > MIN_EASE_VELOCITY;
         }
-        
-        panEaseStart = ofGetElapsedTimef();
-        panEase = panVelocity.length() > MIN_EASE_VELOCITY;
-        
-        cout << panVelocity << endl;
     }
     
 }

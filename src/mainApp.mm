@@ -285,7 +285,8 @@ void mainApp::setup()
 
     mouseController.registerEvents(this);
     oscReceiverController.registerEvents(this);
-    oscReceiverController.verticalPan = true;
+    //oscReceiverController.verticalPan = true;
+    leapController.registerEvents(this);
 
     #if !(TARGET_OS_IPHONE)
     keyboardController.registerEvents(this);
@@ -315,6 +316,7 @@ void mainApp::onZoom(const void* sender, float & factor) {
 }
 
 void mainApp::onViewpointChange(const void* sender, ofNode & viewpoint) {
+    cout << "onViewPointChange" << endl;
     //cout << "onViewpointChange: " << viewpoint.getOrientationEuler() << "\n";
 }
 
@@ -505,6 +507,23 @@ void mainApp::update()
     #endif
     reliefUpdate();
     oscReceiverController.update();
+    leapController.update();
+    // this will be dumb
+    if (leapController.justTyped) {
+        cout << "just typed" << endl;
+    }
+    if (leapController.justTapped) {
+        cout << "just tapped" << endl;
+        
+//        mapCenter.x = leapController.pos.x;
+//        mapCenter.y = leapController.pos.y;
+    }
+    if (leapController.justSwiped) {
+        cout << "just swiped" << endl;
+    }
+    if (leapController.justCircled) {
+        cout << "just circled" << endl;
+    }
 
     #if (USE_QCAR)
     ofxQCAR::getInstance()->update();

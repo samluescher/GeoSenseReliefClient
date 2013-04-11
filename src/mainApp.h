@@ -15,7 +15,7 @@
 #define USE_QCAR !(USE_ARTK)
 #else
 #define USE_QCAR false
-#define USE_ARTK true
+#define USE_ARTK false
 #include "KeyboardController.h"
 #endif
 
@@ -27,6 +27,7 @@
 #endif
 
 #include "OscReceiverController.h"
+#include "LeapController.h"
 
 #include "MouseController.h"
 #include "MapFeature.h"
@@ -85,6 +86,7 @@ public:
     
     MouseController mouseController;
     OscReceiverController oscReceiverController;
+    LeapController leapController;
     
     #if !(TARGET_OS_IPHONE)
     KeyboardController keyboardController;
