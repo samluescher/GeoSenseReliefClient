@@ -26,6 +26,8 @@ public:
     void pan(float dx, float dy, float dz);
     
     bool horizontalPan, verticalPan;
+    bool justTyped, justTapped, justSwiped, justCircled;
+    Vector pos;
     
     ofxLeapMotion leap;
     

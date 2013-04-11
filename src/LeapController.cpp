@@ -19,6 +19,11 @@ LeapController::LeapController() {
 
 void LeapController::update() {
     
+    justTyped = false;
+    justTapped = false;
+    justSwiped = false;
+    justCircled = false;
+    
     hands = leap.getLeapHands();
     
     if(leap.isFrameNew() && hands.size()){
@@ -34,7 +39,8 @@ void LeapController::update() {
                 float dz = -hand.palmPosition().y + handsPrevious[i].palmPosition().y;
                 int numFingers = hands[i].fingers().count();
                 
-                horizontalPan = (numFingers == 2);
+//                horizontalPan = (numFingers == 2);
+                horizontalPan = false;
                 verticalPan = (numFingers == 0);
                 
                 pan(dx,dy,dz);
@@ -51,31 +57,38 @@ void LeapController::update() {
     for (size_t i=0; i < gestures.count(); i++) {
         if (gestures[i].type() == Gesture::TYPE_SCREEN_TAP) {
             ScreenTapGesture tap = gestures[i];
+            pos = tap.position();
+            justTyped = true;
             
-            cout << "LEAP TYPE GESTURE" << endl;
+            //cout << "LEAP TYPE GESTURE AT: " << pos << endl;
+            
+            
             
             
         } else if (gestures[i].type() == Gesture::TYPE_KEY_TAP) {
             KeyTapGesture tap = gestures[i];
+            pos = tap.position();
+            justTapped = true;
             
-            cout << "LEAP TAP GESTURE" << endl;
+            //cout << "LEAP TAP GESTURE AT: " << pos << endl;
         
         } else if (gestures[i].type() == Gesture::TYPE_SWIPE) {
             SwipeGesture swipe = gestures[i];
             Vector diff = 0.004f*(swipe.position() - swipe.startPosition());
+            justSwiped = true;
             
-            cout << "LEAP SWIPE GESTURE" << endl;
+            //cout << "LEAP SWIPE GESTURE" << endl;
         
         } else if (gestures[i].type() == Gesture::TYPE_CIRCLE) {
             CircleGesture circle = gestures[i];
             float progress = circle.progress();
             
             if (progress >= 1.0f) {
-
                 double curAngle = 6.5;
+                justCircled = true;
+                
+                //cout << "LEAP CIRCLE GESTURE" << endl;
             }
-            
-            cout << "LEAP CIRCLE GESTURE" << endl;
         }
     }
     
