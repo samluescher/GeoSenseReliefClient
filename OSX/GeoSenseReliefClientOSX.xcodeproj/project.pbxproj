@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		221D41BA1704BC7300163123 /* OscReceiverController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 221D41B81704BC7300163123 /* OscReceiverController.cpp */; };
+		222AB2B1171720A000DAE516 /* libLeap.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 222AB2AD171720A000DAE516 /* libLeap.dylib */; };
+		222AB2B2171720A000DAE516 /* ofxLeapMotion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 222AB2AF171720A000DAE516 /* ofxLeapMotion.cpp */; };
+		222AB2BA171722C600DAE516 /* LeapController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 222AB2B8171722C600DAE516 /* LeapController.cpp */; };
 		22320EE317035FD00029872F /* KeyboardController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22320EE217035FD00029872F /* KeyboardController.cpp */; };
 		22320EE61703744E0029872F /* SceneController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22320EE51703744E0029872F /* SceneController.cpp */; };
 		22320EE9170378980029872F /* ARTKController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22320EE7170378980029872F /* ARTKController.cpp */; };
@@ -16,6 +19,8 @@
 		223CE0E61704F6800007533D /* TerrainLayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 223CE0E41704F6800007533D /* TerrainLayer.cpp */; };
 		223CE0EA1704F69E0007533D /* WorldLayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 223CE0E81704F69E0007533D /* WorldLayer.cpp */; };
 		223CE0ED1705004A0007533D /* ViewPoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 223CE0EB1705004A0007533D /* ViewPoint.cpp */; };
+		2250AB22171723BD0056198F /* libLeap.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 222AB2AD171720A000DAE516 /* libLeap.dylib */; };
+		2250AB25171725040056198F /* MapWidget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2250AB23171725040056198F /* MapWidget.cpp */; };
 		2261512217027D1400290F86 /* ofxARToolkitPlus.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 226150FE17027D1400290F86 /* ofxARToolkitPlus.cpp */; };
 		2261512317027D1400290F86 /* libARToolKitPlus.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2261511617027D1400290F86 /* libARToolKitPlus.a */; };
 		2261512417027D1400290F86 /* libARToolKitPlus.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2261511817027D1400290F86 /* libARToolKitPlus.a */; };
@@ -101,6 +106,16 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		2250AB21171723A60056198F /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 6;
+			files = (
+				2250AB22171723BD0056198F /* libLeap.dylib in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		E4C2427710CC5ABF004149E2 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -116,6 +131,13 @@
 /* Begin PBXFileReference section */
 		221D41B81704BC7300163123 /* OscReceiverController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = OscReceiverController.cpp; path = ../../src/OscReceiverController.cpp; sourceTree = "<group>"; };
 		221D41B91704BC7300163123 /* OscReceiverController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OscReceiverController.h; path = ../../src/OscReceiverController.h; sourceTree = "<group>"; };
+		222AB2A9171720A000DAE516 /* Leap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Leap.h; sourceTree = "<group>"; };
+		222AB2AA171720A000DAE516 /* LeapMath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LeapMath.h; sourceTree = "<group>"; };
+		222AB2AD171720A000DAE516 /* libLeap.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libLeap.dylib; sourceTree = "<group>"; };
+		222AB2AF171720A000DAE516 /* ofxLeapMotion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxLeapMotion.cpp; sourceTree = "<group>"; };
+		222AB2B0171720A000DAE516 /* ofxLeapMotion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxLeapMotion.h; sourceTree = "<group>"; };
+		222AB2B8171722C600DAE516 /* LeapController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LeapController.cpp; path = ../../src/LeapController.cpp; sourceTree = "<group>"; };
+		222AB2B9171722C600DAE516 /* LeapController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LeapController.h; path = ../../src/LeapController.h; sourceTree = "<group>"; };
 		22320EE117035F200029872F /* KeyboardController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = KeyboardController.h; path = ../../src/KeyboardController.h; sourceTree = "<group>"; };
 		22320EE217035FD00029872F /* KeyboardController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = KeyboardController.cpp; path = ../../src/KeyboardController.cpp; sourceTree = "<group>"; };
 		22320EE51703744E0029872F /* SceneController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SceneController.cpp; path = ../../src/SceneController.cpp; sourceTree = "<group>"; };
@@ -131,6 +153,8 @@
 		223CE0EC1705004A0007533D /* ViewPoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewPoint.h; path = ../../src/ViewPoint.h; sourceTree = "<group>"; };
 		223F4FB516EAB25E0025FB63 /* MapFeatureLayer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MapFeatureLayer.h; path = ../../src/MapFeatureLayer.h; sourceTree = "<group>"; };
 		223F4FB616EAB34D0025FB63 /* GeoJSONMesh.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = GeoJSONMesh.h; path = ../../src/GeoJSONMesh.h; sourceTree = "<group>"; };
+		2250AB23171725040056198F /* MapWidget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MapWidget.cpp; path = ../../src/MapWidget.cpp; sourceTree = "<group>"; };
+		2250AB24171725040056198F /* MapWidget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MapWidget.h; path = ../../src/MapWidget.h; sourceTree = "<group>"; };
 		226150FE17027D1400290F86 /* ofxARToolkitPlus.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxARToolkitPlus.cpp; sourceTree = "<group>"; };
 		226150FF17027D1400290F86 /* ofxARToolkitPlus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxARToolkitPlus.h; sourceTree = "<group>"; };
 		2261510417027D1400290F86 /* ar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ar.h; sourceTree = "<group>"; };
@@ -446,15 +470,72 @@
 				226151A417027D1F00290F86 /* opencv.a in Frameworks */,
 				2288370E17163E0C002F58A2 /* libdc1394.a in Frameworks */,
 				2288370F17163E0C002F58A2 /* libusb-1.0.a in Frameworks */,
+				222AB2B1171720A000DAE516 /* libLeap.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		222AB2A61717208200DAE516 /* ofxLeapMotion */ = {
+			isa = PBXGroup;
+			children = (
+				222AB2A7171720A000DAE516 /* libs */,
+				222AB2AE171720A000DAE516 /* src */,
+			);
+			name = ofxLeapMotion;
+			sourceTree = "<group>";
+		};
+		222AB2A7171720A000DAE516 /* libs */ = {
+			isa = PBXGroup;
+			children = (
+				222AB2A8171720A000DAE516 /* include */,
+				222AB2AB171720A000DAE516 /* lib */,
+			);
+			name = libs;
+			path = ../../../addons/ofxLeapMotion/src/ofxLeapMotion/libs;
+			sourceTree = "<group>";
+		};
+		222AB2A8171720A000DAE516 /* include */ = {
+			isa = PBXGroup;
+			children = (
+				222AB2A9171720A000DAE516 /* Leap.h */,
+				222AB2AA171720A000DAE516 /* LeapMath.h */,
+			);
+			path = include;
+			sourceTree = "<group>";
+		};
+		222AB2AB171720A000DAE516 /* lib */ = {
+			isa = PBXGroup;
+			children = (
+				222AB2AC171720A000DAE516 /* osx */,
+			);
+			path = lib;
+			sourceTree = "<group>";
+		};
+		222AB2AC171720A000DAE516 /* osx */ = {
+			isa = PBXGroup;
+			children = (
+				222AB2AD171720A000DAE516 /* libLeap.dylib */,
+			);
+			path = osx;
+			sourceTree = "<group>";
+		};
+		222AB2AE171720A000DAE516 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				222AB2AF171720A000DAE516 /* ofxLeapMotion.cpp */,
+				222AB2B0171720A000DAE516 /* ofxLeapMotion.h */,
+			);
+			name = src;
+			path = ../../../addons/ofxLeapMotion/src/ofxLeapMotion/src;
+			sourceTree = "<group>";
+		};
 		22320EE4170360ED0029872F /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				222AB2B8171722C600DAE516 /* LeapController.cpp */,
+				222AB2B9171722C600DAE516 /* LeapController.h */,
 				22320EE217035FD00029872F /* KeyboardController.cpp */,
 				22320EE117035F200029872F /* KeyboardController.h */,
 				22E14206164D866F00CA0A44 /* MouseController.cpp */,
@@ -1270,6 +1351,7 @@
 		BB4B014C10F69532006C3DED /* addons */ = {
 			isa = PBXGroup;
 			children = (
+				222AB2A61717208200DAE516 /* ofxLeapMotion */,
 				228836EB17163E02002F58A2 /* ofxLibdc */,
 				226150FC17027CF500290F86 /* ofxARtoolkitPlus */,
 				226150FB17027CEB00290F86 /* ofxOpenCv */,
@@ -1352,6 +1434,8 @@
 				22E14200164D862A00CA0A44 /* main.mm */,
 				22E1420B164D866F00CA0A44 /* mainApp.h */,
 				22E1420C164D866F00CA0A44 /* mainApp.mm */,
+				2250AB23171725040056198F /* MapWidget.cpp */,
+				2250AB24171725040056198F /* MapWidget.h */,
 				22E14204164D866F00CA0A44 /* MapFeature.cpp */,
 				223CE0EB1705004A0007533D /* ViewPoint.cpp */,
 				223CE0EC1705004A0007533D /* ViewPoint.h */,
@@ -1389,6 +1473,7 @@
 				E4B69B590A3A1756003C02F2 /* Frameworks */,
 				E4B6FFFD0C3F9AB9008CF71C /* ShellScript */,
 				E4C2427710CC5ABF004149E2 /* CopyFiles */,
+				2250AB21171723A60056198F /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -1511,6 +1596,9 @@
 				2288371017163E0C002F58A2 /* Camera.cpp in Sources */,
 				2288371117163E0C002F58A2 /* Grabber.cpp in Sources */,
 				2288371217163E0C002F58A2 /* PointGrey.cpp in Sources */,
+				222AB2B2171720A000DAE516 /* ofxLeapMotion.cpp in Sources */,
+				222AB2BA171722C600DAE516 /* LeapController.cpp in Sources */,
+				2250AB25171725040056198F /* MapWidget.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1645,6 +1733,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../../../addons/ofxLibdc/libs/osx/lib\"",
+					"\"$(SRCROOT)/../../../addons/ofxLeapMotion/src/ofxLeapMotion/libs/lib/osx\"",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				OTHER_LDFLAGS = "$(inherited)";
@@ -1674,6 +1763,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../../../addons/ofxLibdc/libs/osx/lib\"",
+					"\"$(SRCROOT)/../../../addons/ofxLeapMotion/src/ofxLeapMotion/libs/lib/osx\"",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				OTHER_LDFLAGS = "$(inherited)";

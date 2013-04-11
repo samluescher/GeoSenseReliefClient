@@ -43,6 +43,7 @@
 
 #define COLOR_GRID ofColor(100, 100, 100, 70)
 #define COLOR_BACKGROUND ofColor(0)
+#define COLOR_MAP_WIDGET ofColor(255, 255, 230, 128)
 #define GUI_DISAPPEAR_FRAMES 1400
 
 #endif

@@ -539,6 +539,15 @@ void mainApp::update()
     if (!calibrationMode) {
         layersGUI->setVisible(cursorNotMovedSince < GUI_DISAPPEAR_FRAMES);
     }
+
+    for (int i = 0; i < mapWidgets.size(); i++) {
+        MapWidget *widget = mapWidgets.at(i);
+        widget->update();
+        if (widget->shouldRemove()) {
+            mapWidgets.erase(mapWidgets.begin() + i);
+            i--;
+        }
+    }
     
 }
 
@@ -607,6 +616,14 @@ void mainApp::drawTerrain(bool wireframe) {
 
     if (lightingEnabled) {
         ofDisableLighting();
+    }
+}
+
+void mainApp::drawMapWidgets()
+{
+    for (int i = 0; i < mapWidgets.size(); i++) {
+        MapWidget *widget = mapWidgets.at(i);
+        widget->draw();
     }
 }
 
@@ -759,7 +776,11 @@ void mainApp::drawWorld(bool useARMatrix, int viewportX, int viewportY, int view
                         drawMapFeatures();
                         ofDisableBlendMode();
                     }
-                    
+    
+                    ofEnableBlendMode(OF_BLENDMODE_ADD);
+                    drawMapWidgets();
+                    ofDisableBlendMode();
+    
                     if (drawTerrainGridEnabled || calibrationMode) {
                         drawTerrainGrid();
                     }
@@ -1338,6 +1359,11 @@ void mainApp::keyPressed  (int key){
     char filename[40];
     strftime(filename, 40, "%Y-%m-%d %H-%M-%S", timeinfo );
     std::stringstream ss;
+
+    MapWidget *widget = new MapWidget();
+    widget->setPosition(mapCenter);
+    widget->setLifetime(20);
+    mapWidgets.push_back(widget);
     
     switch (key) {
         case 99:

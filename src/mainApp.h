@@ -30,6 +30,7 @@
 #include "LeapController.h"
 
 #include "MouseController.h"
+#include "MapWidget.h"
 #include "MapFeature.h"
 #include "MapFeatureLayer.h"
 #include "TerrainLayer.h"
@@ -108,6 +109,8 @@ public:
     bool isPanning;
     
     std::vector<MapFeature*> mapFeatures;
+    std::vector<MapWidget*> mapWidgets;
+    
     ofVboMesh mapFeaturesMesh;
     void urlResponse(ofHttpResponse & response);
     void addItemsFromJSONString(string jsonStr);
@@ -157,6 +160,7 @@ public:
     void drawTerrainGrid();
     void drawLights();
     void drawMapFeatures();
+    void drawMapWidgets();
     void drawGUI();
     void drawWorld(bool externalMatrix, int viewportX, int viewportY, int viewportW, int viewportH);
     void updateVisibleMap(bool updateServer);
