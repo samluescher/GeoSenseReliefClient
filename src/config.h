@@ -37,6 +37,10 @@
 
 #endif
 
+#define USE_LIBDC true
+
+
+
 #define COLOR_GRID ofColor(100, 100, 100, 70)
 #define COLOR_BACKGROUND ofColor(0)
 #define GUI_DISAPPEAR_FRAMES 1400
@@ -46,6 +50,12 @@
 #define VIDEO_WIDTH 800
 #define VIDEO_HEIGHT 600
 
-#define SCREEN_UNIT_TO_TERRAIN_UNIT_INITIAL 400.f
+#define VIDEO_EXPOSURE 1.0f
+#define VIDEO_GAIN 1.2f
+
+
+#define GL_UNIT_TO_TERRAIN_UNIT_INITIAL 100.f
 
 #define LIGHT_ATTENUATION .175f
+
+#define ARTK_THRESHOLD 80

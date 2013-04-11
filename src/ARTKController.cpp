@@ -11,30 +11,58 @@
 ARTKController::ARTKController() {
     
     ofLog() << "*** Initializing ARTK";
-    videoGrabber.setDeviceID(1);
+
+    #if !(USE_LIBDC)
+    //videoGrabber.setDeviceID(1);
 	videoGrabber.initGrabber(VIDEO_WIDTH, VIDEO_HEIGHT);
     videoWidth = videoGrabber.getWidth();
     videoHeight = videoGrabber.getHeight();
-    ofLog() << "Initialized videoGrabber at " << videoWidth << "x" << videoHeight;
+    #else
+    camera.setSize(VIDEO_WIDTH, VIDEO_HEIGHT);
+	camera.setup();
+    camera.setExposure(VIDEO_EXPOSURE);
+    camera.setGain(VIDEO_GAIN);
+    ofLog() << "exposure " << camera.getExposure() << "  gain " << camera.getGain();
+    videoWidth = camera.getWidth();
+    videoHeight = camera.getHeight();
+    #endif
+    
+    ofLog() << "Initialized camera at " << videoWidth << "x" << videoHeight;
+    #if !(USE_LIBDC)
 	videoImage.allocate(videoWidth, videoHeight);
-	//grayImage.allocate(videoWidth, videoHeight);
-	//grayThres.allocate(videoWidth, videoHeight);
-	artkThreshold = 85;
+    #endif
+
+	videoThreshold = ARTK_THRESHOLD;
     artk.setup(videoWidth, videoHeight);
-	artk.setThreshold(artkThreshold);
 }
 
 void ARTKController::update() {
+	artk.setThreshold(videoThreshold);
     videoScale = max(ofGetWidth() / (1.0f * videoWidth), ofGetHeight() / (1.0f * videoHeight));
     videoX = 0;
     videoY = 0;
     
+    bool artkUpdate;
+    
+    #if !(USE_LIBDC)
     videoGrabber.update();
-    if (videoGrabber.isFrameNew()) {
+    artkUpdate = videoGrabber.isFrameNew();
+    if (artkUpdate) {
 		videoImage.setFromPixels(videoGrabber.getPixels(), videoWidth, videoHeight);
         videoImage.mirror(true, true);
-        grayVideoImage = videoImage;
+    }
+    #else
+    artkUpdate = camera.isReady();
+    if (camera.grabVideo(cameraImage)) {
+		cameraImage.update();
+        videoImage.setFromPixels(cameraImage.getPixels(), videoWidth, videoHeight);
+        videoImage.mirror(true, true);
+	}
+    #endif
+
+    if (artkUpdate) {
 		// Pass in the new image pixels to artk
+        grayVideoImage = videoImage;
         artk.update(grayVideoImage.getPixels());
     }
 }
@@ -48,16 +76,24 @@ void ARTKController::applyMatrix() {
     ofSphere(0, 0, 0, 1);
 }
 
-void ARTKController::draw(bool drawDebugEnabled) {
+void ARTKController::draw(bool drawVideo, bool drawThresh, bool drawFullSize) {
     ofPushMatrix();
-    ofTranslate(videoX, videoY);
-    ofScale(videoScale, videoScale);
-    
-    if (drawDebugEnabled) {
-        grayVideoImage.threshold(artkThreshold);
-        grayVideoImage.draw(0, 0, videoWidth, videoHeight);
+    if (drawFullSize) {
+        ofTranslate(videoX, videoY);
+        ofScale(videoScale, videoScale);
     } else {
+        float s = .5;
+        ofTranslate(ofGetWidth() - videoWidth * s, 0);
+        ofScale(s, s);
+    }
+    
+    if (drawVideo) {
+        ofSetColor(255);
         videoImage.draw(0, 0, videoWidth, videoHeight);
+        if (drawThresh) {
+            grayVideoImage.threshold(videoThreshold);
+            grayVideoImage.draw(0, videoHeight, videoWidth, videoHeight);
+        }
     }
     
     artk.draw(0, 0);

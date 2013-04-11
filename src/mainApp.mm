@@ -10,7 +10,6 @@
 #define LIGHT_POS_INC .2
 #define PAN_POS_INC .05
 #define WATER_POS_INC 1
-#define TERRAIN_OPACITY 200
 
 #define KEYBOARD_INC .2f
 
@@ -39,6 +38,8 @@ ofVec3f mainApp::surfaceAt(ofVec2f pos) {
 //--------------------------------------------------------------
 void mainApp::setup() 
 {
+    ofSetLogLevel(OF_LOG_VERBOSE);
+    
 #if (USE_QCAR)
     ofLog() << "*** Initializing QCAR";
     [ofxQCAR_Utils getInstance].targetType = TYPE_FRAMEMARKERS;
@@ -63,10 +64,10 @@ void mainApp::setup()
     ofLog() << "terrainExtents: " << terrainExtents.x << "," << terrainExtents.y;
     ofVec2f center = terrainSW + terrainExtents / 2;
     terrainCenterOffset = ofVec3f(center.x, center.y, 0); 
-    mapCenter = fukushima + ofVec3f(2.5, 0, 0); // initially center on off-shore Fukushima
+    mapCenter = fukushima - ofVec3f(2.75, 0, 0); // initially center on off-shore Fukushima
     
-    terrainUnitToScreenUnit = 1 / SCREEN_UNIT_TO_TERRAIN_UNIT_INITIAL;
-    reliefUnitToScreenUnit = 40.0f;
+    terrainUnitToGlUnit = 1 / GL_UNIT_TO_TERRAIN_UNIT_INITIAL;
+    realworldUnitToGlUnit = 40.0f;
     globalScale = 1.f;
     
     // offset of physical Relief to physical marker
@@ -91,26 +92,40 @@ void mainApp::setup()
     featureHeight = .5f;
 
     
+	fingerMovie.loadMovie("movies/tsunami-propagation.mov");
+    
+    
+    
     ofLog() << " *** Creating terrain layers";
-    float seaFloorPeakHeight = terrainPeakHeight * 10;
+    float seaFloorPeakHeight = terrainPeakHeight * 13;
     TerrainLayer *layer;
     
-    layer = addTerrainLayer("CRUST", "maps/heightmap.ASTGTM2_128,28,149,45-1600-with-water.png", "maps/srtm.ASTGTM2_128,28,149,45-14400-with-water.png", terrainPeakHeight);
+    layer = addTerrainLayer("CRUST", "maps/heightmap.ASTGTM2_128,28,149,45-1600.png", "maps/srtm.ASTGTM2_128,28,149,45-14400-with-water.png", terrainPeakHeight);
     layer->setScale(1);
 
-    layer = addTerrainLayer("PLATES", "maps/bathymetry_128,28,149,45-1600.png", "maps/ocean.blue_128,28,149,45-1600.png", seaFloorPeakHeight);
+    layer = addTerrainLayer("PLATES", "maps/heightmap.ETOPO1_128,28,149,45-downsampled-blur.png", "maps/greenblue.ETOPO1_128,28,149,45.png", seaFloorPeakHeight);
     layer->move(ofVec3f(0, 0, -(seaFloorPeakHeight + terrainPeakHeight * .2)));
     layer->setScale(ofVec3f(focusLayer->heightMap.getWidth() / layer->heightMap.getWidth(), focusLayer->heightMap.getHeight() / layer->heightMap.getHeight(), 1));
+
+    /*
+    layer = addTerrainLayer("J PLATE", "maps/bathymetry_128,28,149,45-1600-j-plate.png", "maps/ocean.blue_128,28,149,45-1600.png", seaFloorPeakHeight);
+    layer->move(ofVec3f(0, 0, -(seaFloorPeakHeight + terrainPeakHeight * .2)));
+    layer->setScale(ofVec3f(focusLayer->heightMap.getWidth() / layer->heightMap.getWidth(), focusLayer->heightMap.getHeight() / layer->heightMap.getHeight(), 1));
+
+    layer = addTerrainLayer("P PLATE", "maps/bathymetry_128,28,149,45-1600-p-plate.png", "maps/ocean.blue_128,28,149,45-1600.png", seaFloorPeakHeight);
+    layer->move(ofVec3f(0, 0, -(seaFloorPeakHeight + terrainPeakHeight * .2)));
+    layer->setScale(ofVec3f(focusLayer->heightMap.getWidth() / layer->heightMap.getWidth(), focusLayer->heightMap.getHeight() / layer->heightMap.getHeight(), 1));*/
     
     layer = addTerrainLayer("MANTLE", "maps/heightmap.mantle.png", "maps/mantle.png", terrainPeakHeight);
     layer->move(ofVec3f(0, 0, -(terrainPeakHeight + seaFloorPeakHeight + terrainPeakHeight * .1)));
     layer->setScale(ofVec3f(focusLayer->heightMap.getWidth() / layer->heightMap.getWidth(), focusLayer->heightMap.getHeight() / layer->heightMap.getHeight(), 1));
-    layer->lighting = false;
+    //layer->lighting = false;
  
     
     ofSetSmoothLighting(true);
     lightAttenuation = LIGHT_ATTENUATION;
     animateLight = -1;
+    animatePlate = -1;
     
     ofLight* pointLight = new ofLight();
 	pointLight->setPointLight();
@@ -146,6 +161,8 @@ void mainApp::setup()
     calibrationMode = false;
     drawTerrainEnabled = true;
     drawTexturesEnabled = true;
+    drawVideoEnabled = true;
+    drawAnimationEnabled = false;
     drawTerrainGridEnabled = false;
     drawMapFeaturesEnabled = false;
     drawMiniMapEnabled = false;
@@ -155,7 +172,8 @@ void mainApp::setup()
     prevWaterLevel = 0.0;
     reliefSendMode = RELIEF_SEND_OFF;
     fullscreenEnabled = false;
-    lightingEnabled = true;
+    dualscreenEnabled = false;
+    lightingEnabled = false;
     ofSetFullscreen(fullscreenEnabled);
     
 #if (IS_RELIEF_CEILING)
@@ -176,7 +194,7 @@ void mainApp::setup()
     cam.enableOrtho();
 #endif
     
-    layersGUI = new ofxUICanvas(spacing, spacing, guiW, ofGetHeight() * .6);     
+    layersGUI = new ofxUICanvas(spacing, spacing, guiW, ofGetHeight());
     for (int i = 0; i < terrainLayers.size(); i++) {
         TerrainLayer *layer = terrainLayers.at(i);
         layersGUI->addToggle(layer->layerName, true, dim, dim);
@@ -185,13 +203,14 @@ void mainApp::setup()
 
 #if !(TARGET_OS_IPHONE)
 	layersGUI->addToggle("FULLSCREEN", fullscreenEnabled, dim, dim);
+	layersGUI->addToggle("DUALSCREEN", dualscreenEnabled, dim, dim);
 	layersGUI->addToggle("ORTHOGONAL", cam.getOrtho(), dim, dim);
     //    layersGUI->addButton("RESET CAMERA", false, dim, dim);
 #endif
     layersGUI->addToggle("LIGHTING", lightingEnabled, dim, dim);
     layersGUI->addSlider("ATTENUATION", 0, 1.5, lightAttenuation, guiW - spacing * 2, dim);
 	layersGUI->addWidgetDown(new ofxUILabel("", OFX_UI_FONT_LARGE));
-    layersGUI->addSlider("ZOOM", MIN_ZOOM, MAX_ZOOM, 1 / terrainUnitToScreenUnit, guiW - spacing * 2, dim);
+    layersGUI->addSlider("ZOOM", MIN_ZOOM, MAX_ZOOM, 1 / terrainUnitToGlUnit, guiW - spacing * 2, dim);
     layersGUI->addSlider("GLOBAL SCALE", .1, 4, globalScale, guiW - spacing * 2, dim);
 	layersGUI->addWidgetDown(new ofxUILabel("", OFX_UI_FONT_LARGE));
 	layersGUI->addWidgetDown(new ofxUILabel("", OFX_UI_FONT_LARGE)); 
@@ -202,6 +221,9 @@ void mainApp::setup()
 	layersGUI->addToggle("MINIMAP", drawMiniMapEnabled, dim, dim);
 	layersGUI->addToggle("WATER", drawWaterEnabled, dim, dim);
     layersGUI->addSlider("WATER LEVEL", 0, 5.0, waterLevel, guiW - spacing * 2, dim);
+    #if (USE_QCAR || USE_ARTK)
+	layersGUI->addToggle("VIDEO", drawVideoEnabled, dim, dim);
+    #endif
 	layersGUI->addToggle("DEBUG", drawDebugEnabled, dim, dim);
 	layersGUI->addToggle("WIREFRAMES", drawWireframesEnabled, dim, dim);
     
@@ -237,6 +259,18 @@ void mainApp::setup()
 	calibrationGUI->addToggle("RECEIVING", false, dim, dim);
 	calibrationGUI->addWidgetDown(new ofxUILabel("", OFX_UI_FONT_LARGE)); 
 	calibrationGUI->addWidgetDown(new ofxUILabel("", OFX_UI_FONT_LARGE)); 
+
+    #if (USE_ARTK)
+    calibrationGUI->addSlider("VIDEO THRESH", 0, 255, artkController.videoThreshold, guiW - spacing * 2, dim);
+    #if (USE_LIBDC)
+    calibrationGUI->addSlider("VIDEO EXPOSURE", 0, 1, artkController.camera.getExposure(), guiW - spacing * 2, dim);
+    calibrationGUI->addSlider("VIDEO GAIN", 0, 2, artkController.camera.getGain(), guiW - spacing * 2, dim);
+    #endif
+    #endif
+    
+	calibrationGUI->addWidgetDown(new ofxUILabel("", OFX_UI_FONT_LARGE));
+	calibrationGUI->addWidgetDown(new ofxUILabel("", OFX_UI_FONT_LARGE));
+    
     calibrationGUI->addSlider("GLOBAL SCALE", .1, 4, globalScale, guiW - spacing * 2, dim);
     calibrationGUI->addSlider("RELIEF OFFSET X", -200, 200, reliefOffset.x, guiW - spacing * 2, dim);
     calibrationGUI->addSlider("RELIEF OFFSET Y", -200, 200, reliefOffset.y, guiW - spacing * 2, dim);
@@ -272,7 +306,6 @@ void mainApp::onPan(const void* sender, ofVec3f & distance) {
         } else {
             layer->opacity = 1.f;
         }
-        layer->visible = layer->opacity > .1;
     }
 }
 
@@ -289,7 +322,7 @@ void mainApp::onViewpointChange(const void* sender, ofNode & viewpoint) {
 void mainApp::resetCam()
 {
     cam.reset();
-    cam.setPosition(mapCenter + ofVec3f(0, 0, 2 / terrainUnitToScreenUnit));
+    cam.setPosition(mapCenter + ofVec3f(0, 4, 2 / terrainUnitToGlUnit));
     cam.lookAt(mapCenter);
     
     
@@ -314,7 +347,7 @@ void mainApp::guiEvent(ofxUIEventArgs &e)
         ofxUIToggle *toggle = (ofxUIToggle *) e.widget; 
         bool value = toggle->getValue(); 
 
-        if (name == "CRUST" || name == "PLATES" || name == "MANTLE") {
+        if (name == "CRUST" || name == "PLATES" || name == "J PLATE" || name == "P PLATE" || name == "MANTLE") {
             for (int i = 0; i < terrainLayers.size(); i++) {
                 TerrainLayer *layer = terrainLayers.at(i);
                 if (layer->layerName == name) {
@@ -327,6 +360,9 @@ void mainApp::guiEvent(ofxUIEventArgs &e)
         if (name == "FULLSCREEN") {
             fullscreenEnabled = value;
             ofSetFullscreen(fullscreenEnabled);
+        }
+        if (name == "DUALSCREEN") {
+            dualscreenEnabled = value;
         }
         if (name == "LIGHTING") {
             lightingEnabled = value;
@@ -357,6 +393,9 @@ void mainApp::guiEvent(ofxUIEventArgs &e)
         }
         if (name == "MINIMAP") {
             drawMiniMapEnabled = value;
+        }
+        if (name == "VIDEO") {
+            drawVideoEnabled = value;
         }
         if (name == "DEBUG") {
             drawDebugEnabled = value;
@@ -392,7 +431,7 @@ void mainApp::guiEvent(ofxUIEventArgs &e)
             lightAttenuation = value;
         }
         if (name == "ZOOM") {
-            terrainUnitToScreenUnit = 1 / value;
+            terrainUnitToGlUnit = 1 / value;
             updateVisibleMap(true);
         }
         if (name == "WATER LEVEL") {
@@ -402,8 +441,21 @@ void mainApp::guiEvent(ofxUIEventArgs &e)
             message.addFloatArg(waterLevel);
             reliefMessageSend(message);
         }
+        #if (USE_ARTK)
+        if (name == "VIDEO THRESH") {
+            artkController.videoThreshold = value;
+        }
+        #if (USE_LIBDC)
+        if (name == "VIDEO EXPOSURE") {
+            artkController.camera.setExposure(value);
+        }
+        if (name == "VIDEO GAIN") {
+            artkController.camera.setGain(value);
+        }
+        #endif
+        #endif
         if (name == "GLOBAL SCALE") {
-            globalScale = value; 
+            globalScale = value;
         }
         if (name == "RELIEF OFFSET X") {
             reliefOffset.x = value; 
@@ -421,6 +473,30 @@ void mainApp::guiEvent(ofxUIEventArgs &e)
 
 void mainApp::update() 
 {
+    fingerMovie.update();
+    
+    for (int i = lights.size() - 1; i >= 0; i--) {
+        ofLight* light = lights.at(i);
+        if (animateLight == i) {
+            float l = 4;
+            float p = l * sin(ofGetElapsedTimef() - animateLightStart);
+            p -= l / 2;
+            light->setPosition(animateLightStartPos + ofVec3f(0, p, 0));
+        }
+    }
+
+    for (int i = terrainLayers.size() - 1; i >= 0; i--) {
+        TerrainLayer* layer = terrainLayers.at(i);
+        if (animatePlate == i) {
+            float l = 7;
+            float p = l * cos(ofGetElapsedTimef() - animatePlateStart);
+            float j = 0.0000000002;
+            layer->setPosition(animatePlateStartPos + ofVec3f(0, p, 0) + ofVec3f(rand() * j, rand() * j, rand() * j));
+        }
+    }
+
+    
+    
     reliefUpdate();
     mouseController.update();
 
@@ -471,27 +547,29 @@ void mainApp::drawTerrain(bool wireframe) {
             } else {
                 light->disable();
             }
-            //ofLog() << 1 / terrainUnitToScreenUnit / SCREEN_UNIT_TO_TERRAIN_UNIT_INITIAL;
+            //ofLog() << 1 / terrainUnitToGlUnit / SCREEN_UNIT_TO_TERRAIN_UNIT_INITIAL;
         }
     }
 
     ofPushMatrix();
     ofTranslate(terrainSW + terrainExtents / 2);
-    ofScale(terrainToHeightMapScale.x, terrainToHeightMapScale.y, terrainToHeightMapScale.z); 
+    ofScale(terrainToHeightMapScale.x, terrainToHeightMapScale.y, terrainToHeightMapScale.z);
     int s = terrainLayers.size();
 
     ofEnableBlendMode(OF_BLENDMODE_ALPHA);
     
     if (drawDebugEnabled) {
         ofSetColor(0, 255, 255);
-        //ofSphere(mapCenter.x, mapCenter.y, mapCenter.z, 10);
+        ofSphere(mapCenter.x, mapCenter.y, mapCenter.z, 10);
     }
     
     for (int i = s - 1; i >= 0; i--) {
         TerrainLayer *layer = terrainLayers.at(i);
         if (layer->visible) {
-            bool drawTexture = layer->drawTexture;
+            bool drawTexture = layer->drawTexture,
+                visible = layer->visible;
             layer->drawTexture = drawTexture && drawTexturesEnabled && !wireframe;
+            layer->visible = visible && layer->opacity > .1;
             layer->drawWireframe = wireframe;
             if (lightingEnabled && layer->lighting) {
                 ofEnableLighting();
@@ -500,6 +578,7 @@ void mainApp::drawTerrain(bool wireframe) {
             }
             layer->draw();
             layer->drawTexture = drawTexture;
+            layer->visible = visible;
         }
     }
     
@@ -538,69 +617,84 @@ void mainApp::drawLights() {
             ofLine(pos - ofVec3f(0, 0, lightR), pos + ofVec3f(0, 0, lightR));
             ofLine(pos - ofVec3f(lightR / 2, lightR / 2, 0), pos + ofVec3f(lightR / 2, lightR / 2, 0));
             ofLine(pos - ofVec3f(0, lightR / 2, lightR / 2), pos + ofVec3f(0, lightR / 2, lightR / 2));
-
-        
-            if (animateLight == i) {
-                float l = 4;
-                float p = l * sin(ofGetElapsedTimef() - animateLightStart);
-                p -= l / 2;
-                light->setPosition(animateLightStartPos + ofVec3f(0, p, 0));
-            }
         }
     
     }
     
 }
 
-void mainApp::draw()
-{
-    #if (USE_QCAR)
-    ofxQCAR * qcar = ofxQCAR::getInstance();
-    qcar->draw();
-    
-    if (qcar->hasFoundMarker()) {
-        string markerName = qcar->getMarkerName();
-        if (markerName == "MarkerQ") {
-            reliefOffset = reliefToMarker1Offset;
-        } else if (qcar->getMarkerName() == "MarkerC") {
-            reliefOffset = reliefToMarker2Offset;
-        } else {
-            reliefOffset = ofVec3f(0, 0, 0);
-        }
-        modelViewMatrix = qcar->getProjectionMatrix();
-        projectionMatrix = qcar->getModelViewMatrix();
-        noMarkerSince = 0;
-    }
-    
-    bool useARMatrix = noMarkerSince > -NO_MARKER_TOLERANCE_FRAMES;
-    #else
-    bool useARMatrix = false;
+void mainApp::draw() {
+    ofSetColor(255);
     ofBackground(COLOR_BACKGROUND);
-    #endif
-    
-    #if (USE_ARTK)
-    if (artkEnabled) {
-        artkController.draw(drawDebugEnabled);
+
+    if (drawAnimationEnabled) {
+        fingerMovie.draw(-ofGetWidth()/2,-ofGetHeight()/2,ofGetWidth()*2,ofGetHeight()*2);
+        fingerMovie.play();
+        
     }
-    #endif
+
+    int w = ofGetWidth();
+    int h = ofGetHeight();
+    if (dualscreenEnabled) {
+        w /= 2;
+        h = w * 3 / 4;
+        drawWorld(USE_ARTK || USE_QCAR, w, 0, w, h);
+    }
+    drawWorld(false, 0, 0, w, h);
+
+    if (!calibrationMode) {
+        mainApp::drawGUI();
+    }
+}
+
+void mainApp::drawWorld(bool useARMatrix, int viewportX, int viewportY, int viewportW, int viewportH)
+{
+    if (useARMatrix) {
+        #if (USE_QCAR)
+        ofxQCAR * qcar = ofxQCAR::getInstance();
+        qcar->draw();
+        
+        if (qcar->hasFoundMarker()) {
+            string markerName = qcar->getMarkerName();
+            if (markerName == "MarkerQ") {
+                reliefOffset = reliefToMarker1Offset;
+            } else if (qcar->getMarkerName() == "MarkerC") {
+                reliefOffset = reliefToMarker2Offset;
+            } else {
+                reliefOffset = ofVec3f(0, 0, 0);
+            }
+            modelViewMatrix = qcar->getProjectionMatrix();
+            projectionMatrix = qcar->getModelViewMatrix();
+            noMarkerSince = 0;
+        }
+        //useARMatrix = noMarkerSince > -NO_MARKER_TOLERANCE_FRAMES;
+        #elif (USE_ARTK)
+        if (artkEnabled) {
+            artkController.draw(drawVideoEnabled, drawDebugEnabled || calibrationMode, false);
+        }
+        #endif
+    }
     
     ofPushView();
         
-        #if (USE_QCAR)
         if (useARMatrix) {
-            glMatrixMode(GL_PROJECTION);
-            glLoadMatrixf(modelViewMatrix.getPtr());
-            
-            glMatrixMode(GL_MODELVIEW );
-            glLoadMatrixf(projectionMatrix.getPtr());
+            #if (USE_QCAR)
+            if (useARMatrix) {
+                glMatrixMode(GL_PROJECTION);
+                glLoadMatrixf(modelViewMatrix.getPtr());
+                
+                glMatrixMode(GL_MODELVIEW );
+                glLoadMatrixf(projectionMatrix.getPtr());
+            }
+            #elif (USE_ARTK)
+            artkController.applyMatrix();
+            #endif
+        } else {
+            cam.begin();
         }
-        #elif (USE_ARTK)
-        artkController.applyMatrix();
-        #else
 
-        cam.begin();
-        #endif
-    
+        glViewport(viewportX, viewportY, viewportW, viewportH);
+
         ofPushMatrix();
         
             #if (!USE_QCAR)
@@ -616,9 +710,13 @@ void mainApp::draw()
             #endif
             
             ofPushMatrix();
-                ofScale(1 / terrainUnitToScreenUnit, 1 / terrainUnitToScreenUnit, 1 / terrainUnitToScreenUnit);
+                // first, we scale by the inverse of the terrain over screen unit ratio, which enables
+                // us to subsequently use terrain units (degrees lng, lat) when drawing
+                ofScale(1 / terrainUnitToGlUnit, 1 / terrainUnitToGlUnit, 1 / terrainUnitToGlUnit);
     
                 ofPushMatrix();
+                    // second, we translate by negative mapCenter so that we are not looking at [zero-meridian, equator]
+                    // but at our region of interest instead.
                     ofTranslate(-mapCenter);
 
                     if (drawTerrainEnabled && !calibrationMode) {
@@ -647,7 +745,7 @@ void mainApp::draw()
                         drawTerrainGrid();
                     }
         
-                    if (drawDebugEnabled) {
+                    if (drawDebugEnabled && lightingEnabled) {
                         drawLights();
                     }
     
@@ -672,21 +770,19 @@ void mainApp::draw()
         ofPopMatrix();
     
     ofPopView();
-    
-    #if (USE_QCAR)
-    if (qcar->hasFoundMarker() && (drawDebugEnabled || calibrationMode)) {
-        ofSetColor(255);
-        qcar->drawMarkerCenter();
+
+    if (useARMatrix) {
+        #if (USE_QCAR)
+                if (qcar->hasFoundMarker() && (drawDebugEnabled || calibrationMode)) {
+                    ofSetColor(255);
+                    qcar->drawMarkerCenter();
+                }
+        #elif (USE_ARTK)
+        #endif
+    } else {
+        cam.end();
     }
-    #elif (USE_ARTK)
-    #else
-    cam.end();
-    #endif
-    
-    
-    if (!calibrationMode) {
-        mainApp::drawGUI();
-    }
+  
 }
 
 void mainApp::drawGUI() 
@@ -808,7 +904,7 @@ void mainApp::drawGUI()
         
         if (calibrationMode) {
             msg += "\n---CALIBRATION MODE---";
-            msg += "\nreliefUnitToScreenUnit: " + ofToString(reliefUnitToScreenUnit);
+            msg += "\nrealworldUnitToGlUnit: " + ofToString(realworldUnitToGlUnit);
             msg += "\nreliefOffset: " + ofToString(reliefOffset);
         }    
         
@@ -830,11 +926,11 @@ void mainApp::drawGrid(ofVec2f sw, ofVec2f ne, int subdivisionsX, int subdivisio
 
 void mainApp::updateVisibleMap(bool updateServer)
 {
-    reliefUnitToTerrainUnit = reliefUnitToScreenUnit / (1 / terrainUnitToScreenUnit);
+    realworldUnitToTerrainUnit = realworldUnitToGlUnit / (1 / terrainUnitToGlUnit);
     
     normalizedMapCenter = (mapCenter - terrainSW) / terrainExtents;    
     normalizedMapCenter.y = 1 - normalizedMapCenter.y;
-    normalizedReliefSize = ofVec2f(RELIEF_SIZE_X * reliefUnitToTerrainUnit / terrainExtents.x, RELIEF_SIZE_Y * reliefUnitToTerrainUnit / terrainExtents.y);
+    normalizedReliefSize = ofVec2f(RELIEF_SIZE_X * realworldUnitToTerrainUnit / terrainExtents.x, RELIEF_SIZE_Y * realworldUnitToTerrainUnit / terrainExtents.y);
     
     terrainCrop.allocate(normalizedReliefSize.x * focusLayer->textureImage.width, normalizedReliefSize.y * focusLayer->textureImage.height, OF_IMAGE_COLOR);
     featureMapCrop.allocate(normalizedReliefSize.x * featureMap.width, normalizedReliefSize.y * featureMap.height, OF_IMAGE_COLOR_ALPHA);
@@ -898,7 +994,7 @@ void mainApp::updateVisibleMap(bool updateServer)
         m.setAddress("/relief/broadcast/map/position");
         m.addFloatArg(mapCenter.x);
         m.addFloatArg(mapCenter.y);
-        m.addFloatArg(terrainUnitToScreenUnit);
+        m.addFloatArg(terrainUnitToGlUnit);
         //ofLog() << "broadcast new map position";
         reliefMessageSend(m);
     }
@@ -916,12 +1012,12 @@ void mainApp::reliefMessageReceived(ofxOscMessage m)
         ofLog() << "reliefMessageReceived from " << m.getRemoteIp() << ": " << m.getAddress();
         mapCenter.x = m.getArgAsFloat(0);
         mapCenter.y = m.getArgAsFloat(1);
-        terrainUnitToScreenUnit = m.getArgAsFloat(2);
+        terrainUnitToGlUnit = m.getArgAsFloat(2);
         
         ofxUISlider *slider = (ofxUISlider *)layersGUI->getWidget("ZOOM");
-        slider->setValue(1 / terrainUnitToScreenUnit);
+        slider->setValue(1 / terrainUnitToGlUnit);
         
-        ofLog() << "position: " << mapCenter << ", terrainUnitToScreenUnit: " << terrainUnitToScreenUnit;
+        ofLog() << "position: " << mapCenter << ", terrainUnitToGlUnit: " << terrainUnitToGlUnit;
         updateVisibleMap(false);
     }
     if (m.getAddress() == "/relief/broadcast/waterlevel") {
@@ -970,7 +1066,7 @@ void mainApp::drawTerrainGrid() {
 void mainApp::drawReliefGrid() 
 {
     ofPushMatrix();
-    ofScale(reliefUnitToScreenUnit, reliefUnitToScreenUnit, reliefUnitToScreenUnit);
+    ofScale(realworldUnitToGlUnit, realworldUnitToGlUnit, realworldUnitToGlUnit);
     float reliefScreenW = RELIEF_SIZE_X;
     float reliefScreenH = RELIEF_SIZE_Y;
     ofEnableBlendMode(OF_BLENDMODE_ALPHA);
@@ -983,7 +1079,7 @@ void mainApp::drawReliefGrid()
 void mainApp::drawReliefFrame() 
 {
     ofPushMatrix();
-    ofScale(reliefUnitToScreenUnit, reliefUnitToScreenUnit, reliefUnitToScreenUnit);
+    ofScale(realworldUnitToGlUnit, realworldUnitToGlUnit, realworldUnitToGlUnit);
     float reliefScreenW = RELIEF_SIZE_X;
     float reliefScreenH = RELIEF_SIZE_Y;
     
@@ -1313,6 +1409,19 @@ void mainApp::keyPressed  (int key){
             } else {
                 animateLight = -1;
             }
+            break;
+        case 98:
+            if (animatePlate < 0) {
+                animatePlate = 2;
+                animatePlateStart = ofGetElapsedTimef();
+                animatePlateStartPos = terrainLayers.at(animatePlate)->getPosition();
+            } else {
+                animatePlate = -1;
+            }
+            break;
+        case 110:
+            drawAnimationEnabled = true;
+            break;
             
         #if (USE_ARTK)
         // t
@@ -1374,9 +1483,9 @@ void mainApp::handlePinch(ofPinchEventArgs &e) {
     /*
      float scale = e.scale * .01;
      if (e.scale > 1) {
-     terrainUnitToScreenUnit += (terrainUnitToScreenUnit * scale);
+     terrainUnitToGlUnit += (terrainUnitToGlUnit * scale);
      } else {
-     terrainUnitToScreenUnit -= (terrainUnitToScreenUnit * scale);
+     terrainUnitToGlUnit -= (terrainUnitToGlUnit * scale);
      }
      */
 }
@@ -1412,7 +1521,7 @@ void mainApp::touchMoved(ofTouchEventArgs & touch)
     touchPoint = lastTouchPoint;
     
     if (isPanning) {
-        mapCenter += delta * terrainUnitToScreenUnit;      
+        mapCenter += delta * terrainUnitToGlUnit;      
         updateVisibleMap(true);
     }*/
 }

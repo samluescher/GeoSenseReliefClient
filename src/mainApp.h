@@ -15,15 +15,15 @@
 #define USE_QCAR !(USE_ARTK)
 #else
 #define USE_QCAR false
-#define USE_ARTK false
+#define USE_ARTK true
 #include "KeyboardController.h"
 #endif
 
 #if (USE_ARTK)
 #include "ARTKController.h"
-#define TERRAIN_OPACITY .75
+#define TERRAIN_OPACITY 1.f
 #else 
-#define TERRAIN_OPACITY 1.0
+#define TERRAIN_OPACITY 1.f
 #endif
 
 #include "OscReceiverController.h"
@@ -130,7 +130,7 @@ public:
     ofVec2f touchPoint;
     int deviceOrientation;
     float startTime;
-    float terrainUnitToScreenUnit, reliefUnitToScreenUnit, reliefUnitToTerrainUnit;
+    float terrainUnitToGlUnit, realworldUnitToGlUnit, realworldUnitToTerrainUnit;
     bool calibrationMode, zoomMode;
     float timeSinceLastDoubleTap;
     ofVec3f reliefOffset, reliefToMarker1Offset, reliefToMarker2Offset;
@@ -156,11 +156,11 @@ public:
     void drawLights();
     void drawMapFeatures();
     void drawGUI();
+    void drawWorld(bool externalMatrix, int viewportX, int viewportY, int viewportW, int viewportH);
     void updateVisibleMap(bool updateServer);
     
-    int animateLight;
-    
-    bool drawTerrainEnabled, drawTexturesEnabled, drawTerrainGridEnabled, drawDebugEnabled, drawWireframesEnabled, drawMapFeaturesEnabled, drawMiniMapEnabled, drawWaterEnabled, tetherWaterEnabled, fullscreenEnabled, lightingEnabled;
+    bool drawTerrainEnabled, drawTexturesEnabled, drawTerrainGridEnabled, drawDebugEnabled, drawWireframesEnabled, drawMapFeaturesEnabled, drawMiniMapEnabled, drawWaterEnabled, tetherWaterEnabled, drawAnimationEnabled,
+        drawVideoEnabled, fullscreenEnabled, dualscreenEnabled, lightingEnabled;
     
     void reliefMessageReceived(ofxOscMessage m);
     void updateRelief();
@@ -168,9 +168,15 @@ public:
     
     int cursorNotMovedSince;
     
+    int animateLight;
     float animateLightStart;
     ofVec3f animateLightStartPos;
     
+    int animatePlate;
+    float animatePlateStart;
+    ofVec3f animatePlateStartPos;
+    
+    ofVideoPlayer 		fingerMovie;
     
 #if (TARGET_OS_IPHONE)
     ofPinchGestureRecognizer *pinchRecognizer;
