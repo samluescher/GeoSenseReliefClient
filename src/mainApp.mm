@@ -38,7 +38,7 @@ ofVec3f mainApp::surfaceAt(ofVec2f pos) {
 //--------------------------------------------------------------
 void mainApp::setup() 
 {
-    ofSetLogLevel(OF_LOG_VERBOSE);
+    //ofSetLogLevel(OF_LOG_VERBOSE);
     
 #if (USE_QCAR)
     ofLog() << "*** Initializing QCAR";
@@ -67,7 +67,7 @@ void mainApp::setup()
     mapCenter = fukushima - ofVec3f(2.75, 0, 0); // initially center on off-shore Fukushima
     
     terrainUnitToGlUnit = 1 / GL_UNIT_TO_TERRAIN_UNIT_INITIAL;
-    realworldUnitToGlUnit = 40.0f;
+    realworldUnitToGlUnit = 3.5f;
     globalScale = 1.f;
     
     // offset of physical Relief to physical marker
@@ -260,6 +260,8 @@ void mainApp::setup()
 	calibrationGUI->addWidgetDown(new ofxUILabel("", OFX_UI_FONT_LARGE)); 
 	calibrationGUI->addWidgetDown(new ofxUILabel("", OFX_UI_FONT_LARGE)); 
 
+    calibrationGUI->addSlider("REAL WORLD SCALE", realworldUnitToGlUnit * .33f, realworldUnitToGlUnit * 3, realworldUnitToGlUnit, guiW - spacing * 2, dim);
+    
     #if (USE_ARTK)
     calibrationGUI->addSlider("VIDEO THRESH", 0, 255, artkController.videoThreshold, guiW - spacing * 2, dim);
     #if (USE_LIBDC)
@@ -331,7 +333,7 @@ void mainApp::resetCam()
     //cam.update();
     //cam.disableMouseInput();
      
-    
+    update();
     updateVisibleMap(true);
 
 }
@@ -456,6 +458,10 @@ void mainApp::guiEvent(ofxUIEventArgs &e)
         }
         #endif
         #endif
+        if (name == "REAL WORLD SCALE") {
+            realworldUnitToGlUnit = value;
+            ofLog() << realworldUnitToGlUnit;
+        }
         if (name == "GLOBAL SCALE") {
             globalScale = value;
         }
@@ -476,6 +482,7 @@ void mainApp::guiEvent(ofxUIEventArgs &e)
 void mainApp::update() 
 {
     fingerMovie.update();
+    realworldUnitToTerrainUnit = realworldUnitToGlUnit / (1 / terrainUnitToGlUnit);
     
     for (int i = lights.size() - 1; i >= 0; i--) {
         ofLight* light = lights.at(i);
@@ -514,6 +521,17 @@ void mainApp::update()
     }
     if (leapController.justTapped) {
         cout << "just tapped" << endl;
+
+        #define LEAP_OFFSET ofVec3f(0, 100, 0)
+        
+        MapWidget *widget = new MapWidget();
+        ofVec3f mappedPos = (ofVec3f(leapController.pos.x, -leapController.pos.z, 1)
+            + LEAP_OFFSET)
+            * realworldUnitToTerrainUnit;
+        ofLog() << mappedPos << "  " << realworldUnitToTerrainUnit;
+        widget->setPosition(mapCenter + mappedPos);
+        widget->setLifetime(20);
+        mapWidgets.push_back(widget);
         
 //        mapCenter.x = leapController.pos.x;
 //        mapCenter.y = leapController.pos.y;
@@ -966,9 +984,7 @@ void mainApp::drawGrid(ofVec2f sw, ofVec2f ne, int subdivisionsX, int subdivisio
 
 void mainApp::updateVisibleMap(bool updateServer)
 {
-    realworldUnitToTerrainUnit = realworldUnitToGlUnit / (1 / terrainUnitToGlUnit);
-    
-    normalizedMapCenter = (mapCenter - terrainSW) / terrainExtents;    
+    normalizedMapCenter = (mapCenter - terrainSW) / terrainExtents;
     normalizedMapCenter.y = 1 - normalizedMapCenter.y;
     normalizedReliefSize = ofVec2f(RELIEF_SIZE_X * realworldUnitToTerrainUnit / terrainExtents.x, RELIEF_SIZE_Y * realworldUnitToTerrainUnit / terrainExtents.y);
     
@@ -1359,11 +1375,6 @@ void mainApp::keyPressed  (int key){
     char filename[40];
     strftime(filename, 40, "%Y-%m-%d %H-%M-%S", timeinfo );
     std::stringstream ss;
-
-    MapWidget *widget = new MapWidget();
-    widget->setPosition(mapCenter);
-    widget->setLifetime(20);
-    mapWidgets.push_back(widget);
     
     switch (key) {
         case 99:
