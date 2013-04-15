@@ -11,6 +11,7 @@
 
 MapWidget::MapWidget() {
     lifetime = -1;
+    widgetId = -1;
     baseColor = COLOR_MAP_WIDGET;
 }
 

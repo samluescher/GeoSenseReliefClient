@@ -15,7 +15,8 @@ private:
     
 public:
     MapWidget();
-    
+    int widgetId;
+    string widgetName;
     void customDraw();
     void update();
     void setBaseColor(ofColor color);
