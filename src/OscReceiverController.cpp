@@ -12,22 +12,23 @@
 OscReceiverController::OscReceiverController() {
     
     // arbitrary for now, will fix later
-    float buffer_size = 75.f;
+    float kinect_h = 75.f;
+    float buffer_size = 222.f;
     
     float w = 360.f + buffer_size;
-    float h = 227.f + buffer_size;
+    float h = 227.f;
     
     //    0 ---- 1
     //   /        \
     //  /          \
     // 3 ---------- 2
     
-    p0 = ofVec3f(-w/2.0, -buffer_size, 0);
-    p1 = ofVec3f( w/2.0, -buffer_size, 0);
-    p2 = ofVec3f( w/2.0, -buffer_size - h, 0);
-    p3 = ofVec3f(-w/2.0, -buffer_size - h, 0);
+    p0 = ofVec3f(-w/2.0, -kinect_h, 0);
+    p1 = ofVec3f( w/2.0, -kinect_h, 0);
+    p2 = ofVec3f( w/2.0, -kinect_h - h, 0);
+    p3 = ofVec3f(-w/2.0, -kinect_h - h, 0);
     
-    center = p0 + ofVec3f(w/2.0,-h/2.0,0);
+    center = p3 + ofVec3f(w/2.0,h/2.0,0);
     
     n = (p3 - p0).cross(p1 - p0);
 }
