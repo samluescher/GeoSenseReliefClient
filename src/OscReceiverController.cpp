@@ -12,19 +12,22 @@
 OscReceiverController::OscReceiverController() {
     
     // arbitrary for now, will fix later
-    center = ofVec3f(0,0,0);
-    float w = 360;
-    float h = 227;
+    float buffer_size = 75.f;
     
-    // p0 ---- p1
-    //  |       |
-    //  |       |
-    // p3 ---- p2
+    float w = 360.f + buffer_size;
+    float h = 227.f + buffer_size;
     
-    p0 = center - ofVec3f(-w/2.0, -75.f, 0);
-    p1 = center - ofVec3f( w/2.0, -75.f, 0);
-    p2 = center - ofVec3f( w/2.0, -75.f - h, 0);
-    p3 = center - ofVec3f(-w/2.0, -75.f - h, 0);
+    //    0 ---- 1
+    //   /        \
+    //  /          \
+    // 3 ---------- 2
+    
+    p0 = ofVec3f(-w/2.0, -buffer_size, 0);
+    p1 = ofVec3f( w/2.0, -buffer_size, 0);
+    p2 = ofVec3f( w/2.0, -buffer_size - h, 0);
+    p3 = ofVec3f(-w/2.0, -buffer_size - h, 0);
+    
+    center = p0 + ofVec3f(w/2.0,-h/2.0,0);
     
     n = (p3 - p0).cross(p1 - p0);
 }
@@ -60,6 +63,7 @@ void OscReceiverController::oscMessageReceived(ofxOscMessage m) {
             MapWidget viewpoint;
             viewpoint.setPosition(pos);
             viewpoint.lookAt(intersectionPoint);
+            viewpoint.setOrientation(dir);
             viewpoint.widgetName = "viewpoint";
             viewpoint.widgetId = _id;        
             cout << intersectionPoint << endl;

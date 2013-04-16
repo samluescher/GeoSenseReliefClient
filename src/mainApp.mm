@@ -320,7 +320,7 @@ void mainApp::onZoom(const void* sender, float & factor) {
 void mainApp::onViewpointChange(const void* sender, MapWidget & viewpoint) {
     cout << "onViewPointChange" << endl;
     cam.setPosition(viewpoint.getPosition());
-    cam.lookAt(viewpoint.getLookAtDir());
+    cam.lookAt(mapCenter);//viewpoint.getLookAtDir());
     
     bool addNew = true;
     MapWidget *widget;
