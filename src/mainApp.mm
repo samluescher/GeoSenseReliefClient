@@ -155,6 +155,10 @@ void mainApp::setup()
     // ripple (from ofxFX)
     rip.allocate(555,555);
     
+    ofImage ripBackground;
+    ripBackground.loadImage("maps/heightmap.mantle.png");
+    rip.setTexture(ripBackground.getTextureReference(),1);
+    
     
     loadFeaturesFromGeoJSONFile("json/japan-prefectures.json");
     loadFeaturesFromGeoJSONFile("json/plateboundaries.json");
@@ -841,7 +845,7 @@ void mainApp::draw() {
     ofSetColor(255,255);
     
     rip.draw(0,0);
-    ofDrawBitmapString("ofxRipples ( damping = " + ofToString(rip.damping) + " )", 15,15);
+    //ofDrawBitmapString("ofxRipples ( damping = " + ofToString(rip.damping) + " )", 15,15);
     
 
 
