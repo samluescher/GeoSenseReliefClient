@@ -152,6 +152,10 @@ void mainApp::setup()
     //loadFeaturesFromFile("json/safecast.8.json");
     //loadFeaturesFromFile("json/earthquakes.json");
     
+    // ripple (from ofxFX)
+    rip.allocate(555,555);
+    
+    
     loadFeaturesFromGeoJSONFile("json/japan-prefectures.json");
     loadFeaturesFromGeoJSONFile("json/plateboundaries.json");
     loadFeaturesFromGeoJSONFile("json/tsunamiinundationmerge_jpf.json");
@@ -608,6 +612,15 @@ void mainApp::guiEvent(ofxUIEventArgs &e)
 
 void mainApp::update() 
 {
+    // ripple (from ofxFX)
+    rip.begin();
+    ofFill();
+    ofSetColor(ofNoise( ofGetFrameNum() ) * 255 * 5, 255);
+    ofEllipse(mouseX,mouseY, 10,10);
+    rip.end();
+    rip.update();
+    
+    
     fingerMovie.update();
     realworldUnitToTerrainUnit = realworldUnitToGlUnit / (1 / terrainUnitToGlUnit);
     
@@ -823,6 +836,14 @@ void mainApp::draw() {
     glow.draw(0, 0);
     ofDisableAlphaBlending();
     */
+    
+    // ripple (from ofxFX)
+    ofSetColor(255,255);
+    
+    rip.draw(0,0);
+    ofDrawBitmapString("ofxRipples ( damping = " + ofToString(rip.damping) + " )", 15,15);
+    
+
 
 }
 
@@ -1663,7 +1684,7 @@ void mainApp::mouseMoved(int x, int y ){
 
 //--------------------------------------------------------------
 void mainApp::mouseDragged(int x, int y, int button){
-    
+    rip.damping = ofMap(y, 0, ofGetHeight(), 0.9, 1.0, true);
 }
 
 //--------------------------------------------------------------

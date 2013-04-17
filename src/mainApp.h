@@ -203,5 +203,7 @@ public:
     
 	ofxUICanvas *calibrationGUI, *layersGUI;
     void guiEvent(ofxUIEventArgs &e);
+    
+    ofxRipples rip;
 };
 
