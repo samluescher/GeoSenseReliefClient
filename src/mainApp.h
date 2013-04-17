@@ -30,7 +30,6 @@
 #include "LeapController.h"
 
 #include "MouseController.h"
-#include "MapWidget.h"
 #include "MapFeature.h"
 #include "MapFeatureLayer.h"
 #include "TerrainLayer.h"
@@ -98,7 +97,7 @@ public:
     
     void onPan(const void* sender, ofVec3f & distance);
     void onZoom(const void* sender, float & factor);
-    void onViewpointChange(const void* sender, ofNode & viewpoint);
+    void onViewpointChange(const void* sender, MapWidget & viewpoint);
     
     ofVboMesh terrainVboMesh, terrainWaterMesh;
     ofImage terrainCrop, sendMap, featureMap, featureMapCrop, featureHeightMap;

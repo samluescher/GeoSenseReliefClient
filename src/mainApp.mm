@@ -335,8 +335,34 @@ void mainApp::onZoom(const void* sender, float & factor) {
     updateVisibleMap(true);
 }
 
-void mainApp::onViewpointChange(const void* sender, ofNode & viewpoint) {
+void mainApp::onViewpointChange(const void* sender, MapWidget & viewpoint) {
     cout << "onViewPointChange" << endl;
+    cam.setPosition(viewpoint.getPosition());
+//    cam.lookAt(viewpoint.getLookAtDir());
+    
+    bool addNew = true;
+    MapWidget *widget;
+    for (int i = 0; i < mapWidgets.size(); i++) {
+        widget = mapWidgets.at(i);
+        if (widget->widgetName == viewpoint.widgetName && widget->widgetId == viewpoint.widgetId) {
+            addNew = false;
+            break;
+        }
+    }
+    
+    if (addNew) {
+        widget = new MapWidget();
+        mapWidgets.push_back(widget);
+    }
+    
+    widget->setPosition(viewpoint.getLookAtDir()/realworldUnitToGlUnit);
+    widget->setLifetime(50);
+    widget->widgetId = viewpoint.widgetId;
+    widget->widgetName = viewpoint.widgetName;
+    
+    
+    
+    
     //cout << "onViewpointChange: " << viewpoint.getOrientationEuler() << "\n";
 }
 
@@ -1440,6 +1466,12 @@ void mainApp::exit(){
 
 //--------------------------------------------------------------
 void mainApp::keyPressed  (int key){
+
+    MapWidget *widget = new MapWidget();
+    widget->setPosition(mapCenter);
+    mapWidgets.push_back(widget);
+    
+    
     ofLog() << "KEY " << key;
     bool guiVisible;
     time_t rawtime;

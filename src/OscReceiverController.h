@@ -14,7 +14,17 @@
 //--------------------------------------------------------
 class OscReceiverController : public SceneController{
 public:
+    OscReceiverController();
     void oscMessageReceived(ofxOscMessage m);
     bool horizontalPan, verticalPan;
+    
+    ofVec3f center;
+    
+    ofVec3f p0;
+    ofVec3f p1;
+    ofVec3f p2;
+    ofVec3f p3;
+    
+    ofVec3f n;
 };
 

@@ -3,6 +3,7 @@
 #include "ofMain.h"
 #include "ofEvents.h"
 #include "ofxEasingFunc.h"
+#include "MapWidget.h"
 
 #define EASING_TIME .5f
 #define MIN_EASE_VELOCITY .005f
@@ -17,7 +18,7 @@ class SceneController{
         ofVec3f panVelocity;
         ofEvent<ofVec3f> onPan;
         ofEvent<float> onZoom;
-        ofEvent<ofNode> onViewpointChange;
+        ofEvent<MapWidget> onViewpointChange;
 
         template<class ListenerClass>
         void registerEvents(ListenerClass * listener){
