@@ -18,6 +18,8 @@
 
 #define LINE_WIDTH_GRID_SUBDIV 2
 #define LINE_WIDTH_GRID_WHOLE 4
+#define LINE_WIDTH_MAP_FEATURES 6
+
 #define COLOR_WATER ofColor(0, 100, 120, 175)
 
 #else
@@ -27,6 +29,7 @@
 
 #define LINE_WIDTH_GRID_SUBDIV 1
 #define LINE_WIDTH_GRID_WHOLE 2
+#define LINE_WIDTH_MAP_FEATURES 3
 
 #if (IS_RELIEF_CEILING)
 #define COLOR_WATER ofColor(0, 100, 120, 255)
@@ -48,15 +51,17 @@
 
 #endif
 
+
 #define VIDEO_WIDTH 800
 #define VIDEO_HEIGHT 600
 
+
 #define VIDEO_EXPOSURE 1.0f
-#define VIDEO_GAIN 1.2f
+#define VIDEO_GAIN .8f
 
 
-#define GL_UNIT_TO_TERRAIN_UNIT_INITIAL 100.f
+#define GL_UNIT_TO_TERRAIN_UNIT_INITIAL 20.f
+
 
 #define LIGHT_ATTENUATION .175f
-
 #define ARTK_THRESHOLD 80

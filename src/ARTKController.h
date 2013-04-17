@@ -13,7 +13,7 @@ class ARTKController : public SceneController{
 public:
     ARTKController();
     virtual void update();
-    void applyMatrix();
+    void applyMatrix(int markerIndex);
     void draw(bool drawVideo, bool drawThresh, bool drawFullSize);
 
     #if !(USE_LIBDC)

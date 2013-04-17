@@ -9,9 +9,7 @@
 
 void MapFeatureLayer::customDraw() {
     for (int i = 0; i < featureVboMeshes.size(); i++) {
-        ofVboMesh vboMesh = featureVboMeshes.at(i);
-        vboMesh.setMode(OF_PRIMITIVE_LINE_LOOP);
-        vboMesh.draw();
+        featureVboMeshes.at(i).draw();
     }
 }
 

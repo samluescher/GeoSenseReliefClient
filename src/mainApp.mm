@@ -14,8 +14,8 @@
 #define KEYBOARD_INC .2f
 
 
-#define MIN_ZOOM 50 //300
-#define MAX_ZOOM 1600
+#define MIN_ZOOM 5 //300
+#define MAX_ZOOM 200
 
 #define fukushima ofVec2f(141.033247, 37.425252)
 
@@ -68,17 +68,21 @@ void mainApp::setup()
     
     terrainUnitToGlUnit = 1 / GL_UNIT_TO_TERRAIN_UNIT_INITIAL;
     realworldUnitToGlUnit = 3.5f;
-    globalScale = 1.f;
-    
+    globalScale = ofVec3f(1.f, 1.f, 1.f);
+
+    #if (IS_DESK_CEILING)
+    globalScale = ofVec3f(.95f, .95f, .95f);
+    #endif
+
+    #if (IS_RELIEF_CEILING)
     // offset of physical Relief to physical marker
     reliefOffset = ofVec3f(0, 0, 0);
     reliefToMarker1Offset = ofVec3f(0, 265, 0);
     reliefToMarker2Offset = ofVec3f(-275, 0, 0);
 
-    #if (IS_RELIEF_CEILING)
     reliefOffset.x = -30.5;
     reliefOffset.y = 94.25;
-    globalScale = 1.27;
+    globalScale = ofVec3f(1.27f, 1.27f, 1.27f);
     #endif
     
     ofEnableNormalizedTexCoords();
@@ -100,7 +104,7 @@ void mainApp::setup()
     float seaFloorPeakHeight = terrainPeakHeight * 13;
     TerrainLayer *layer;
     
-    layer = addTerrainLayer("CRUST", "maps/heightmap.ASTGTM2_128,28,149,45-1600.png", "maps/srtm.ASTGTM2_128,28,149,45-14400-with-water.png", terrainPeakHeight);
+    layer = addTerrainLayer("CRUST", "maps/heightmap.ASTGTM2_128,28,149,45-1600-with-water.png", "maps/srtm.ASTGTM2_128,28,149,45-14400-with-water.png", terrainPeakHeight);
     layer->setScale(1);
 
     layer = addTerrainLayer("PLATES", "maps/heightmap.ETOPO1_128,28,149,45-downsampled-blur.png", "maps/greenblue.ETOPO1_128,28,149,45.png", seaFloorPeakHeight);
@@ -148,7 +152,10 @@ void mainApp::setup()
     //loadFeaturesFromFile("json/safecast.8.json");
     //loadFeaturesFromFile("json/earthquakes.json");
     
-    //loadFeaturesFromGeoJSONFile("json/tsunamiinundationmerge_jpf.json");
+    loadFeaturesFromGeoJSONFile("json/japan-prefectures.json");
+    loadFeaturesFromGeoJSONFile("json/plateboundaries.json");
+    loadFeaturesFromGeoJSONFile("json/tsunamiinundationmerge_jpf.json");
+    
     
 #if (TARGET_OS_IPHONE)
     EAGLView *view = ofxiPhoneGetGLView();  
@@ -211,7 +218,6 @@ void mainApp::setup()
     layersGUI->addSlider("ATTENUATION", 0, 1.5, lightAttenuation, guiW - spacing * 2, dim);
 	layersGUI->addWidgetDown(new ofxUILabel("", OFX_UI_FONT_LARGE));
     layersGUI->addSlider("ZOOM", MIN_ZOOM, MAX_ZOOM, 1 / terrainUnitToGlUnit, guiW - spacing * 2, dim);
-    layersGUI->addSlider("GLOBAL SCALE", .1, 4, globalScale, guiW - spacing * 2, dim);
 	layersGUI->addWidgetDown(new ofxUILabel("", OFX_UI_FONT_LARGE));
 	layersGUI->addWidgetDown(new ofxUILabel("", OFX_UI_FONT_LARGE)); 
 	layersGUI->addToggle("TERRAIN", drawTerrainEnabled, dim, dim);
@@ -273,7 +279,9 @@ void mainApp::setup()
 	calibrationGUI->addWidgetDown(new ofxUILabel("", OFX_UI_FONT_LARGE));
 	calibrationGUI->addWidgetDown(new ofxUILabel("", OFX_UI_FONT_LARGE));
     
-    calibrationGUI->addSlider("GLOBAL SCALE", .1, 4, globalScale, guiW - spacing * 2, dim);
+    calibrationGUI->addSlider("GLOBAL SCALE", .1, 4, globalScale.x, guiW - spacing * 2, dim);
+    calibrationGUI->addSlider("GLOBAL SCALE X", .1, 4, globalScale.x, guiW - spacing * 2, dim);
+    calibrationGUI->addSlider("GLOBAL SCALE Y", .1, 4, globalScale.y, guiW - spacing * 2, dim);
     calibrationGUI->addSlider("RELIEF OFFSET X", -200, 200, reliefOffset.x, guiW - spacing * 2, dim);
     calibrationGUI->addSlider("RELIEF OFFSET Y", -200, 200, reliefOffset.y, guiW - spacing * 2, dim);
     calibrationGUI->addSlider("RELIEF OFFSET Z", -200, 200, reliefOffset.z, guiW - spacing * 2, dim);
@@ -293,8 +301,18 @@ void mainApp::setup()
     #if !(TARGET_OS_IPHONE)
     keyboardController.registerEvents(this);
     #endif
-    
+
+    //post.init(ofGetWidth(), ofGetHeight());
+    //post.createPass<BloomPass>()->setEnabled(true);
+
     cursorNotMovedSince = 0;
+    
+    int width = ofGetWidth();
+    int height = ofGetHeight();
+    
+    glow.allocate(width, height);
+    screenFbo.allocate(width, height);
+    
 }
 
 void mainApp::onPan(const void* sender, ofVec3f & distance) {
@@ -463,7 +481,13 @@ void mainApp::guiEvent(ofxUIEventArgs &e)
             ofLog() << realworldUnitToGlUnit;
         }
         if (name == "GLOBAL SCALE") {
-            globalScale = value;
+            globalScale = ofVec3f(value, value, value);
+        }
+        if (name == "GLOBAL SCALE X") {
+            globalScale.x = value;
+        }
+        if (name == "GLOBAL SCALE Y") {
+            globalScale.y = value;
         }
         if (name == "RELIEF OFFSET X") {
             reliefOffset.x = value; 
@@ -587,7 +611,7 @@ void mainApp::drawTerrain(bool wireframe) {
     if (lightingEnabled) {
         for (int i = lights.size() - 1; i >= 0; i--) {
             ofLight* light = lights.at(i);
-            light->setAttenuation(lightAttenuation / globalScale);
+            light->setAttenuation(lightAttenuation / globalScale.x);
             if (i == 0 || i == animateLight) {
                 light->enable();
             } else {
@@ -647,7 +671,7 @@ void mainApp::drawMapWidgets()
 
 void mainApp::drawMapFeatures()
 {
-    glLineWidth(LINE_WIDTH_GRID_WHOLE);
+    glLineWidth(LINE_WIDTH_MAP_FEATURES);
     ofEnableBlendMode(OF_BLENDMODE_ALPHA);
     ofSetColor(200, 250, 250, 150);
     
@@ -677,6 +701,9 @@ void mainApp::drawLights() {
     
 }
 
+
+
+
 void mainApp::draw() {
     ofSetColor(255);
     ofBackground(COLOR_BACKGROUND);
@@ -692,17 +719,39 @@ void mainApp::draw() {
     if (dualscreenEnabled) {
         w /= 2;
         h = w * 3 / 4;
-        drawWorld(USE_ARTK || USE_QCAR, w, 0, w, h);
+        drawWorld(false, w, 0, w, h);
     }
-    drawWorld(false, 0, 0, w, h);
+    drawWorld(USE_ARTK || USE_QCAR, 0, 0, w, h);
 
     if (!calibrationMode) {
         mainApp::drawGUI();
     }
+
+    /*
+    works ok -- but cam.begin() would prevent glow. look into that.
+     
+    ofEnableAlphaBlending();
+    screenFbo.begin();
+    ofClear(0, 0, 0, 0);
+    ofTranslate(ofGetWidth()/2, ofGetHeight()/2);
+    drawMapFeatures();
+    screenFbo.end();
+    
+    glow.setRadius(sin( ofGetElapsedTimef() ) * 15);
+    glow.setTexture(screenFbo.getTextureReference());
+    glow.update();
+    
+    ofEnableBlendMode(OF_BLENDMODE_ADD);
+    glow.draw(0, 0);
+    ofDisableAlphaBlending();
+    */
+
 }
 
 void mainApp::drawWorld(bool useARMatrix, int viewportX, int viewportY, int viewportW, int viewportH)
 {
+    int markerID = -1;
+    
     if (useARMatrix) {
         #if (USE_QCAR)
         ofxQCAR * qcar = ofxQCAR::getInstance();
@@ -741,10 +790,12 @@ void mainApp::drawWorld(bool useARMatrix, int viewportX, int viewportY, int view
                 glLoadMatrixf(projectionMatrix.getPtr());
             }
             #elif (USE_ARTK)
-            artkController.applyMatrix();
+            markerID = artkController.artk.getMarkerID(0);
+            artkController.applyMatrix(0);
             #endif
         } else {
             cam.begin();
+
         }
 
         glViewport(viewportX, viewportY, viewportW, viewportH);
@@ -753,12 +804,12 @@ void mainApp::drawWorld(bool useARMatrix, int viewportX, int viewportY, int view
         
             #if (!USE_QCAR)
             if (cam.getOrtho()) {
-                ofTranslate(ofGetWidth() / 2, ofGetHeight() / 2, 0);
+                //ofTranslate(ofGetWidth() / 2, ofGetHeight() / 2, 0);
             }
             #endif
             
             /*ofTranslate(reliefOffset);*/
-            ofScale(globalScale, globalScale, globalScale);
+            ofScale(globalScale.x, globalScale.y, globalScale.z);
             
             #if (IS_RELIEF_CEILING)
             #endif
@@ -767,6 +818,19 @@ void mainApp::drawWorld(bool useARMatrix, int viewportX, int viewportY, int view
                 // first, we scale by the inverse of the terrain over screen unit ratio, which enables
                 // us to subsequently use terrain units (degrees lng, lat) when drawing
                 ofScale(1 / terrainUnitToGlUnit, 1 / terrainUnitToGlUnit, 1 / terrainUnitToGlUnit);
+
+                if (useARMatrix) {
+                    #if (USE_ARTK)
+                    vector<ofVec3f> markerOffsets;
+                    //markerOffsets.push_back(ofVec3f(-9.25f, 7.25f, 0));
+                    //markerOffsets.push_back(ofVec3f(9.25f, 7.25f, 0));
+                    markerOffsets.push_back(ofVec3f(-10.f, 7.5f, 0));
+                    markerOffsets.push_back(ofVec3f(10.f, 7.5f, 0));
+                    if (markerID >= 0 && markerID < markerOffsets.size()) {
+                        ofTranslate(-markerOffsets.at(markerID));
+                    }
+                    #endif
+                }
     
                 ofPushMatrix();
                     // second, we translate by negative mapCenter so that we are not looking at [zero-meridian, equator]
@@ -831,16 +895,22 @@ void mainApp::drawWorld(bool useARMatrix, int viewportX, int viewportY, int view
 
     if (useARMatrix) {
         #if (USE_QCAR)
-                if (qcar->hasFoundMarker() && (drawDebugEnabled || calibrationMode)) {
-                    ofSetColor(255);
-                    qcar->drawMarkerCenter();
-                }
+        if (qcar->hasFoundMarker() && (drawDebugEnabled || calibrationMode)) {
+            ofSetColor(255);
+            qcar->drawMarkerCenter();
+        }
         #elif (USE_ARTK)
+        if (calibrationMode) {
+            ofPushMatrix();
+            ofTranslate((1 - globalScale.x) * ofGetWidth() * .5f, (1 - globalScale.y) * ofGetHeight() * .5f);
+            ofScale(globalScale.x, globalScale.y, globalScale.z);
+            artkController.draw(false, false, true);
+            ofPopMatrix();
+        }
         #endif
     } else {
         cam.end();
-    }
-  
+    }    
 }
 
 void mainApp::drawGUI() 
@@ -984,6 +1054,7 @@ void mainApp::drawGrid(ofVec2f sw, ofVec2f ne, int subdivisionsX, int subdivisio
 
 void mainApp::updateVisibleMap(bool updateServer)
 {
+    
     normalizedMapCenter = (mapCenter - terrainSW) / terrainExtents;
     normalizedMapCenter.y = 1 - normalizedMapCenter.y;
     normalizedReliefSize = ofVec2f(RELIEF_SIZE_X * realworldUnitToTerrainUnit / terrainExtents.x, RELIEF_SIZE_Y * realworldUnitToTerrainUnit / terrainExtents.y);
@@ -992,7 +1063,10 @@ void mainApp::updateVisibleMap(bool updateServer)
     featureMapCrop.allocate(normalizedReliefSize.x * featureMap.width, normalizedReliefSize.y * featureMap.height, OF_IMAGE_COLOR_ALPHA);
     
     terrainCrop.cropFrom(focusLayer->textureImage, -terrainCrop.width / 2 + normalizedMapCenter.x * focusLayer->textureImage.width, -terrainCrop.height / 2 + normalizedMapCenter.y * focusLayer->textureImage.height, terrainCrop.width, terrainCrop.height);
-    featureMapCrop.cropFrom(featureMap, -featureMapCrop.width / 2 + normalizedMapCenter.x * featureMap.width, -featureMapCrop.height / 2 + normalizedMapCenter.y * featureMap.height, featureMapCrop.width, featureMapCrop.height);
+
+    if (featureMap.isAllocated()) {
+        featureMapCrop.cropFrom(featureMap, -featureMapCrop.width / 2 + normalizedMapCenter.x * featureMap.width, -featureMapCrop.height / 2 + normalizedMapCenter.y * featureMap.height, featureMapCrop.width, featureMapCrop.height);
+    }
     
     if (reliefSendMode != RELIEF_SEND_OFF) {
         ofImage sendMapFrom;

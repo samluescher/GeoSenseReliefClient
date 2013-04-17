@@ -41,6 +41,9 @@
 #include "ofxUI.h"
 #include "config.h"
 
+#include "ofxFX.h"
+
+
 #include <time.h>
 
 //class MouseController;
@@ -82,7 +85,7 @@ public:
     ARTKController artkController;
     bool artkEnabled;
     #endif
-    
+   
     void setCalibrationMode(bool state);
     
     MouseController mouseController;
@@ -107,6 +110,9 @@ public:
     ofVec3f surfaceAt(ofVec2f pos);
     float waterLevel, prevWaterLevel;
     bool isPanning;
+    
+    ofFbo screenFbo;
+    ofxGlow glow;
     
     std::vector<MapFeature*> mapFeatures;
     std::vector<MapWidget*> mapWidgets;
@@ -139,7 +145,7 @@ public:
     bool calibrationMode, zoomMode;
     float timeSinceLastDoubleTap;
     ofVec3f reliefOffset, reliefToMarker1Offset, reliefToMarker2Offset;
-    float globalScale;
+    ofVec3f globalScale;
     ofVec2f terrainExtents;
     
     ofMatrix4x4 modelViewMatrix, projectionMatrix;

@@ -47,6 +47,7 @@ std::vector<ofVec3f> getVerticesFromCoordinates(Json::Value coordinates) {
 std::vector<ofMesh> geoJSONFeatureCollectionToMeshes(ofxJSONElement &featureCollection)
 {
     int size = featureCollection["features"].size();
+    int numVerts = 0;
     std::vector<ofMesh> meshes;
     ofLog() << "features in FeatureCollection: " << size;
     for (int i = 0; i < size; i++) {
@@ -55,18 +56,38 @@ std::vector<ofMesh> geoJSONFeatureCollectionToMeshes(ofxJSONElement &featureColl
         const Json::Value coordinates = feature["geometry"]["coordinates"];
         string featureType = feature["type"].asString();
         string geometryType = geometry["type"].asString();
-        ofVboMesh mesh;
-        if (featureType.compare("Polygon")) {
-            mesh.setMode(OF_PRIMITIVE_LINE_LOOP);
-            std::vector<ofVec3f> verts = getVerticesFromCoordinates(coordinates);
-            for (int j = 0; j < verts.size(); j++) {
-                mesh.addVertex(verts.at(j));
+
+        if (geometryType == "Polygon" || geometryType == "MultiLineString") {
+            for (int j = 0; j < coordinates.size(); j++) {
+                ofMesh mesh;
+                std::vector<ofVec3f> verts = getVerticesFromCoordinates(coordinates[j]);
+                if (geometryType == "Polygon") {
+                    mesh.setMode(OF_PRIMITIVE_LINE_LOOP);
+                } else if (geometryType == "MultiLineString") {
+                    mesh.setMode(OF_PRIMITIVE_LINE_STRIP);
+                }
+                mesh.addVertices(verts);
+                numVerts += verts.size();
+                meshes.push_back(mesh);
             }
-            meshes.push_back(mesh);
+        } else if (geometryType == "MultiPolygon") {
+            for (int j = 0; j < coordinates.size(); j++) {
+                for (int k = 0; k < coordinates[j].size(); k++) {
+                    std::vector<ofVec3f> verts = getVerticesFromCoordinates(coordinates[j][k]);
+                    ofMesh mesh;
+                    mesh.setMode(OF_PRIMITIVE_LINE_LOOP);
+                    mesh.addVertices(verts);
+                    meshes.push_back(mesh);
+                    numVerts += verts.size();
+                }
+            }
+        } else {
+            ofLog() << "Ignoring geometry.type: " << geometryType;
         }
+        
     }
 
-    ofLog() << "Generated meshes: " << meshes.size();
+    ofLog() << "Generated meshes: " << meshes.size() << ", vertices: " << numVerts;
     return meshes;
 }
 

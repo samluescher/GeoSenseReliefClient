@@ -49,14 +49,14 @@ void ARTKController::update() {
     artkUpdate = videoGrabber.isFrameNew();
     if (artkUpdate) {
 		videoImage.setFromPixels(videoGrabber.getPixels(), videoWidth, videoHeight);
-        videoImage.mirror(true, true);
+        //videoImage.mirror(true, true);
     }
     #else
     artkUpdate = camera.isReady();
     if (camera.grabVideo(cameraImage)) {
 		cameraImage.update();
         videoImage.setFromPixels(cameraImage.getPixels(), videoWidth, videoHeight);
-        videoImage.mirror(true, true);
+        //videoImage.mirror(true, true);
 	}
     #endif
 
@@ -67,13 +67,29 @@ void ARTKController::update() {
     }
 }
 
-void ARTKController::applyMatrix() {
-    //ofTranslate(videoX, videoY);
-    //ofScale(videoScale, videoScale);
-    artk.applyProjectionMatrix(videoWidth * videoScale, videoHeight * videoScale);
-    artk.applyModelMatrix(0);
+void ARTKController::applyMatrix(int markerIndex) {
     
-    ofSphere(0, 0, 0, 1);
+    ofTranslate(videoX, videoY);
+    ofScale(videoScale, videoScale);
+    artk.applyProjectionMatrix(videoWidth * videoScale, videoHeight * videoScale);
+    artk.applyModelMatrix(markerIndex);
+    
+
+    /*
+    ofVec3f translation;
+    ofMatrix4x4 orientation;
+    artk.getTranslationAndOrientation(markerIndex, translation, orientation);
+    float angle;
+    ofVec3f vec;
+    orientation.getRotate().getRotate(angle, vec);
+    ofLog() << angle;
+
+    ofTranslate(ofGetWidth() / 2, ofGetHeight() / 2);
+    ofTranslate(translation.x, translation.y);
+    ofLog() << translation;
+    ofRotate(angle, vec.x, vec.y, vec.z);*/
+   
+//    ofSphere(0, 0, 0, 1);
 }
 
 void ARTKController::draw(bool drawVideo, bool drawThresh, bool drawFullSize) {
