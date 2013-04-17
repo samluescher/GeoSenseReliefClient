@@ -17,13 +17,7 @@ LeapController::LeapController() {
     leap.setupGestures();
 }
 
-void LeapController::update() {
-    
-    justTyped = false;
-    justTapped = false;
-    justSwiped = false;
-    justCircled = false;
-    
+void LeapController::update() {   
     hands = leap.getLeapHands();
     
     if(leap.isFrameNew() && hands.size()){
@@ -57,25 +51,25 @@ void LeapController::update() {
     for (size_t i=0; i < gestures.count(); i++) {
         if (gestures[i].type() == Gesture::TYPE_SCREEN_TAP) {
             ScreenTapGesture tap = gestures[i];
-            pos = tap.position();
-            justTyped = true;
-            
-            //cout << "LEAP TYPE GESTURE AT: " << pos << endl;
-            
-            
-            
-            
+            static GestureEventArgs args;
+            args.pos = ofVec3f(tap.position().x, tap.position().y, tap.position().z);
+            ofNotifyEvent(onTapScreen, args, this);
         } else if (gestures[i].type() == Gesture::TYPE_KEY_TAP) {
             KeyTapGesture tap = gestures[i];
-            pos = tap.position();
-            justTapped = true;
+            static GestureEventArgs args;
+            args.pos = ofVec3f(tap.position().x, tap.position().y, tap.position().z);
+            ofNotifyEvent(onTapDown, args, this);
             
             //cout << "LEAP TAP GESTURE AT: " << pos << endl;
         
         } else if (gestures[i].type() == Gesture::TYPE_SWIPE) {
             SwipeGesture swipe = gestures[i];
             Vector diff = 0.004f*(swipe.position() - swipe.startPosition());
-            justSwiped = true;
+            static GestureEventArgs args;
+            args.pos = ofVec3f(swipe.position().x, swipe.position().y, swipe.position().z);
+            args.startPos = ofVec3f(swipe.startPosition().x, swipe.startPosition().y, swipe.startPosition().z);
+            args.state = swipe.state();
+            ofNotifyEvent(onSwipe, args, this);
             
             //cout << "LEAP SWIPE GESTURE" << endl;
         
@@ -85,10 +79,13 @@ void LeapController::update() {
             
             if (progress >= 1.0f) {
                 double curAngle = 6.5;
-                justCircled = true;
                 
                 //cout << "LEAP CIRCLE GESTURE" << endl;
             }
+            static GestureEventArgs args;
+            args.pos = ofVec3f(circle.center().x, circle.center().y, circle.center().z);
+            args.progress = circle.progress();
+            ofNotifyEvent(onCircle, args, this);
         }
     }
     

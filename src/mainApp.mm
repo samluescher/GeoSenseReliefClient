@@ -156,22 +156,26 @@ void mainApp::setup()
     loadFeaturesFromGeoJSONFile("json/plateboundaries.json");
     loadFeaturesFromGeoJSONFile("json/tsunamiinundationmerge_jpf.json");
     
+    for (int i = 0; i < featureLayers.size(); i++) {
+        MapFeatureLayer *layer = featureLayers.at(i);
+        layer->visible = i == 0;
+    }
     
-#if (TARGET_OS_IPHONE)
+    #if (TARGET_OS_IPHONE)
     EAGLView *view = ofxiPhoneGetGLView();  
     pinchRecognizer = [[ofPinchGestureRecognizer alloc] initWithView:view];
     ofAddListener(pinchRecognizer->ofPinchEvent,this, &mainApp::handlePinch);
-#endif
+    #endif
     
     drawDebugEnabled = true;
     drawWireframesEnabled = false;
     calibrationMode = false;
-    drawTerrainEnabled = true;
+    drawTerrainEnabled = false;
     drawTexturesEnabled = true;
     drawVideoEnabled = true;
     drawAnimationEnabled = false;
     drawTerrainGridEnabled = false;
-    drawMapFeaturesEnabled = false;
+    drawMapFeaturesEnabled = true;
     drawMiniMapEnabled = false;
     drawWaterEnabled = false;
     tetherWaterEnabled = false;
@@ -204,7 +208,12 @@ void mainApp::setup()
     layersGUI = new ofxUICanvas(spacing, spacing, guiW, ofGetHeight());
     for (int i = 0; i < terrainLayers.size(); i++) {
         TerrainLayer *layer = terrainLayers.at(i);
-        layersGUI->addToggle(layer->layerName, true, dim, dim);
+        layersGUI->addToggle(layer->layerName, layer->visible, dim, dim);
+    }
+	layersGUI->addWidgetDown(new ofxUILabel("", OFX_UI_FONT_LARGE));
+    for (int i = 0; i < featureLayers.size(); i++) {
+        MapFeatureLayer *layer = featureLayers.at(i);
+        layersGUI->addToggle(layer->layerName, layer->visible, dim, dim);
     }
 	layersGUI->addWidgetDown(new ofxUILabel("", OFX_UI_FONT_LARGE));
 
@@ -290,7 +299,7 @@ void mainApp::setup()
     resetCam();
 
     #if !(TARGET_OS_IPHONE)
-    ofEnableSmoothing();
+    ofEnableSmoothing();    
     #endif
 
     mouseController.registerEvents(this);
@@ -313,6 +322,57 @@ void mainApp::setup()
     glow.allocate(width, height);
     screenFbo.allocate(width, height);
     
+}
+
+void mainApp::onSwipe(GestureEventArgs & args) {
+    if (args.state == args.STATE_STOP) {
+        int dir = args.pos.x > args.startPos.x;
+        ofLog() << "swiped "  << (dir == 1 ? "right" : "left") << " " << args.pos;
+
+        int firstVisible = -1, setVisible = 0;
+        for (int i = 0; i < featureLayers.size(); i++) {
+            MapFeatureLayer *layer = featureLayers.at(i);
+            if (layer->visible) {
+                firstVisible = i;
+                break;
+            }
+        }
+        if (dir == 1) {
+            setVisible = firstVisible < 0 ? 0 :
+            firstVisible < featureLayers.size() - 1 ? firstVisible + 1 : 0;
+        } else {
+            setVisible = firstVisible < 0 ? 0 :
+            firstVisible > 0 ? firstVisible - 1 : featureLayers.size() - 1;
+        }
+        ofLog() << " set visible: " << (dir == 1 ? " >> " : " << ") << setVisible;
+        for (int i = 0; i < featureLayers.size(); i++) {
+            MapFeatureLayer *layer = featureLayers.at(i);
+            setFeatureLayerVisible(i, i == setVisible);
+        }
+    }
+}
+
+void mainApp::onCircle(GestureEventArgs & args) {
+    ofLog() << "circled " << args.progress;
+}
+
+void mainApp::onTapDown(GestureEventArgs & args) {
+    ofLog() << "tapped down " << args.pos;
+
+    #define LEAP_OFFSET ofVec3f(0, 100, 0)
+    
+    MapWidget *widget = new MapWidget();
+    ofVec3f mappedPos = (ofVec3f(args.pos.x, -args.pos.z, 1)
+        + LEAP_OFFSET)
+        * realworldUnitToTerrainUnit;
+    ofLog() << mappedPos << "  " << realworldUnitToTerrainUnit;
+    widget->setPosition(mapCenter + mappedPos);
+    widget->setLifetime(20);
+    mapWidgets.push_back(widget);
+}
+
+void mainApp::onTapScreen(GestureEventArgs & args) {
+    ofLog() << "tapped screen " << args.pos;
 }
 
 void mainApp::onPan(const void* sender, ofVec3f & distance) {
@@ -379,7 +439,18 @@ void mainApp::resetCam()
      
     update();
     updateVisibleMap(true);
+}
 
+void mainApp::setFeatureLayerVisible(int index, bool visible) {
+    MapFeatureLayer *layer = featureLayers.at(index);
+    layer->visible = visible;
+    layersGUI->getWidget(layer->layerName)->setState(visible);
+}
+
+void mainApp::setTerrainLayerVisible(int index, bool visible) {
+    TerrainLayer *layer = terrainLayers.at(index);
+    layer->visible = visible;
+    layersGUI->getWidget(layer->layerName)->setState(visible);
 }
 
 void mainApp::guiEvent(ofxUIEventArgs &e)
@@ -395,13 +466,19 @@ void mainApp::guiEvent(ofxUIEventArgs &e)
         ofxUIToggle *toggle = (ofxUIToggle *) e.widget; 
         bool value = toggle->getValue(); 
 
-        if (name == "CRUST" || name == "PLATES" || name == "J PLATE" || name == "P PLATE" || name == "MANTLE") {
-            for (int i = 0; i < terrainLayers.size(); i++) {
-                TerrainLayer *layer = terrainLayers.at(i);
-                if (layer->layerName == name) {
-                    layer->visible = value;
-                    break;
-                }
+        for (int i = 0; i < terrainLayers.size(); i++) {
+            TerrainLayer *layer = terrainLayers.at(i);
+            if (layer->layerName == name) {
+                setTerrainLayerVisible(i, value);
+                break;
+            }
+        }
+
+        for (int i = 0; i < featureLayers.size(); i++) {
+            MapFeatureLayer *layer = featureLayers.at(i);
+            if (layer->layerName == name) {
+                setFeatureLayerVisible(i, value);
+                break;
             }
         }
         
@@ -565,33 +642,6 @@ void mainApp::update()
     reliefUpdate();
     oscReceiverController.update();
     leapController.update();
-    // this will be dumb
-    if (leapController.justTyped) {
-        cout << "just typed" << endl;
-    }
-    if (leapController.justTapped) {
-        cout << "just tapped" << endl;
-
-        #define LEAP_OFFSET ofVec3f(0, 100, 0)
-        
-        MapWidget *widget = new MapWidget();
-        ofVec3f mappedPos = (ofVec3f(leapController.pos.x, -leapController.pos.z, 1)
-            + LEAP_OFFSET)
-            * realworldUnitToTerrainUnit;
-        ofLog() << mappedPos << "  " << realworldUnitToTerrainUnit;
-        widget->setPosition(mapCenter + mappedPos);
-        widget->setLifetime(20);
-        mapWidgets.push_back(widget);
-        
-//        mapCenter.x = leapController.pos.x;
-//        mapCenter.y = leapController.pos.y;
-    }
-    if (leapController.justSwiped) {
-        cout << "just swiped" << endl;
-    }
-    if (leapController.justCircled) {
-        cout << "just circled" << endl;
-    }
 
     #if (USE_QCAR)
     ofxQCAR::getInstance()->update();
@@ -703,7 +753,9 @@ void mainApp::drawMapFeatures()
     
     for (int i = 0; i < featureLayers.size(); i++) {
         MapFeatureLayer *layer = featureLayers.at(i);
-        layer->draw();
+        if (layer->visible) {
+            layer->draw();
+        }
     }
 }
 
@@ -1289,16 +1341,20 @@ void mainApp::loadFeaturesFromGeoJSONFile(string filePath) {
 		jsonStr += buffer.getNextLine();
     }
     
-    addFeatureLayerFromGeoJSONString(jsonStr);
+    MapFeatureLayer* layer = addFeatureLayerFromGeoJSONString(jsonStr);
+    if (layer != nil) {
+        layer->layerName = ofFilePath::getFileName(filePath);
+    }
 }
 
 //Parses a json string into map features
-void mainApp::addFeatureLayerFromGeoJSONString(string jsonStr) {
+MapFeatureLayer* mainApp::addFeatureLayerFromGeoJSONString(string jsonStr) {
     ofxJSONElement json;
     if (json.parse(jsonStr)) {
         MapFeatureLayer *layer = new MapFeatureLayer();
         layer->addMeshes(geoJSONFeatureCollectionToMeshes(json));
         featureLayers.push_back(layer);
+        return layer;
     } else {
         ofLog() << "Error parsing JSON";
     }

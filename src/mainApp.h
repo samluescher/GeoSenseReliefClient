@@ -97,6 +97,10 @@ public:
     
     void onPan(const void* sender, ofVec3f & distance);
     void onZoom(const void* sender, float & factor);
+    void onSwipe(GestureEventArgs & args);
+    void onCircle(GestureEventArgs & args);
+    void onTapDown(GestureEventArgs & args);
+    void onTapScreen(GestureEventArgs & args);
     void onViewpointChange(const void* sender, MapWidget & viewpoint);
     
     ofVboMesh terrainVboMesh, terrainWaterMesh;
@@ -132,7 +136,10 @@ public:
     TerrainLayer *addTerrainLayer(string name, string heightmap, string texture, float peakHeight);
     TerrainLayer *focusLayer;
     void loadFeaturesFromGeoJSONFile(string filePath);
-    void addFeatureLayerFromGeoJSONString(string jsonStr);
+    MapFeatureLayer* addFeatureLayerFromGeoJSONString(string jsonStr);
+    void setFeatureLayerVisible(int index, bool visible);
+    void setTerrainLayerVisible(int index, bool visible);
+
 
     float lightAttenuation;
     std::vector<ofLight *> lights;

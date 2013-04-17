@@ -21,15 +21,11 @@ using namespace Leap;
 class LeapController: public SceneController{
 public:
     LeapController();
-    void update();
-    
-    void pan(float dx, float dy, float dz);
-    
-    bool horizontalPan, verticalPan;
-    bool justTyped, justTapped, justSwiped, justCircled;
-    Vector pos;
-    
     ofxLeapMotion leap;
+
+    void update();
+    void pan(float dx, float dy, float dz);
+    bool horizontalPan, verticalPan;
     
     Controller controller;
         
