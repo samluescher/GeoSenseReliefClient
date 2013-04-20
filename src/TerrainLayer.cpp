@@ -12,7 +12,8 @@
 void TerrainLayer::loadHeightMap(string filename, float peakHeight) {
     ofLog() << "Loading height map: " << filename;
     heightMap.loadImage(filename);
-    vboMesh = meshFromImage(heightMap, 1, peakHeight);
+    mesh = meshFromImage(heightMap, 1, peakHeight);
+    vbo.setMesh(mesh, GL_STATIC_DRAW);
 }
 
 void TerrainLayer::loadTexture(string filename) {
@@ -27,12 +28,13 @@ void TerrainLayer::customDraw() {
         if (drawTexture) {
             textureImage.getTextureReference().bind();
         }
-        vboMesh.draw();
+        vbo.draw(GL_TRIANGLES, 0, mesh.getVertices().size() - 1);
+        //mesh.draw();
         if (drawTexture) {
             textureImage.getTextureReference().unbind();
         }
     } else {
         ofSetColor(100, 100, 100, 20);
-        vboMesh.drawWireframe();
+        //vbo.drawWireframe();
     }
 }

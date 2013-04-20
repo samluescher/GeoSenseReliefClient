@@ -12,5 +12,5 @@ WorldLayer::WorldLayer() {
     opacity = 1.0f;
     lighting = true;
     visible = true;
-    layerName = "";
+    title = "";
 }

@@ -5,6 +5,10 @@
 //  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
+#pragma once
+#ifndef __GeoSenseReliefClientOSX__MapWidget__
+#define __GeoSenseReliefClientOSX__MapWidget__
+
 #include "ofMain.h"
 
 class MapWidget: public ofNode {
@@ -16,6 +20,8 @@ private:
 public:
     MapWidget();
     int widgetId;
+    int width;
+    int height;
     string widgetName;
     void customDraw();
     void update();
@@ -23,3 +29,5 @@ public:
     void setLifetime(int frames);
     bool shouldRemove();
 };
+
+#endif

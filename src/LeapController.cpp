@@ -26,7 +26,7 @@ void LeapController::update() {
             
             Hand hand = hands[i];
             
-            if (handsPrevious.size() == hands.size() && hand.fingers().count() <= 2){
+            if (handsPrevious.size() == hands.size() && hand.fingers().count() == 3){
                 
                 float dx =  hand.palmPosition().x - handsPrevious[i].palmPosition().x;
                 float dy =  hand.palmPosition().z - handsPrevious[i].palmPosition().z;
@@ -35,7 +35,7 @@ void LeapController::update() {
                 
 //                horizontalPan = (numFingers == 2);
                 horizontalPan = false;
-                verticalPan = (numFingers == 0);
+                verticalPan = true;
                 
                 pan(dx,dy,dz);
             }
@@ -84,6 +84,7 @@ void LeapController::update() {
             }
             static GestureEventArgs args;
             args.pos = ofVec3f(circle.center().x, circle.center().y, circle.center().z);
+            args.normal = ofVec3f(circle.normal().x, circle.normal().y, circle.normal().z);
             args.progress = circle.progress();
             ofNotifyEvent(onCircle, args, this);
         }

@@ -5,7 +5,7 @@
 class WorldLayer: public ofNode {
     public:
         WorldLayer();
-        string layerName;
+        string title;
         float opacity;
         bool visible, lighting;
 };

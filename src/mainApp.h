@@ -30,7 +30,6 @@
 #include "LeapController.h"
 
 #include "MouseController.h"
-#include "MapFeature.h"
 #include "MapFeatureLayer.h"
 #include "TerrainLayer.h"
 #include "ofxJSONElement.h"
@@ -39,6 +38,7 @@
 
 #include "ofxUI.h"
 #include "config.h"
+#include "Timeline.h"
 
 #include "ofxFX.h"
 
@@ -85,6 +85,9 @@ public:
     bool artkEnabled;
     #endif
    
+
+    Timeline timeline;
+    
     void setCalibrationMode(bool state);
     
     MouseController mouseController;
@@ -117,16 +120,16 @@ public:
     ofFbo screenFbo;
     ofxGlow glow;
     
-    std::vector<MapFeature*> mapFeatures;
     std::vector<MapWidget*> mapWidgets;
     
     ofVboMesh mapFeaturesMesh;
     void urlResponse(ofHttpResponse & response);
     void addItemsFromJSONString(string jsonStr);
-    ofMesh getMeshFromFeatures(std::vector<MapFeature*> mapFeatures);
     int numLoading;
-    void loadFeaturesFromURL(string url);
+    
+    /*void loadFeaturesFromURL(string url);*/
     void loadFeaturesFromFile(string filePath);
+    
     float gridSize;
     
     
@@ -135,8 +138,14 @@ public:
 
     TerrainLayer *addTerrainLayer(string name, string heightmap, string texture, float peakHeight);
     TerrainLayer *focusLayer;
-    void loadFeaturesFromGeoJSONFile(string filePath);
-    MapFeatureLayer* addFeatureLayerFromGeoJSONString(string jsonStr);
+
+    MapFeatureLayer* addMapFeaturelayer(string title);
+    MapFeatureCollection* loadFeaturesFromGeoJSONURL(string url, string title, MapFeatureLayer* layer);
+    MapFeatureCollection* loadFeaturesFromGeoJSONFile(string filePath, string title);
+    MapFeatureCollection* loadFeaturesFromGeoJSONURL(string url, string title);
+    
+    std::map<string, MapFeatureCollection*> urlToMapFeatureCollectionIndex;
+    MapFeatureCollection* addFeaturesFromGeoJSONString(string jsonStr, MapFeatureCollection *coll);
     void setFeatureLayerVisible(int index, bool visible);
     void setTerrainLayerVisible(int index, bool visible);
 

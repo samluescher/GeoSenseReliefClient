@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		22196FC61720B53100C23B9A /* MapWidget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22196FC41720B53100C23B9A /* MapWidget.cpp */; };
+		22196FC91720B54800C23B9A /* Timeline.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22196FC71720B54800C23B9A /* Timeline.cpp */; };
+		22196FCC1720BC3D00C23B9A /* MapFeatureCollection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22196FCA1720BC3D00C23B9A /* MapFeatureCollection.cpp */; };
 		221D18CF171D15F0003E3F74 /* ofxFlocking.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 221D18BE171D15F0003E3F74 /* ofxFlocking.cpp */; };
 		221D18D0171D15F0003E3F74 /* ofxFluid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 221D18C0171D15F0003E3F74 /* ofxFluid.cpp */; };
 		221D18D1171D15F0003E3F74 /* ofxFXObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 221D18C3171D15F0003E3F74 /* ofxFXObject.cpp */; };
@@ -23,7 +26,6 @@
 		223CE0EA1704F69E0007533D /* WorldLayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 223CE0E81704F69E0007533D /* WorldLayer.cpp */; };
 		223CE0ED1705004A0007533D /* ViewPoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 223CE0EB1705004A0007533D /* ViewPoint.cpp */; };
 		2250AB22171723BD0056198F /* libLeap.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 222AB2AD171720A000DAE516 /* libLeap.dylib */; };
-		2250AB25171725040056198F /* MapWidget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2250AB23171725040056198F /* MapWidget.cpp */; };
 		2261512217027D1400290F86 /* ofxARToolkitPlus.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 226150FE17027D1400290F86 /* ofxARToolkitPlus.cpp */; };
 		2261512317027D1400290F86 /* libARToolKitPlus.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2261511617027D1400290F86 /* libARToolKitPlus.a */; };
 		2261512417027D1400290F86 /* libARToolKitPlus.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2261511817027D1400290F86 /* libARToolKitPlus.a */; };
@@ -69,8 +71,8 @@
 		22AA59991606E08300E88EF8 /* tinyxmlparser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22AA59931606E08300E88EF8 /* tinyxmlparser.cpp */; };
 		22AA599A1606E08300E88EF8 /* ofxXmlSettings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22AA59951606E08300E88EF8 /* ofxXmlSettings.cpp */; };
 		22B804D417062DC1001A0AE2 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22B804D317062DC1001A0AE2 /* Accelerate.framework */; };
+		22C32B7417222C240015BC73 /* MapFeature.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22C32B7217222C240015BC73 /* MapFeature.cpp */; };
 		22E14201164D862A00CA0A44 /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = 22E14200164D862A00CA0A44 /* main.mm */; };
-		22E1420D164D866F00CA0A44 /* MapFeature.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22E14204164D866F00CA0A44 /* MapFeature.cpp */; };
 		22E1420E164D866F00CA0A44 /* MouseController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22E14206164D866F00CA0A44 /* MouseController.cpp */; };
 		22E1420F164D866F00CA0A44 /* ReliefClientBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22E14208164D866F00CA0A44 /* ReliefClientBase.cpp */; };
 		22E14210164D866F00CA0A44 /* mainApp.mm in Sources */ = {isa = PBXBuildFile; fileRef = 22E1420C164D866F00CA0A44 /* mainApp.mm */; };
@@ -132,6 +134,12 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		22196FC41720B53100C23B9A /* MapWidget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MapWidget.cpp; path = ../../src/MapWidget.cpp; sourceTree = "<group>"; };
+		22196FC51720B53100C23B9A /* MapWidget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MapWidget.h; path = ../../src/MapWidget.h; sourceTree = "<group>"; };
+		22196FC71720B54800C23B9A /* Timeline.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Timeline.cpp; path = ../../src/Timeline.cpp; sourceTree = "<group>"; };
+		22196FC81720B54800C23B9A /* Timeline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Timeline.h; path = ../../src/Timeline.h; sourceTree = "<group>"; };
+		22196FCA1720BC3D00C23B9A /* MapFeatureCollection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MapFeatureCollection.cpp; path = ../../src/MapFeatureCollection.cpp; sourceTree = "<group>"; };
+		22196FCB1720BC3D00C23B9A /* MapFeatureCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MapFeatureCollection.h; path = ../../src/MapFeatureCollection.h; sourceTree = "<group>"; };
 		221D18A5171D15F0003E3F74 /* ofxAbsDiff.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxAbsDiff.h; sourceTree = "<group>"; };
 		221D18A6171D15F0003E3F74 /* ofxBlend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxBlend.h; sourceTree = "<group>"; };
 		221D18A7171D15F0003E3F74 /* ofxClone.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxClone.h; sourceTree = "<group>"; };
@@ -192,9 +200,6 @@
 		223CE0EB1705004A0007533D /* ViewPoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ViewPoint.cpp; path = ../../src/ViewPoint.cpp; sourceTree = "<group>"; };
 		223CE0EC1705004A0007533D /* ViewPoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewPoint.h; path = ../../src/ViewPoint.h; sourceTree = "<group>"; };
 		223F4FB516EAB25E0025FB63 /* MapFeatureLayer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MapFeatureLayer.h; path = ../../src/MapFeatureLayer.h; sourceTree = "<group>"; };
-		223F4FB616EAB34D0025FB63 /* GeoJSONMesh.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = GeoJSONMesh.h; path = ../../src/GeoJSONMesh.h; sourceTree = "<group>"; };
-		2250AB23171725040056198F /* MapWidget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MapWidget.cpp; path = ../../src/MapWidget.cpp; sourceTree = "<group>"; };
-		2250AB24171725040056198F /* MapWidget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MapWidget.h; path = ../../src/MapWidget.h; sourceTree = "<group>"; };
 		226150FE17027D1400290F86 /* ofxARToolkitPlus.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxARToolkitPlus.cpp; sourceTree = "<group>"; };
 		226150FF17027D1400290F86 /* ofxARToolkitPlus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxARToolkitPlus.h; sourceTree = "<group>"; };
 		2261510417027D1400290F86 /* ar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ar.h; sourceTree = "<group>"; };
@@ -446,11 +451,11 @@
 		22AA59951606E08300E88EF8 /* ofxXmlSettings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxXmlSettings.cpp; sourceTree = "<group>"; };
 		22AA59961606E08300E88EF8 /* ofxXmlSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxXmlSettings.h; sourceTree = "<group>"; };
 		22B804D317062DC1001A0AE2 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
+		22C32B7217222C240015BC73 /* MapFeature.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MapFeature.cpp; path = ../../src/MapFeature.cpp; sourceTree = "<group>"; };
+		22C32B7317222C240015BC73 /* MapFeature.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MapFeature.h; path = ../../src/MapFeature.h; sourceTree = "<group>"; };
 		22E14200164D862A00CA0A44 /* main.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = main.mm; sourceTree = "<group>"; };
 		22E14202164D866F00CA0A44 /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = config.h; path = ../../src/config.h; sourceTree = "<group>"; };
 		22E14203164D866F00CA0A44 /* ImageMesh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = ImageMesh.h; path = ../../src/ImageMesh.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		22E14204164D866F00CA0A44 /* MapFeature.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MapFeature.cpp; path = ../../src/MapFeature.cpp; sourceTree = "<group>"; };
-		22E14205164D866F00CA0A44 /* MapFeature.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MapFeature.h; path = ../../src/MapFeature.h; sourceTree = "<group>"; };
 		22E14206164D866F00CA0A44 /* MouseController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MouseController.cpp; path = ../../src/MouseController.cpp; sourceTree = "<group>"; };
 		22E14207164D866F00CA0A44 /* MouseController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MouseController.h; path = ../../src/MouseController.h; sourceTree = "<group>"; };
 		22E14208164D866F00CA0A44 /* ReliefClientBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ReliefClientBase.cpp; path = ../../src/ReliefClientBase.cpp; sourceTree = "<group>"; };
@@ -1569,28 +1574,31 @@
 		E4B69E1C0A3A1BDC003C02F2 /* src */ = {
 			isa = PBXGroup;
 			children = (
-				22320EE4170360ED0029872F /* Controllers */,
 				22E14202164D866F00CA0A44 /* config.h */,
-				223F4FB616EAB34D0025FB63 /* GeoJSONMesh.h */,
+				22320EE4170360ED0029872F /* Controllers */,
 				22E14203164D866F00CA0A44 /* ImageMesh.h */,
 				22E14200164D862A00CA0A44 /* main.mm */,
 				22E1420B164D866F00CA0A44 /* mainApp.h */,
 				22E1420C164D866F00CA0A44 /* mainApp.mm */,
-				2250AB23171725040056198F /* MapWidget.cpp */,
-				2250AB24171725040056198F /* MapWidget.h */,
-				22E14204164D866F00CA0A44 /* MapFeature.cpp */,
-				223CE0EB1705004A0007533D /* ViewPoint.cpp */,
-				223CE0EC1705004A0007533D /* ViewPoint.h */,
-				22E14205164D866F00CA0A44 /* MapFeature.h */,
 				2298A9C116EAD9CE006D1CED /* MapFeatureLayer.cpp */,
 				223F4FB516EAB25E0025FB63 /* MapFeatureLayer.h */,
+				22196FC41720B53100C23B9A /* MapWidget.cpp */,
+				22196FC51720B53100C23B9A /* MapWidget.h */,
 				22E14208164D866F00CA0A44 /* ReliefClientBase.cpp */,
 				22E14209164D866F00CA0A44 /* ReliefClientBase.h */,
-				229751FF16E6901700323FB3 /* util.h */,
 				223CE0E41704F6800007533D /* TerrainLayer.cpp */,
 				223CE0E51704F6800007533D /* TerrainLayer.h */,
+				22196FC71720B54800C23B9A /* Timeline.cpp */,
+				22196FC81720B54800C23B9A /* Timeline.h */,
+				229751FF16E6901700323FB3 /* util.h */,
+				223CE0EB1705004A0007533D /* ViewPoint.cpp */,
+				223CE0EC1705004A0007533D /* ViewPoint.h */,
 				223CE0E81704F69E0007533D /* WorldLayer.cpp */,
 				223CE0E91704F69E0007533D /* WorldLayer.h */,
+				22196FCA1720BC3D00C23B9A /* MapFeatureCollection.cpp */,
+				22196FCB1720BC3D00C23B9A /* MapFeatureCollection.h */,
+				22C32B7217222C240015BC73 /* MapFeature.cpp */,
+				22C32B7317222C240015BC73 /* MapFeature.h */,
 			);
 			path = src;
 			sourceTree = SOURCE_ROOT;
@@ -1715,7 +1723,6 @@
 				22AA59991606E08300E88EF8 /* tinyxmlparser.cpp in Sources */,
 				22AA599A1606E08300E88EF8 /* ofxXmlSettings.cpp in Sources */,
 				22E14201164D862A00CA0A44 /* main.mm in Sources */,
-				22E1420D164D866F00CA0A44 /* MapFeature.cpp in Sources */,
 				22E1420E164D866F00CA0A44 /* MouseController.cpp in Sources */,
 				22E1420F164D866F00CA0A44 /* ReliefClientBase.cpp in Sources */,
 				22E14210164D866F00CA0A44 /* mainApp.mm in Sources */,
@@ -1740,10 +1747,13 @@
 				2288371217163E0C002F58A2 /* PointGrey.cpp in Sources */,
 				222AB2B2171720A000DAE516 /* ofxLeapMotion.cpp in Sources */,
 				222AB2BA171722C600DAE516 /* LeapController.cpp in Sources */,
-				2250AB25171725040056198F /* MapWidget.cpp in Sources */,
 				221D18CF171D15F0003E3F74 /* ofxFlocking.cpp in Sources */,
 				221D18D0171D15F0003E3F74 /* ofxFluid.cpp in Sources */,
 				221D18D1171D15F0003E3F74 /* ofxFXObject.cpp in Sources */,
+				22196FC61720B53100C23B9A /* MapWidget.cpp in Sources */,
+				22196FC91720B54800C23B9A /* Timeline.cpp in Sources */,
+				22196FCC1720BC3D00C23B9A /* MapFeatureCollection.cpp in Sources */,
+				22C32B7417222C240015BC73 /* MapFeature.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -12,6 +12,7 @@ class GestureEventArgs : public ofEventArgs {
 public:
     ofVec3f pos;
     ofVec3f startPos;
+    ofVec3f normal;
     int state;
     float progress;
 

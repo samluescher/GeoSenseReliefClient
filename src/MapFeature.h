@@ -1,19 +1,32 @@
 //
 //  MapFeature.h
+//  GeoSenseReliefClientOSX
 //
-//  Created by Samuel Lüscher on 7/27/12.
-//  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
+//  Created by Samuel Luescher on 19.04.13.
 //
+//
+
+#ifndef __GeoSenseReliefClientOSX__MapFeature__
+#define __GeoSenseReliefClientOSX__MapFeature__
 
 #include "ofMain.h"
+#include "ofxJSONElement.h"
 
 class MapFeature: public ofNode {
+public:
+    MapFeature();
+    enum FeatureType {
+        POINT = 1,
+        MESH = 2
+    };
+    int type;
+    ofMesh mesh;
+    ofNode point;
     
-    public:
-        float normVal;
-        float width;
-        float height;
-        ofColor color;
-
-    void customDraw();
+    ofColor color;
+    ofColor labelColor;
+    
+    Json::Value properties;
 };
+
+#endif /* defined(__GeoSenseReliefClientOSX__MapFeature__) */

@@ -11,7 +11,11 @@
 class TerrainLayer: public WorldLayer {
     
 public:
-    ofVboMesh vboMesh;
+    //ofVboMesh vboMesh;
+    
+    ofMesh mesh;
+    ofVbo vbo;
+    
     ofImage textureImage, heightMap;
     bool drawWireframe, drawTexture;
     

@@ -1,7 +1,6 @@
 #include "mainApp.h"
 #include "ofEvents.h"
 #include "util.h"
-#include "GeoJSONMesh.h"
 
 #define NO_MARKER_TOLERANCE_FRAMES 10
 #define GRID_SUBDIVISIONS 10
@@ -55,6 +54,34 @@ void mainApp::setup()
     #endif
     
     startTime = ofGetElapsedTimef();
+ 
+    
+    drawDebugEnabled = true;
+    drawWireframesEnabled = false;
+    calibrationMode = false;
+    drawTerrainEnabled = true;
+    drawTexturesEnabled = true;
+    drawVideoEnabled = true;
+    drawAnimationEnabled = false;
+    drawTerrainGridEnabled = false;
+    drawMapFeaturesEnabled = true;
+    drawMiniMapEnabled = false;
+    drawWaterEnabled = false;
+    tetherWaterEnabled = false;
+    waterLevel = 0.3;
+    prevWaterLevel = 0.0;
+    reliefSendMode = RELIEF_SEND_OFF;
+    fullscreenEnabled = false;
+    dualscreenEnabled = false;
+    lightingEnabled = false;
+    lightAttenuation = LIGHT_ATTENUATION;
+    animateLight = -1;
+    animatePlate = -1;
+    timeline.width = ofGetWidth() / 2;
+    timeline.setPosition(ofVec2f(ofGetWidth() / 2, 50));
+    
+    
+    
     
     terrainSW = ofVec2f(128, 28);
     terrainNE = ofVec2f(150, 46);
@@ -71,7 +98,11 @@ void mainApp::setup()
     globalScale = ofVec3f(1.f, 1.f, 1.f);
 
     #if (IS_DESK_CEILING)
-    globalScale = ofVec3f(.95f, .95f, .95f);
+    globalScale = ofVec3f(1.6f, 1.6f, 1.6f);
+    reliefOffset = ofVec3f(-268, -100, 0);
+    lightAttenuation = 3.f;
+    lightingEnabled = true;
+    fullscreenEnabled = true;
     #endif
 
     #if (IS_RELIEF_CEILING)
@@ -96,7 +127,7 @@ void mainApp::setup()
     featureHeight = .5f;
 
     
-	fingerMovie.loadMovie("movies/tsunami-propagation.mov");
+	//fingerMovie.loadMovie("movies/tsunami-propagation.mov");
     
     
     
@@ -127,9 +158,6 @@ void mainApp::setup()
  
     
     ofSetSmoothLighting(true);
-    lightAttenuation = LIGHT_ATTENUATION;
-    animateLight = -1;
-    animatePlate = -1;
     
     ofLight* pointLight = new ofLight();
 	pointLight->setPointLight();
@@ -147,14 +175,35 @@ void mainApp::setup()
 
     numLoading = 0;
     ofRegisterURLNotification(this);  
-    //loadFeaturesFromURL("http://map.safecast.org/api/mappoints/4ff47bc60aea6a01ec00000f?b=&"+ofToString(terrainSW.x)+"b="+ofToString(terrainSW.y)+"&b="+ofToString(terrainNE.x)+"&b="+ofToString(terrainNE.y)+"&z=8");
+    //loadFeaturesFromURL("http://map.safecast.org/api/mappoints/4ff47bc60aea6a01ec00000f?b=&"+ofToString(terrainSW.x)+"b="+ofToString(terrainSW.y)+"&b="+ofToString(terrainNE.x)+"&b="+ofToString(terrainNE.y)+"&z=3");
     
     //loadFeaturesFromFile("json/safecast.8.json");
     //loadFeaturesFromFile("json/earthquakes.json");
     
-    loadFeaturesFromGeoJSONFile("json/japan-prefectures.json");
-    loadFeaturesFromGeoJSONFile("json/plateboundaries.json");
-    loadFeaturesFromGeoJSONFile("json/tsunamiinundationmerge_jpf.json");
+    loadFeaturesFromGeoJSONFile("json/japan-prefectures.json", "Prefectures");
+    loadFeaturesFromGeoJSONFile("json/plateboundaries.json", "Plate boundaries")->pointRadius = 0;
+    loadFeaturesFromGeoJSONFile("json/convergence.json", "Convergence");
+    loadFeaturesFromGeoJSONFile("json/tsunamiinundationmerge_jpf.json", "Inundation zone");
+    
+    stringstream ss;
+    ss << "" << "&b=" << terrainSW.x - 2 << "&b=" << terrainSW.y - 1 << "&b=" << terrainNE.x + 1 << "&b=" << terrainNE.y + 1;
+    string strBounds = ss.str();
+
+    ss.str("");
+    ss << "http://localhost:3000/api/map/stratarium/layer/51706f7e1b84fc58e900001f/features?z=7" << strBounds;
+    MapFeatureLayer* earthquakes = addMapFeaturelayer("Earthquakes");
+    
+    //loadFeaturesFromGeoJSONURL(ss.str(), "all", earthquakes);
+      
+    for (int year = EARTHQUAKE_START_YEAR; year <= EARTHQUAKE_END_YEAR; year++) {
+        ss.str("");
+        ss << "" "http://localhost:3000/api/map/stratarium/layer/51706f7e1b84fc58e900001f/features?z=7&t=yearly&d=" << year << strBounds;
+        stringstream ssName;
+        ssName << "Earthquakes " << year;
+        MapFeatureCollection *coll = loadFeaturesFromGeoJSONURL(ss.str(), ssName.str(), earthquakes);
+        coll->timelinePos = (year - EARTHQUAKE_START_YEAR) / float(EARTHQUAKE_END_YEAR - EARTHQUAKE_START_YEAR);
+        ofLog() << coll->title << " " << coll->timelinePos;
+    }
     
     for (int i = 0; i < featureLayers.size(); i++) {
         MapFeatureLayer *layer = featureLayers.at(i);
@@ -167,24 +216,7 @@ void mainApp::setup()
     ofAddListener(pinchRecognizer->ofPinchEvent,this, &mainApp::handlePinch);
     #endif
     
-    drawDebugEnabled = true;
-    drawWireframesEnabled = false;
-    calibrationMode = false;
-    drawTerrainEnabled = false;
-    drawTexturesEnabled = true;
-    drawVideoEnabled = true;
-    drawAnimationEnabled = false;
-    drawTerrainGridEnabled = false;
-    drawMapFeaturesEnabled = true;
-    drawMiniMapEnabled = false;
-    drawWaterEnabled = false;
-    tetherWaterEnabled = false;
-    waterLevel = 0.3;
-    prevWaterLevel = 0.0;
-    reliefSendMode = RELIEF_SEND_OFF;
-    fullscreenEnabled = false;
-    dualscreenEnabled = false;
-    lightingEnabled = false;
+
     ofSetFullscreen(fullscreenEnabled);
     
 #if (IS_RELIEF_CEILING)
@@ -208,12 +240,12 @@ void mainApp::setup()
     layersGUI = new ofxUICanvas(spacing, spacing, guiW, ofGetHeight());
     for (int i = 0; i < terrainLayers.size(); i++) {
         TerrainLayer *layer = terrainLayers.at(i);
-        layersGUI->addToggle(layer->layerName, layer->visible, dim, dim);
+        layersGUI->addToggle(layer->title, layer->visible, dim, dim);
     }
 	layersGUI->addWidgetDown(new ofxUILabel("", OFX_UI_FONT_LARGE));
     for (int i = 0; i < featureLayers.size(); i++) {
         MapFeatureLayer *layer = featureLayers.at(i);
-        layersGUI->addToggle(layer->layerName, layer->visible, dim, dim);
+        layersGUI->addToggle(layer->title, layer->visible, dim, dim);
     }
 	layersGUI->addWidgetDown(new ofxUILabel("", OFX_UI_FONT_LARGE));
 
@@ -224,7 +256,7 @@ void mainApp::setup()
     //    layersGUI->addButton("RESET CAMERA", false, dim, dim);
 #endif
     layersGUI->addToggle("LIGHTING", lightingEnabled, dim, dim);
-    layersGUI->addSlider("ATTENUATION", 0, 1.5, lightAttenuation, guiW - spacing * 2, dim);
+    layersGUI->addSlider("ATTENUATION", 0, 4, lightAttenuation, guiW - spacing * 2, dim);
 	layersGUI->addWidgetDown(new ofxUILabel("", OFX_UI_FONT_LARGE));
     layersGUI->addSlider("ZOOM", MIN_ZOOM, MAX_ZOOM, 1 / terrainUnitToGlUnit, guiW - spacing * 2, dim);
 	layersGUI->addWidgetDown(new ofxUILabel("", OFX_UI_FONT_LARGE));
@@ -291,15 +323,15 @@ void mainApp::setup()
     calibrationGUI->addSlider("GLOBAL SCALE", .1, 4, globalScale.x, guiW - spacing * 2, dim);
     calibrationGUI->addSlider("GLOBAL SCALE X", .1, 4, globalScale.x, guiW - spacing * 2, dim);
     calibrationGUI->addSlider("GLOBAL SCALE Y", .1, 4, globalScale.y, guiW - spacing * 2, dim);
-    calibrationGUI->addSlider("RELIEF OFFSET X", -200, 200, reliefOffset.x, guiW - spacing * 2, dim);
-    calibrationGUI->addSlider("RELIEF OFFSET Y", -200, 200, reliefOffset.y, guiW - spacing * 2, dim);
-    calibrationGUI->addSlider("RELIEF OFFSET Z", -200, 200, reliefOffset.z, guiW - spacing * 2, dim);
+    calibrationGUI->addSlider("RELIEF OFFSET X", -400, 400, reliefOffset.x, guiW - spacing * 2, dim);
+    calibrationGUI->addSlider("RELIEF OFFSET Y", -400, 400, reliefOffset.y, guiW - spacing * 2, dim);
+    calibrationGUI->addSlider("RELIEF OFFSET Z", -400, 400, reliefOffset.z, guiW - spacing * 2, dim);
 	ofAddListener(calibrationGUI->newGUIEvent,this,&mainApp::guiEvent);
     
     resetCam();
 
     #if !(TARGET_OS_IPHONE)
-    ofEnableSmoothing();    
+    ofEnableSmoothing();
     #endif
 
     mouseController.registerEvents(this);
@@ -325,6 +357,7 @@ void mainApp::setup()
 }
 
 void mainApp::onSwipe(GestureEventArgs & args) {
+    return;
     if (args.state == args.STATE_STOP) {
         int dir = args.pos.x > args.startPos.x;
         ofLog() << "swiped "  << (dir == 1 ? "right" : "left") << " " << args.pos;
@@ -354,6 +387,8 @@ void mainApp::onSwipe(GestureEventArgs & args) {
 
 void mainApp::onCircle(GestureEventArgs & args) {
     ofLog() << "circled " << args.progress;
+    int dir = args.normal.z > 0 ? -1 : 1;
+    timeline.setCursorPos(timeline.getCursorPos() + TIMELINE_CIRCLE_STEP * args.progress * dir);
 }
 
 void mainApp::onTapDown(GestureEventArgs & args) {
@@ -444,13 +479,13 @@ void mainApp::resetCam()
 void mainApp::setFeatureLayerVisible(int index, bool visible) {
     MapFeatureLayer *layer = featureLayers.at(index);
     layer->visible = visible;
-    layersGUI->getWidget(layer->layerName)->setState(visible);
+    layersGUI->getWidget(layer->title)->setState(visible);
 }
 
 void mainApp::setTerrainLayerVisible(int index, bool visible) {
     TerrainLayer *layer = terrainLayers.at(index);
     layer->visible = visible;
-    layersGUI->getWidget(layer->layerName)->setState(visible);
+    layersGUI->getWidget(layer->title)->setState(visible);
 }
 
 void mainApp::guiEvent(ofxUIEventArgs &e)
@@ -468,7 +503,7 @@ void mainApp::guiEvent(ofxUIEventArgs &e)
 
         for (int i = 0; i < terrainLayers.size(); i++) {
             TerrainLayer *layer = terrainLayers.at(i);
-            if (layer->layerName == name) {
+            if (layer->title == name) {
                 setTerrainLayerVisible(i, value);
                 break;
             }
@@ -476,7 +511,7 @@ void mainApp::guiEvent(ofxUIEventArgs &e)
 
         for (int i = 0; i < featureLayers.size(); i++) {
             MapFeatureLayer *layer = featureLayers.at(i);
-            if (layer->layerName == name) {
+            if (layer->title == name) {
                 setFeatureLayerVisible(i, value);
                 break;
             }
@@ -614,10 +649,12 @@ void mainApp::update()
     for (int i = lights.size() - 1; i >= 0; i--) {
         ofLight* light = lights.at(i);
         if (animateLight == i) {
-            float l = 4;
-            float p = l * sin(ofGetElapsedTimef() - animateLightStart);
-            p -= l / 2;
-            light->setPosition(animateLightStartPos + ofVec3f(0, p, 0));
+            float r = 16;
+            float x = r * cos(ofGetElapsedTimef() - animateLightStart);
+            float y = r * sin(ofGetElapsedTimef() - animateLightStart);
+            x -= r / 2;
+            y -= r / 2;
+            light->setPosition(animateLightStartPos + ofVec3f(x, y, 3));
         }
     }
 
@@ -630,6 +667,8 @@ void mainApp::update()
             layer->setPosition(animatePlateStartPos + ofVec3f(0, p, 0) + ofVec3f(rand() * j, rand() * j, rand() * j));
         }
     }
+    
+    
 
     
     
@@ -728,7 +767,6 @@ void mainApp::drawTerrain(bool wireframe) {
         }
     }
     
-
     ofDisableBlendMode();
     ofPopMatrix();
 
@@ -741,18 +779,29 @@ void mainApp::drawMapWidgets()
 {
     for (int i = 0; i < mapWidgets.size(); i++) {
         MapWidget *widget = mapWidgets.at(i);
-        widget->draw();
+        //widget->draw();
     }
 }
 
 void mainApp::drawMapFeatures()
 {
-    glLineWidth(LINE_WIDTH_MAP_FEATURES);
     ofEnableBlendMode(OF_BLENDMODE_ALPHA);
-    ofSetColor(200, 250, 250, 150);
-    
+
     for (int i = 0; i < featureLayers.size(); i++) {
         MapFeatureLayer *layer = featureLayers.at(i);
+
+        for (int j = 0; j < layer->featureCollections.size(); j++) {
+            MapFeatureCollection *coll = layer->featureCollections.at(j);
+            float p = timeline.getCursorPos();
+            if (/*p > 0 && p < 1 &&*/ coll->timelinePos >= 0) {
+                float delta = abs(p - coll->timelinePos);
+                coll->opacity = fmax(0, 1 - delta * 1 / TIMELINE_VISIBLE_RANGE);
+            } else {
+                coll->opacity = 1;
+            }
+        }
+        
+        
         if (layer->visible) {
             layer->draw();
         }
@@ -851,13 +900,15 @@ void mainApp::drawWorld(bool useARMatrix, int viewportX, int viewportY, int view
         //useARMatrix = noMarkerSince > -NO_MARKER_TOLERANCE_FRAMES;
         #elif (USE_ARTK)
         if (artkEnabled) {
-            artkController.draw(drawVideoEnabled, drawDebugEnabled || calibrationMode, false);
+            artkController.draw(drawVideoEnabled || calibrationMode, drawDebugEnabled || calibrationMode, drawVideoEnabled && !calibrationMode);
         }
         #endif
     }
+
+  
     
     ofPushView();
-        
+    
         if (useARMatrix) {
             #if (USE_QCAR)
             if (useARMatrix) {
@@ -886,7 +937,7 @@ void mainApp::drawWorld(bool useARMatrix, int viewportX, int viewportY, int view
             }
             #endif
             
-            /*ofTranslate(reliefOffset);*/
+            ofTranslate(reliefOffset);
             ofScale(globalScale.x, globalScale.y, globalScale.z);
             
             #if (IS_RELIEF_CEILING)
@@ -931,7 +982,7 @@ void mainApp::drawWorld(bool useARMatrix, int viewportX, int viewportY, int view
                         //drawWater(waterLevel);
                     }
     
-                    if (drawMapFeaturesEnabled && !calibrationMode) {
+                    if (drawMapFeaturesEnabled) {
                         ofEnableBlendMode(OF_BLENDMODE_ADD);
                         drawMapFeatures();
                         ofDisableBlendMode();
@@ -989,6 +1040,7 @@ void mainApp::drawWorld(bool useARMatrix, int viewportX, int viewportY, int view
     } else {
         cam.end();
     }    
+
 }
 
 void mainApp::drawGUI() 
@@ -1095,7 +1147,7 @@ void mainApp::drawGUI()
     }
     
     if (drawDebugEnabled) {
-        string msg = "fps: " + ofToString(ofGetFrameRate(), 2) + ", features: " + ofToString(mapFeatures.size());
+        string msg = "fps: " + ofToString(ofGetFrameRate(), 2);
         msg += "\nterrain scale: " + ofToString(terrainToHeightMapScale);
         if (false/*numLoading > 0*/) {
             msg += "\nloading data";
@@ -1121,6 +1173,14 @@ void mainApp::drawGUI()
         ofSetColor(255);
         ofDrawBitmapString(msg, consolePos.x, consolePos.y);
     }
+    
+    
+    int x = 40, y = 40;
+    ofSetColor(255);
+    ofNoFill();
+    
+    timeline.draw();
+    
 }
 
 void mainApp::drawGrid(ofVec2f sw, ofVec2f ne, int subdivisionsX, int subdivisionsY, ofColor line, ofColor background) {
@@ -1316,7 +1376,7 @@ void mainApp::drawIdentity() {
 
 TerrainLayer * mainApp::addTerrainLayer(string name, string heightmap, string texture, float peakHeight) {
     TerrainLayer *layer = new TerrainLayer();
-    layer->layerName = name;
+    layer->title = name;
     layer->loadHeightMap(heightmap, peakHeight);
     layer->loadTexture(texture);
     layer->opacity = TERRAIN_OPACITY;
@@ -1327,8 +1387,15 @@ TerrainLayer * mainApp::addTerrainLayer(string name, string heightmap, string te
     return layer;
 }
 
+MapFeatureLayer* mainApp::addMapFeaturelayer(string title) {
+    MapFeatureLayer* layer = new MapFeatureLayer();
+    layer->title = title;
+    featureLayers.push_back(layer);
+    return layer;
+}
 
-void mainApp::loadFeaturesFromGeoJSONFile(string filePath) {
+
+MapFeatureCollection* mainApp::loadFeaturesFromGeoJSONFile(string filePath, string title) {
 	ofFile file(filePath);
 	if(!file.exists()){
 		ofLogError("The file " + filePath + " is missing");
@@ -1341,24 +1408,57 @@ void mainApp::loadFeaturesFromGeoJSONFile(string filePath) {
 		jsonStr += buffer.getNextLine();
     }
     
-    MapFeatureLayer* layer = addFeatureLayerFromGeoJSONString(jsonStr);
-    if (layer != nil) {
-        layer->layerName = ofFilePath::getFileName(filePath);
+    MapFeatureLayer *layer = addMapFeaturelayer(title);
+    MapFeatureCollection* coll = new MapFeatureCollection();
+    addFeaturesFromGeoJSONString(jsonStr, coll);
+
+    layer->addFeatureCollection(coll);
+    
+    return coll;
+}
+
+MapFeatureCollection* mainApp::loadFeaturesFromGeoJSONURL(string url, string title) {
+    MapFeatureLayer *layer = addMapFeaturelayer(title);
+    return loadFeaturesFromGeoJSONURL(url, title, layer);
+}
+
+MapFeatureCollection* mainApp::loadFeaturesFromGeoJSONURL(string url, string title, MapFeatureLayer* layer) {
+    int layerIndex = 0;
+    for (int i = 0; i < featureLayers.size(); i++) {
+        if (layer == featureLayers.at(i)) {
+            layerIndex = i;
+            break;
+        }
     }
+    
+    MapFeatureCollection* coll = new MapFeatureCollection();
+    coll->title = title;
+    urlToMapFeatureCollectionIndex.insert(make_pair(url, coll));
+    layer->addFeatureCollection(coll);
+    ofLog() << "Loading "<< url << "\n";
+    numLoading++;
+    ofLoadURLAsync(url);
+
+    return coll;
+}
+
+
+void mainApp::urlResponse(ofHttpResponse & response) {
+    numLoading--;
+    addFeaturesFromGeoJSONString(response.data, urlToMapFeatureCollectionIndex[response.request.url]);
 }
 
 //Parses a json string into map features
-MapFeatureLayer* mainApp::addFeatureLayerFromGeoJSONString(string jsonStr) {
+MapFeatureCollection* mainApp::addFeaturesFromGeoJSONString(string jsonStr, MapFeatureCollection *coll) {
     ofxJSONElement json;
     if (json.parse(jsonStr)) {
-        MapFeatureLayer *layer = new MapFeatureLayer();
-        layer->addMeshes(geoJSONFeatureCollectionToMeshes(json));
-        featureLayers.push_back(layer);
-        return layer;
+        coll->addFeaturesFromGeoJSON(json);
     } else {
         ofLog() << "Error parsing JSON";
     }
+    return coll;
 }
+
 
 
 
@@ -1382,7 +1482,7 @@ void mainApp::loadFeaturesFromFile(string filePath) {
     addItemsFromJSONString(jsonStr);
 }
 
-void mainApp::loadFeaturesFromURL(string url) {
+/*void mainApp::loadFeaturesFromURL(string url) {
     cout << url << "\n";
     numLoading++;
     ofLoadURLAsync(url);
@@ -1391,10 +1491,10 @@ void mainApp::loadFeaturesFromURL(string url) {
 void mainApp::urlResponse(ofHttpResponse & response) {
     numLoading--;
     addItemsFromJSONString(response.data);
-}
+}*/
 
 //Parses a json string into map features
-void mainApp::addItemsFromJSONString(string jsonStr) {
+/*void mainApp::addItemsFromJSONString(string jsonStr) {
     ofxJSONElement json;
     int xIndex = 0; int zIndex = 1; 
     if (json.parse(jsonStr)) {
@@ -1501,7 +1601,8 @@ ofMesh mainApp::getMeshFromFeatures(vector<MapFeature*> mapFeatures) {
         
     }
     return mesh;
-}
+}*/
+
 
 void mainApp::setCalibrationMode(bool state) 
 {
