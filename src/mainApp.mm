@@ -204,11 +204,17 @@ void mainApp::setup()
         coll->timelinePos = (year - EARTHQUAKE_START_YEAR) / float(EARTHQUAKE_END_YEAR - EARTHQUAKE_START_YEAR);
         ofLog() << coll->title << " " << coll->timelinePos;
     }
-    
+
     for (int i = 0; i < featureLayers.size(); i++) {
         MapFeatureLayer *layer = featureLayers.at(i);
         layer->visible = i == 0;
     }
+
+    // ripple (from ofxFX)
+    rip.allocate(555,555);
+    ofImage ripBackground;
+    ripBackground.loadImage("maps/heightmap.mantle.png");
+    rip.setTexture(ripBackground.getTextureReference(),1);
     
     #if (TARGET_OS_IPHONE)
     EAGLView *view = ofxiPhoneGetGLView();  
@@ -643,6 +649,15 @@ void mainApp::guiEvent(ofxUIEventArgs &e)
 
 void mainApp::update() 
 {
+    // ripple (from ofxFX)
+    rip.begin();
+    ofFill();
+    ofSetColor(ofNoise( ofGetFrameNum() ) * 255 * 5, 255);
+    ofEllipse(mouseX,mouseY, 10,10);
+    rip.end();
+    rip.update();
+    
+    
     fingerMovie.update();
     realworldUnitToTerrainUnit = realworldUnitToGlUnit / (1 / terrainUnitToGlUnit);
     
@@ -872,6 +887,14 @@ void mainApp::draw() {
     glow.draw(0, 0);
     ofDisableAlphaBlending();
     */
+    
+    // ripple (from ofxFX)
+    ofSetColor(255,255);
+    
+    rip.draw(0,0);
+    //ofDrawBitmapString("ofxRipples ( damping = " + ofToString(rip.damping) + " )", 15,15);
+    
+
 
 }
 
@@ -1764,7 +1787,7 @@ void mainApp::mouseMoved(int x, int y ){
 
 //--------------------------------------------------------------
 void mainApp::mouseDragged(int x, int y, int button){
-    
+    rip.damping = ofMap(y, 0, ofGetHeight(), 0.9, 1.0, true);
 }
 
 //--------------------------------------------------------------
