@@ -4,6 +4,7 @@
 #include "ofEvents.h"
 #include "TargetConditionals.h"
 #include "ofEasyCam.h"
+#include "ofxFensterManager.h"
 
 #if (TARGET_OS_IPHONE)
 #include "ofxQCAR.h"
@@ -43,6 +44,7 @@
 #include "ofxFX.h"
 
 
+
 #include <time.h>
 
 //class MouseController;
@@ -51,9 +53,14 @@ class mainApp : public ReliefClientBase{
 	
 public:
     void setup();
+    void setupGUI();
+    void setupLayers();
+    void setupViewports();
+    void updateGUI();
     void update();
     void draw();
     void exit();
+
 	
 #if (TARGET_OS_IPHONE)
     void touchDown(ofTouchEventArgs & touch);
@@ -85,7 +92,10 @@ public:
     bool artkEnabled;
     #endif
    
-
+    
+    bool drawDebugEnabled;
+    
+    
     Timeline timeline;
     
     void setCalibrationMode(bool state);
@@ -99,6 +109,7 @@ public:
     #endif
     
     void onPan(const void* sender, ofVec3f & distance);
+    void onLook(const void* sender, ofVec3f & distance);
     void onZoom(const void* sender, float & factor);
     void onSwipe(GestureEventArgs & args);
     void onCircle(GestureEventArgs & args);
@@ -106,9 +117,9 @@ public:
     void onTapScreen(GestureEventArgs & args);
     void onViewpointChange(const void* sender, MapWidget & viewpoint);
     
-    ofVboMesh terrainVboMesh, terrainWaterMesh;
+    ofVboMesh terrainVboMesh;
     ofImage terrainCrop, sendMap, featureMap, featureMapCrop, featureHeightMap;
-    ofVec2f terrainSW, terrainNE, terrainCenterOffset, waterSW, waterNE;
+    ofVec2f terrainSW, terrainNE, terrainSE, terrainNW, terrainCenterOffset, waterSW, waterNE;
     ofVec3f terrainToHeightMapScale;
     float sendMapResampledValues[RELIEF_SIZE_X * RELIEF_SIZE_Y];
     ofVec2f normalizedMapCenter, normalizedReliefSize;
@@ -132,11 +143,14 @@ public:
     
     float gridSize;
     
-    
     std::vector<MapFeatureLayer *> featureLayers;
     std::vector<TerrainLayer *> terrainLayers;
+    std::vector<TerrainLayerCollection *> terrainOverlays;
 
-    TerrainLayer *addTerrainLayer(string name, string heightmap, string texture, float peakHeight);
+    TerrainLayer *addTerrainLayerFromHeightMap(string name, string heightmap, string texture, float peakHeight);
+    TerrainLayer *addTerrainLayer(string name);
+    TerrainLayerCollection *addTerrainOverlay(string name);
+    TerrainLayer *createTerrainOverlayItem(string name, ofVec3f p1, ofVec3f p2, float depth, string texture);
     TerrainLayer *focusLayer;
 
     MapFeatureLayer* addMapFeaturelayer(string title);
@@ -148,9 +162,9 @@ public:
     MapFeatureCollection* addFeaturesFromGeoJSONString(string jsonStr, MapFeatureCollection *coll);
     void setFeatureLayerVisible(int index, bool visible);
     void setTerrainLayerVisible(int index, bool visible);
+    void setTerrainOverlayVisible(int index, bool visible);
+    
 
-
-    float lightAttenuation;
     std::vector<ofLight *> lights;
     
     ofVec2f touchPoint;
@@ -159,35 +173,41 @@ public:
     float terrainUnitToGlUnit, realworldUnitToGlUnit, realworldUnitToTerrainUnit;
     bool calibrationMode, zoomMode;
     float timeSinceLastDoubleTap;
-    ofVec3f reliefOffset, reliefToMarker1Offset, reliefToMarker2Offset;
-    ofVec3f globalScale;
+    ofVec3f reliefToMarker1Offset, reliefToMarker2Offset;
     ofVec2f terrainExtents;
     
     ofMatrix4x4 modelViewMatrix, projectionMatrix;
     int noMarkerSince;
     
     ofVec3f mapCenter, newMapCenter;
-    //ofCamera cam;
-    ofEasyCam cam;
-    void resetCam();
+    /*ofEasyCam cam;*/
+    void resetCam(ofCamera& cam);
     
-    void drawIdentity();
-    void drawWater(float waterLevel);
-    void drawTerrain(bool wireframe);
-    void drawGrid(ofVec2f sw, ofVec2f ne, int subdivisionsX, int subdivisionsY, ofColor line);
-    void drawGrid(ofVec2f sw, ofVec2f ne, int subdivisionsX, int subdivisionsY, ofColor line, ofColor background);
-    void drawReliefGrid();
-    void drawReliefFrame();
-    void drawTerrainGrid();
-    void drawLights();
-    void drawMapFeatures();
-    void drawMapWidgets();
+    int selectedViewport = 0;
+    
+    void drawIdentity(int viewport);
+    void drawTerrain(int viewport);
+    void drawTerrainOverlays(int viewport);
+    void drawGrid(int viewport, ofVec2f sw, ofVec2f ne, int subdivisionsX, int subdivisionsY, ofColor line);
+    void drawGrid(int viewport, ofVec2f sw, ofVec2f ne, int subdivisionsX, int subdivisionsY, ofColor line, ofColor background);
+
+    void drawReliefGrid(int viewport);
+    void drawReliefFrame(int viewport);
+    void drawTerrainGrid(int viewport);
+    void drawLights(int viewport);
+    void drawMapFeatures(int viewport);
+    void drawMapWidgets(int viewport);
+
     void drawGUI();
-    void drawWorld(bool externalMatrix, int viewportX, int viewportY, int viewportW, int viewportH);
-    void updateVisibleMap(bool updateServer);
     
-    bool drawTerrainEnabled, drawTexturesEnabled, drawTerrainGridEnabled, drawDebugEnabled, drawWireframesEnabled, drawMapFeaturesEnabled, drawMiniMapEnabled, drawWaterEnabled, tetherWaterEnabled, drawAnimationEnabled,
-        drawVideoEnabled, fullscreenEnabled, dualscreenEnabled, lightingEnabled;
+    void drawWorld(int viewport, bool externalMatrix);
+    void updateVisibleMap(bool updateServer);
+
+    ofxXmlSettings settings;
+    
+    void loadSettings();
+    void saveSettings();
+    
     
     void reliefMessageReceived(ofxOscMessage m);
     void updateRelief();
@@ -203,8 +223,6 @@ public:
     float animatePlateStart;
     ofVec3f animatePlateStartPos;
     
-    ofVideoPlayer 		fingerMovie;
-    
 #if (TARGET_OS_IPHONE)
     ofPinchGestureRecognizer *pinchRecognizer;
     void handlePinch(ofPinchEventArgs &e);
@@ -214,5 +232,6 @@ public:
     void guiEvent(ofxUIEventArgs &e);
     
     ofxRipples rip;
+    ofxBounce bounce;
 };
 

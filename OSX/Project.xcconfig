@@ -18,6 +18,9 @@ OFX_OPENCV_HEADERS = "$(ADDONS_PATH)/ofxOpenCv/libs/opencv/include/"
 OFX_ARTOOLKIT_HEADERS = "$(ADDONS_PATH)/ofxARtoolkitPlus/libs/ARToolKitPlus/include"
 OFX_ARTOOLKIT_LIBS = "$(ADDONS_PATH)/ofxARtoolkitPlus/libs/ARToolKitPlus/lib/osx/"
 
+LIB_GHOST="$(OF_PATH)/addons/ofxFenster/libs/ghost/lib/osx32/libGhost32.a" 
+
+
 // all addons
 OF_ADDON_HEADERS = $(OFX_OPENCV_HEADERS) $(OFX_ARTOOLKIT_HEADERS)
 OF_ADDON_LIBS = $(OFX_ARTOOLKIT_LIBS)
@@ -26,6 +29,6 @@ OF_ADDON_LIBS = $(OFX_ARTOOLKIT_LIBS)
 // MAIN
 
 HEADER_SEARCH_PATHS = $(OF_CORE_HEADERS) $(OF_ADDON_HEADERS)
-OTHER_LDFLAGS = $(OF_CORE_LIBS) ../../../addons/ofxOpenCv/libs/opencv/lib/osx/opencv.a ../../../addons/ofxARtoolkitPlus/libs/ARToolKitPlus/lib/osx/libARToolKitPlus.a
+OTHER_LDFLAGS = $(OF_CORE_LIBS) $(LIB_GHOST) ../../../addons/ofxOpenCv/libs/opencv/lib/osx/opencv.a ../../../addons/ofxARtoolkitPlus/libs/ARToolKitPlus/lib/osx/libARToolKitPlus.a
 
 

@@ -1,0 +1,14 @@
+{"type":"FeatureCollection","features":[
+{"type":"Feature","properties":{},"geometry":{"type":"LineString","coordinates":[[141.97822931250843,33.31380071151174],[134.19990900000792,33.18517200813267]]}},
+{"type":"Feature","properties":{},"geometry":{"type":"LineString","coordinates":[[141.84639337500585,34.136158985805864],[134.19990900000792,34.49911304703109]]}},
+{"type":"Feature","properties":{},"geometry":{"type":"LineString","coordinates":[[142.0221746250033,34.95059228105787],[134.68330743750548,37.012886180290174]]}},
+{"type":"Feature","properties":{},"geometry":{"type":"LineString","coordinates":[[142.4836004062579,35.81048862049862],[135.23262384375883,38.127451691256965]]}},
+{"type":"Feature","properties":{},"geometry":{"type":"LineString","coordinates":[[143.29658868750744,36.6435456018235],[136.48506525001102,38.93529542860309]]}},
+{"type":"Feature","properties":{},"geometry":{"type":"LineString","coordinates":[[143.88985040625565,38.05828073796234],[136.7926824375111,39.564859482282046]]}},
+{"type":"Feature","properties":{},"geometry":{"type":"LineString","coordinates":[[144.1754949375038,39.463152165383384],[136.9464910312566,40.17197191183933]]}},
+{"type":"Feature","properties":{},"geometry":{"type":"LineString","coordinates":[[144.4611394687609,40.67378791953816],[137.4518621250061,41.12221752599405]]}},
+{"type":"Feature","properties":{},"geometry":{"type":"LineString","coordinates":[[144.54903009375965,40.923290800881105],[137.82539728125298,42.433008027180456]]}},
+{"type":"Feature","properties":{},"geometry":{"type":"LineString","coordinates":[[144.81270196875587,41.138767625699344],[138.0451238437543,43.92304451344917]]}},
+{"type":"Feature","properties":{},"geometry":{"type":"LineString","coordinates":[[145.1642644687598,41.38651794212494],[138.90205743750772,45.56158600952431]]}},
+{"type":"Feature","properties":{},"geometry":{"type":"LineString","coordinates":[[145.6037175937535,41.68257686071571],[140.31929376563593,46.74872798970085]]}},
+{"type":"Feature","properties":{},"geometry":{"type":"LineString","coordinates":[[145.83443048438525,41.854651826627446],[141.9562566562565,47.74063737854792]]}}]} 

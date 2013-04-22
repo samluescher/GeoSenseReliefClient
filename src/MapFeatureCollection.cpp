@@ -37,6 +37,25 @@ std::vector<ofVec3f> getVerticesFromCoordinates(Json::Value coordinates) {
     return verts;
 }
 
+MapFeature initFeatureFromGeoJSON(ofxJSONElement jsonFeature) {
+    MapFeature feature;
+    feature.properties = jsonFeature["properties"];
+    string strColor = feature.properties["color"].asString();
+    if (strColor != "") {
+        std::stringstream ss;
+        ss.str("");
+        int hexColor;
+        strColor.replace(0, 1, "");
+        ss << std::hex << strColor;
+        ss >> hexColor;
+        feature.color.setHex(hexColor);
+    }
+    if (!feature.properties["size"].empty() && feature.properties["size"].type() != Json::nullValue) {
+        feature.setScale(feature.properties["size"].asDouble());
+    };
+    return feature;
+}
+
 std::vector<MapFeature> featuresFromGeoJSON(ofxJSONElement &featureCollection)
 {
     int size = featureCollection["features"].size();
@@ -53,7 +72,7 @@ std::vector<MapFeature> featuresFromGeoJSON(ofxJSONElement &featureCollection)
         if (geometryType == "Polygon" || geometryType == "MultiLineString") {
             for (int j = 0; j < coordinates.size(); j++) {
                 ofMesh mesh;
-                MapFeature feature;
+                MapFeature feature = initFeatureFromGeoJSON(jsonFeature);
                 std::vector<ofVec3f> verts = getVerticesFromCoordinates(coordinates[j]);
                 if (geometryType == "Polygon") {
                     mesh.setMode(OF_PRIMITIVE_LINE_LOOP);
@@ -64,7 +83,6 @@ std::vector<MapFeature> featuresFromGeoJSON(ofxJSONElement &featureCollection)
                 numVerts += verts.size();
                 feature.type = feature.MESH;
                 feature.mesh = mesh;
-                feature.properties = jsonFeature["properties"];
                 features.push_back(feature);
             }
         } else if (geometryType == "MultiPolygon") {
@@ -72,21 +90,29 @@ std::vector<MapFeature> featuresFromGeoJSON(ofxJSONElement &featureCollection)
                 for (int k = 0; k < coordinates[j].size(); k++) {
                     std::vector<ofVec3f> verts = getVerticesFromCoordinates(coordinates[j][k]);
                     ofMesh mesh;
-                    MapFeature feature;
+                    MapFeature feature = initFeatureFromGeoJSON(jsonFeature);
                     mesh.setMode(OF_PRIMITIVE_LINE_LOOP);
                     mesh.addVertices(verts);
                     feature.type = feature.MESH;
                     feature.mesh = mesh;
-                    feature.properties = jsonFeature["properties"];
                     features.push_back(feature);
                     numVerts += verts.size();
                 }
             }
-        } else {
-            MapFeature feature;
+        } else if (geometryType == "LineString") {
+            std::vector<ofVec3f> verts = getVerticesFromCoordinates(coordinates);
+            ofMesh mesh;
+            MapFeature feature = initFeatureFromGeoJSON(jsonFeature);
+            mesh.setMode(OF_PRIMITIVE_LINE_STRIP);
+            mesh.addVertices(verts);
+            feature.type = feature.MESH;
+            feature.mesh = mesh;
+            features.push_back(feature);
+            numVerts += verts.size();
+        } else if (geometryType == "Point") {
+            MapFeature feature = initFeatureFromGeoJSON(jsonFeature);
             feature.type = feature.POINT;
             feature.setPosition(getVecFromCoordinates(coordinates));
-            feature.properties = jsonFeature["properties"];
             features.push_back(feature);
             numVerts++;
         }
@@ -101,7 +127,8 @@ std::vector<MapFeature> featuresFromGeoJSON(ofxJSONElement &featureCollection)
 
 MapFeatureCollection::MapFeatureCollection() {
     timelinePos = -1;
-    pointRadius = .25;
+    pointRadius = FEATURE_POINT_RADIUS;
+    opacity = FEATURE_OPACITY;
 }
 
 void MapFeatureCollection::customDraw() {
@@ -115,7 +142,15 @@ void MapFeatureCollection::customDraw() {
         MapFeature feature = features.at(i);
         if (feature.type == feature.POINT && pointRadius > 0) {
             ofFill();
-            ofCircle(feature.getPosition(), pointRadius);
+            ofColor color = feature.color;
+            color.a *= opacity;
+            ofSetColor(color);
+            ofPushMatrix();
+            ofTranslate(feature.getPosition());
+            ofScale(feature.getScale().x, feature.getScale().y);
+            ofCircle(0, 0, 0, pointRadius);
+            ofPopMatrix();
+            ofNoFill();
         }
     }
     drawLabels();
@@ -124,16 +159,15 @@ void MapFeatureCollection::customDraw() {
 void MapFeatureCollection::drawLabels() {
     for (int i = 0; i < features.size(); i++) {
         MapFeature feature = features.at(i);
-        ofSetColor(feature.labelColor);
         string name = feature.properties["name"].asString();
         ofVec3f pos = feature.getPosition();
         if (feature.type == feature.POINT) {
             pos += pointRadius * 1.2;
-        }
-        if (name != "") {
-            ofDrawBitmapString(name, pos);
-            ofLog() << name << "  " << feature.getPosition();
-            
+            if (name != "") {
+                ofSetColor(feature.labelColor);
+                ofDrawBitmapString(name, pos);
+                
+            }
         }
     }
 }

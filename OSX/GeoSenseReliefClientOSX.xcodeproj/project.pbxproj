@@ -66,12 +66,17 @@
 		22AA598B1606DFAE00E88EF8 /* json_value.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22AA59841606DFAE00E88EF8 /* json_value.cpp */; };
 		22AA598C1606DFAE00E88EF8 /* json_writer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22AA59861606DFAE00E88EF8 /* json_writer.cpp */; };
 		22AA598D1606DFAE00E88EF8 /* ofxJSONElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22AA59881606DFAE00E88EF8 /* ofxJSONElement.cpp */; };
-		22AA59971606E08300E88EF8 /* tinyxml.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22AA59901606E08300E88EF8 /* tinyxml.cpp */; };
-		22AA59981606E08300E88EF8 /* tinyxmlerror.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22AA59921606E08300E88EF8 /* tinyxmlerror.cpp */; };
-		22AA59991606E08300E88EF8 /* tinyxmlparser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22AA59931606E08300E88EF8 /* tinyxmlparser.cpp */; };
-		22AA599A1606E08300E88EF8 /* ofxXmlSettings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22AA59951606E08300E88EF8 /* ofxXmlSettings.cpp */; };
 		22B804D417062DC1001A0AE2 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22B804D317062DC1001A0AE2 /* Accelerate.framework */; };
-		22C32B7417222C240015BC73 /* MapFeature.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22C32B7217222C240015BC73 /* MapFeature.cpp */; };
+		22C32C4017238F5B0015BC73 /* ofxDisplay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22C32C2D17238F5B0015BC73 /* ofxDisplay.cpp */; };
+		22C32C4117238F5B0015BC73 /* ofxDisplayManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22C32C3017238F5B0015BC73 /* ofxDisplayManager.cpp */; };
+		22C32C4217238F5B0015BC73 /* ofxDisplayManagerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 22C32C3217238F5B0015BC73 /* ofxDisplayManagerMac.mm */; };
+		22C32C4317238F5B0015BC73 /* ofxFenster.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22C32C3317238F5B0015BC73 /* ofxFenster.cpp */; };
+		22C32C4417238F5B0015BC73 /* ofxFensterCanvas.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22C32C3517238F5B0015BC73 /* ofxFensterCanvas.cpp */; };
+		22C32C4517238F5B0015BC73 /* ofxFensterManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22C32C3717238F5B0015BC73 /* ofxFensterManager.cpp */; };
+		22C32C531724ACCA0015BC73 /* tinyxml.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22C32C4C1724ACCA0015BC73 /* tinyxml.cpp */; };
+		22C32C541724ACCA0015BC73 /* tinyxmlerror.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22C32C4E1724ACCA0015BC73 /* tinyxmlerror.cpp */; };
+		22C32C551724ACCA0015BC73 /* tinyxmlparser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22C32C4F1724ACCA0015BC73 /* tinyxmlparser.cpp */; };
+		22C32C561724ACCA0015BC73 /* ofxXmlSettings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22C32C511724ACCA0015BC73 /* ofxXmlSettings.cpp */; };
 		22E14201164D862A00CA0A44 /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = 22E14200164D862A00CA0A44 /* main.mm */; };
 		22E1420E164D866F00CA0A44 /* MouseController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22E14206164D866F00CA0A44 /* MouseController.cpp */; };
 		22E1420F164D866F00CA0A44 /* ReliefClientBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22E14208164D866F00CA0A44 /* ReliefClientBase.cpp */; };
@@ -444,15 +449,78 @@
 		22AA59861606DFAE00E88EF8 /* json_writer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = json_writer.cpp; sourceTree = "<group>"; };
 		22AA59881606DFAE00E88EF8 /* ofxJSONElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxJSONElement.cpp; sourceTree = "<group>"; };
 		22AA59891606DFAE00E88EF8 /* ofxJSONElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxJSONElement.h; sourceTree = "<group>"; };
-		22AA59901606E08300E88EF8 /* tinyxml.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tinyxml.cpp; sourceTree = "<group>"; };
-		22AA59911606E08300E88EF8 /* tinyxml.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tinyxml.h; sourceTree = "<group>"; };
-		22AA59921606E08300E88EF8 /* tinyxmlerror.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tinyxmlerror.cpp; sourceTree = "<group>"; };
-		22AA59931606E08300E88EF8 /* tinyxmlparser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tinyxmlparser.cpp; sourceTree = "<group>"; };
-		22AA59951606E08300E88EF8 /* ofxXmlSettings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxXmlSettings.cpp; sourceTree = "<group>"; };
-		22AA59961606E08300E88EF8 /* ofxXmlSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxXmlSettings.h; sourceTree = "<group>"; };
 		22B804D317062DC1001A0AE2 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
-		22C32B7217222C240015BC73 /* MapFeature.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MapFeature.cpp; path = ../../src/MapFeature.cpp; sourceTree = "<group>"; };
 		22C32B7317222C240015BC73 /* MapFeature.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MapFeature.h; path = ../../src/MapFeature.h; sourceTree = "<group>"; };
+		22C32BE617238F5B0015BC73 /* GHOST_DisplayManagerCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GHOST_DisplayManagerCocoa.h; sourceTree = "<group>"; };
+		22C32BE717238F5B0015BC73 /* GHOST_SystemCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GHOST_SystemCocoa.h; sourceTree = "<group>"; };
+		22C32BE817238F5B0015BC73 /* GHOST_SystemPathsCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GHOST_SystemPathsCocoa.h; sourceTree = "<group>"; };
+		22C32BE917238F5B0015BC73 /* GHOST_WindowCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GHOST_WindowCocoa.h; sourceTree = "<group>"; };
+		22C32BEA17238F5B0015BC73 /* GHOST_Buttons.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GHOST_Buttons.h; sourceTree = "<group>"; };
+		22C32BEB17238F5B0015BC73 /* GHOST_C-api.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "GHOST_C-api.h"; sourceTree = "<group>"; };
+		22C32BEC17238F5B0015BC73 /* GHOST_CallbackEventConsumer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GHOST_CallbackEventConsumer.h; sourceTree = "<group>"; };
+		22C32BED17238F5B0015BC73 /* GHOST_Debug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GHOST_Debug.h; sourceTree = "<group>"; };
+		22C32BEE17238F5B0015BC73 /* GHOST_DisplayManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GHOST_DisplayManager.h; sourceTree = "<group>"; };
+		22C32BEF17238F5B0015BC73 /* GHOST_DisplayManagerNULL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GHOST_DisplayManagerNULL.h; sourceTree = "<group>"; };
+		22C32BF017238F5B0015BC73 /* GHOST_Event.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GHOST_Event.h; sourceTree = "<group>"; };
+		22C32BF117238F5B0015BC73 /* GHOST_EventButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GHOST_EventButton.h; sourceTree = "<group>"; };
+		22C32BF217238F5B0015BC73 /* GHOST_EventCursor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GHOST_EventCursor.h; sourceTree = "<group>"; };
+		22C32BF317238F5B0015BC73 /* GHOST_EventDragnDrop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GHOST_EventDragnDrop.h; sourceTree = "<group>"; };
+		22C32BF417238F5B0015BC73 /* GHOST_EventKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GHOST_EventKey.h; sourceTree = "<group>"; };
+		22C32BF517238F5B0015BC73 /* GHOST_EventManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GHOST_EventManager.h; sourceTree = "<group>"; };
+		22C32BF617238F5B0015BC73 /* GHOST_EventNDOF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GHOST_EventNDOF.h; sourceTree = "<group>"; };
+		22C32BF717238F5B0015BC73 /* GHOST_EventPrinter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GHOST_EventPrinter.h; sourceTree = "<group>"; };
+		22C32BF817238F5B0015BC73 /* GHOST_EventString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GHOST_EventString.h; sourceTree = "<group>"; };
+		22C32BF917238F5B0015BC73 /* GHOST_EventTrackpad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GHOST_EventTrackpad.h; sourceTree = "<group>"; };
+		22C32BFA17238F5B0015BC73 /* GHOST_EventWheel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GHOST_EventWheel.h; sourceTree = "<group>"; };
+		22C32BFB17238F5B0015BC73 /* GHOST_IEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GHOST_IEvent.h; sourceTree = "<group>"; };
+		22C32BFC17238F5B0015BC73 /* GHOST_IEventConsumer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GHOST_IEventConsumer.h; sourceTree = "<group>"; };
+		22C32BFD17238F5B0015BC73 /* GHOST_ISystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GHOST_ISystem.h; sourceTree = "<group>"; };
+		22C32BFE17238F5B0015BC73 /* GHOST_ISystemPaths.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GHOST_ISystemPaths.h; sourceTree = "<group>"; };
+		22C32BFF17238F5B0015BC73 /* GHOST_ITimerTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GHOST_ITimerTask.h; sourceTree = "<group>"; };
+		22C32C0017238F5B0015BC73 /* GHOST_IWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GHOST_IWindow.h; sourceTree = "<group>"; };
+		22C32C0117238F5B0015BC73 /* GHOST_ModifierKeys.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GHOST_ModifierKeys.h; sourceTree = "<group>"; };
+		22C32C0217238F5B0015BC73 /* GHOST_Path-api.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "GHOST_Path-api.h"; sourceTree = "<group>"; };
+		22C32C0317238F5B0015BC73 /* GHOST_Rect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GHOST_Rect.h; sourceTree = "<group>"; };
+		22C32C0417238F5B0015BC73 /* GHOST_System.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GHOST_System.h; sourceTree = "<group>"; };
+		22C32C0517238F5B0015BC73 /* GHOST_SystemNULL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GHOST_SystemNULL.h; sourceTree = "<group>"; };
+		22C32C0617238F5B0015BC73 /* GHOST_SystemPaths.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GHOST_SystemPaths.h; sourceTree = "<group>"; };
+		22C32C0717238F5B0015BC73 /* GHOST_TimerManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GHOST_TimerManager.h; sourceTree = "<group>"; };
+		22C32C0817238F5B0015BC73 /* GHOST_TimerTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GHOST_TimerTask.h; sourceTree = "<group>"; };
+		22C32C0917238F5B0015BC73 /* GHOST_Types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GHOST_Types.h; sourceTree = "<group>"; };
+		22C32C0A17238F5B0015BC73 /* GHOST_Window.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GHOST_Window.h; sourceTree = "<group>"; };
+		22C32C0B17238F5B0015BC73 /* GHOST_WindowManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GHOST_WindowManager.h; sourceTree = "<group>"; };
+		22C32C0C17238F5B0015BC73 /* GHOST_WindowNULL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GHOST_WindowNULL.h; sourceTree = "<group>"; };
+		22C32C0E17238F5B0015BC73 /* GHOST_DisplayManagerWin32.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GHOST_DisplayManagerWin32.h; sourceTree = "<group>"; };
+		22C32C0F17238F5B0015BC73 /* GHOST_DropTargetWin32.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GHOST_DropTargetWin32.h; sourceTree = "<group>"; };
+		22C32C1017238F5B0015BC73 /* GHOST_SystemPathsWin32.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GHOST_SystemPathsWin32.h; sourceTree = "<group>"; };
+		22C32C1117238F5B0015BC73 /* GHOST_SystemWin32.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GHOST_SystemWin32.h; sourceTree = "<group>"; };
+		22C32C1217238F5B0015BC73 /* GHOST_TaskbarWin32.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GHOST_TaskbarWin32.h; sourceTree = "<group>"; };
+		22C32C1317238F5B0015BC73 /* GHOST_WindowWin32.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GHOST_WindowWin32.h; sourceTree = "<group>"; };
+		22C32C1417238F5B0015BC73 /* pktdef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pktdef.h; sourceTree = "<group>"; };
+		22C32C1517238F5B0015BC73 /* wintab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = wintab.h; sourceTree = "<group>"; };
+		22C32C1717238F5B0015BC73 /* GHOST_DisplayManagerX11.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GHOST_DisplayManagerX11.h; sourceTree = "<group>"; };
+		22C32C1817238F5B0015BC73 /* GHOST_SystemPathsX11.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GHOST_SystemPathsX11.h; sourceTree = "<group>"; };
+		22C32C1917238F5B0015BC73 /* GHOST_SystemX11.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GHOST_SystemX11.h; sourceTree = "<group>"; };
+		22C32C1A17238F5B0015BC73 /* GHOST_WindowX11.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GHOST_WindowX11.h; sourceTree = "<group>"; };
+		22C32C2B17238F5B0015BC73 /* STR_String.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = STR_String.h; sourceTree = "<group>"; };
+		22C32C2D17238F5B0015BC73 /* ofxDisplay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxDisplay.cpp; sourceTree = "<group>"; };
+		22C32C2E17238F5B0015BC73 /* ofxDisplay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxDisplay.h; sourceTree = "<group>"; };
+		22C32C2F17238F5B0015BC73 /* ofxDisplayMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxDisplayMac.h; sourceTree = "<group>"; };
+		22C32C3017238F5B0015BC73 /* ofxDisplayManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxDisplayManager.cpp; sourceTree = "<group>"; };
+		22C32C3117238F5B0015BC73 /* ofxDisplayManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxDisplayManager.h; sourceTree = "<group>"; };
+		22C32C3217238F5B0015BC73 /* ofxDisplayManagerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofxDisplayManagerMac.mm; sourceTree = "<group>"; };
+		22C32C3317238F5B0015BC73 /* ofxFenster.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxFenster.cpp; sourceTree = "<group>"; };
+		22C32C3417238F5B0015BC73 /* ofxFenster.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxFenster.h; sourceTree = "<group>"; };
+		22C32C3517238F5B0015BC73 /* ofxFensterCanvas.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxFensterCanvas.cpp; sourceTree = "<group>"; };
+		22C32C3617238F5B0015BC73 /* ofxFensterCanvas.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxFensterCanvas.h; sourceTree = "<group>"; };
+		22C32C3717238F5B0015BC73 /* ofxFensterManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxFensterManager.cpp; sourceTree = "<group>"; };
+		22C32C3817238F5B0015BC73 /* ofxFensterManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxFensterManager.h; sourceTree = "<group>"; };
+		22C32C4C1724ACCA0015BC73 /* tinyxml.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tinyxml.cpp; sourceTree = "<group>"; };
+		22C32C4D1724ACCA0015BC73 /* tinyxml.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tinyxml.h; sourceTree = "<group>"; };
+		22C32C4E1724ACCA0015BC73 /* tinyxmlerror.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tinyxmlerror.cpp; sourceTree = "<group>"; };
+		22C32C4F1724ACCA0015BC73 /* tinyxmlparser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tinyxmlparser.cpp; sourceTree = "<group>"; };
+		22C32C511724ACCA0015BC73 /* ofxXmlSettings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxXmlSettings.cpp; sourceTree = "<group>"; };
+		22C32C521724ACCA0015BC73 /* ofxXmlSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxXmlSettings.h; sourceTree = "<group>"; };
 		22E14200164D862A00CA0A44 /* main.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = main.mm; sourceTree = "<group>"; };
 		22E14202164D866F00CA0A44 /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = config.h; path = ../../src/config.h; sourceTree = "<group>"; };
 		22E14203164D866F00CA0A44 /* ImageMesh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = ImageMesh.h; path = ../../src/ImageMesh.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
@@ -1463,32 +1531,177 @@
 			path = ../../../addons/ofxJSON/src;
 			sourceTree = "<group>";
 		};
-		22AA598E1606E07300E88EF8 /* ofxXmlSettings */ = {
+		22C32BE117238F3C0015BC73 /* ofxFenster */ = {
 			isa = PBXGroup;
 			children = (
-				22AA598F1606E08300E88EF8 /* libs */,
-				22AA59941606E08300E88EF8 /* src */,
+				22C32BE217238F5B0015BC73 /* libs */,
+				22C32C2C17238F5B0015BC73 /* src */,
 			);
-			name = ofxXmlSettings;
+			name = ofxFenster;
 			sourceTree = "<group>";
 		};
-		22AA598F1606E08300E88EF8 /* libs */ = {
+		22C32BE217238F5B0015BC73 /* libs */ = {
 			isa = PBXGroup;
 			children = (
-				22AA59901606E08300E88EF8 /* tinyxml.cpp */,
-				22AA59911606E08300E88EF8 /* tinyxml.h */,
-				22AA59921606E08300E88EF8 /* tinyxmlerror.cpp */,
-				22AA59931606E08300E88EF8 /* tinyxmlparser.cpp */,
+				22C32BE317238F5B0015BC73 /* ghost */,
+				22C32C2917238F5B0015BC73 /* string */,
+			);
+			name = libs;
+			path = ../../../addons/ofxFenster/libs;
+			sourceTree = "<group>";
+		};
+		22C32BE317238F5B0015BC73 /* ghost */ = {
+			isa = PBXGroup;
+			children = (
+				22C32BE417238F5B0015BC73 /* include */,
+			);
+			path = ghost;
+			sourceTree = "<group>";
+		};
+		22C32BE417238F5B0015BC73 /* include */ = {
+			isa = PBXGroup;
+			children = (
+				22C32BE517238F5B0015BC73 /* Cocoa */,
+				22C32BEA17238F5B0015BC73 /* GHOST_Buttons.h */,
+				22C32BEB17238F5B0015BC73 /* GHOST_C-api.h */,
+				22C32BEC17238F5B0015BC73 /* GHOST_CallbackEventConsumer.h */,
+				22C32BED17238F5B0015BC73 /* GHOST_Debug.h */,
+				22C32BEE17238F5B0015BC73 /* GHOST_DisplayManager.h */,
+				22C32BEF17238F5B0015BC73 /* GHOST_DisplayManagerNULL.h */,
+				22C32BF017238F5B0015BC73 /* GHOST_Event.h */,
+				22C32BF117238F5B0015BC73 /* GHOST_EventButton.h */,
+				22C32BF217238F5B0015BC73 /* GHOST_EventCursor.h */,
+				22C32BF317238F5B0015BC73 /* GHOST_EventDragnDrop.h */,
+				22C32BF417238F5B0015BC73 /* GHOST_EventKey.h */,
+				22C32BF517238F5B0015BC73 /* GHOST_EventManager.h */,
+				22C32BF617238F5B0015BC73 /* GHOST_EventNDOF.h */,
+				22C32BF717238F5B0015BC73 /* GHOST_EventPrinter.h */,
+				22C32BF817238F5B0015BC73 /* GHOST_EventString.h */,
+				22C32BF917238F5B0015BC73 /* GHOST_EventTrackpad.h */,
+				22C32BFA17238F5B0015BC73 /* GHOST_EventWheel.h */,
+				22C32BFB17238F5B0015BC73 /* GHOST_IEvent.h */,
+				22C32BFC17238F5B0015BC73 /* GHOST_IEventConsumer.h */,
+				22C32BFD17238F5B0015BC73 /* GHOST_ISystem.h */,
+				22C32BFE17238F5B0015BC73 /* GHOST_ISystemPaths.h */,
+				22C32BFF17238F5B0015BC73 /* GHOST_ITimerTask.h */,
+				22C32C0017238F5B0015BC73 /* GHOST_IWindow.h */,
+				22C32C0117238F5B0015BC73 /* GHOST_ModifierKeys.h */,
+				22C32C0217238F5B0015BC73 /* GHOST_Path-api.h */,
+				22C32C0317238F5B0015BC73 /* GHOST_Rect.h */,
+				22C32C0417238F5B0015BC73 /* GHOST_System.h */,
+				22C32C0517238F5B0015BC73 /* GHOST_SystemNULL.h */,
+				22C32C0617238F5B0015BC73 /* GHOST_SystemPaths.h */,
+				22C32C0717238F5B0015BC73 /* GHOST_TimerManager.h */,
+				22C32C0817238F5B0015BC73 /* GHOST_TimerTask.h */,
+				22C32C0917238F5B0015BC73 /* GHOST_Types.h */,
+				22C32C0A17238F5B0015BC73 /* GHOST_Window.h */,
+				22C32C0B17238F5B0015BC73 /* GHOST_WindowManager.h */,
+				22C32C0C17238F5B0015BC73 /* GHOST_WindowNULL.h */,
+				22C32C0D17238F5B0015BC73 /* WIN32 */,
+				22C32C1617238F5B0015BC73 /* X11 */,
+			);
+			path = include;
+			sourceTree = "<group>";
+		};
+		22C32BE517238F5B0015BC73 /* Cocoa */ = {
+			isa = PBXGroup;
+			children = (
+				22C32BE617238F5B0015BC73 /* GHOST_DisplayManagerCocoa.h */,
+				22C32BE717238F5B0015BC73 /* GHOST_SystemCocoa.h */,
+				22C32BE817238F5B0015BC73 /* GHOST_SystemPathsCocoa.h */,
+				22C32BE917238F5B0015BC73 /* GHOST_WindowCocoa.h */,
+			);
+			path = Cocoa;
+			sourceTree = "<group>";
+		};
+		22C32C0D17238F5B0015BC73 /* WIN32 */ = {
+			isa = PBXGroup;
+			children = (
+				22C32C0E17238F5B0015BC73 /* GHOST_DisplayManagerWin32.h */,
+				22C32C0F17238F5B0015BC73 /* GHOST_DropTargetWin32.h */,
+				22C32C1017238F5B0015BC73 /* GHOST_SystemPathsWin32.h */,
+				22C32C1117238F5B0015BC73 /* GHOST_SystemWin32.h */,
+				22C32C1217238F5B0015BC73 /* GHOST_TaskbarWin32.h */,
+				22C32C1317238F5B0015BC73 /* GHOST_WindowWin32.h */,
+				22C32C1417238F5B0015BC73 /* pktdef.h */,
+				22C32C1517238F5B0015BC73 /* wintab.h */,
+			);
+			path = WIN32;
+			sourceTree = "<group>";
+		};
+		22C32C1617238F5B0015BC73 /* X11 */ = {
+			isa = PBXGroup;
+			children = (
+				22C32C1717238F5B0015BC73 /* GHOST_DisplayManagerX11.h */,
+				22C32C1817238F5B0015BC73 /* GHOST_SystemPathsX11.h */,
+				22C32C1917238F5B0015BC73 /* GHOST_SystemX11.h */,
+				22C32C1A17238F5B0015BC73 /* GHOST_WindowX11.h */,
+			);
+			path = X11;
+			sourceTree = "<group>";
+		};
+		22C32C2917238F5B0015BC73 /* string */ = {
+			isa = PBXGroup;
+			children = (
+				22C32C2A17238F5B0015BC73 /* include */,
+			);
+			path = string;
+			sourceTree = "<group>";
+		};
+		22C32C2A17238F5B0015BC73 /* include */ = {
+			isa = PBXGroup;
+			children = (
+				22C32C2B17238F5B0015BC73 /* STR_String.h */,
+			);
+			path = include;
+			sourceTree = "<group>";
+		};
+		22C32C2C17238F5B0015BC73 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				22C32C2D17238F5B0015BC73 /* ofxDisplay.cpp */,
+				22C32C2E17238F5B0015BC73 /* ofxDisplay.h */,
+				22C32C2F17238F5B0015BC73 /* ofxDisplayMac.h */,
+				22C32C3017238F5B0015BC73 /* ofxDisplayManager.cpp */,
+				22C32C3117238F5B0015BC73 /* ofxDisplayManager.h */,
+				22C32C3217238F5B0015BC73 /* ofxDisplayManagerMac.mm */,
+				22C32C3317238F5B0015BC73 /* ofxFenster.cpp */,
+				22C32C3417238F5B0015BC73 /* ofxFenster.h */,
+				22C32C3517238F5B0015BC73 /* ofxFensterCanvas.cpp */,
+				22C32C3617238F5B0015BC73 /* ofxFensterCanvas.h */,
+				22C32C3717238F5B0015BC73 /* ofxFensterManager.cpp */,
+				22C32C3817238F5B0015BC73 /* ofxFensterManager.h */,
+			);
+			name = src;
+			path = ../../../addons/ofxFenster/src;
+			sourceTree = "<group>";
+		};
+		22C32C4A1724ACB40015BC73 /* ofxXMLSettings */ = {
+			isa = PBXGroup;
+			children = (
+				22C32C4B1724ACCA0015BC73 /* libs */,
+				22C32C501724ACCA0015BC73 /* src */,
+			);
+			name = ofxXMLSettings;
+			sourceTree = "<group>";
+		};
+		22C32C4B1724ACCA0015BC73 /* libs */ = {
+			isa = PBXGroup;
+			children = (
+				22C32C4C1724ACCA0015BC73 /* tinyxml.cpp */,
+				22C32C4D1724ACCA0015BC73 /* tinyxml.h */,
+				22C32C4E1724ACCA0015BC73 /* tinyxmlerror.cpp */,
+				22C32C4F1724ACCA0015BC73 /* tinyxmlparser.cpp */,
 			);
 			name = libs;
 			path = ../../../addons/ofxXmlSettings/libs;
 			sourceTree = "<group>";
 		};
-		22AA59941606E08300E88EF8 /* src */ = {
+		22C32C501724ACCA0015BC73 /* src */ = {
 			isa = PBXGroup;
 			children = (
-				22AA59951606E08300E88EF8 /* ofxXmlSettings.cpp */,
-				22AA59961606E08300E88EF8 /* ofxXmlSettings.h */,
+				22C32C511724ACCA0015BC73 /* ofxXmlSettings.cpp */,
+				22C32C521724ACCA0015BC73 /* ofxXmlSettings.h */,
 			);
 			name = src;
 			path = ../../../addons/ofxXmlSettings/src;
@@ -1497,12 +1710,13 @@
 		BB4B014C10F69532006C3DED /* addons */ = {
 			isa = PBXGroup;
 			children = (
+				22C32C4A1724ACB40015BC73 /* ofxXMLSettings */,
+				22C32BE117238F3C0015BC73 /* ofxFenster */,
 				221D18A2171D15C8003E3F74 /* ofxFX */,
 				222AB2A61717208200DAE516 /* ofxLeapMotion */,
 				228836EB17163E02002F58A2 /* ofxLibdc */,
 				226150FC17027CF500290F86 /* ofxARtoolkitPlus */,
 				226150FB17027CEB00290F86 /* ofxOpenCv */,
-				22AA598E1606E07300E88EF8 /* ofxXmlSettings */,
 				22AA59101606DF8400E88EF8 /* ofxUI */,
 				22AA590F1606DF6E00E88EF8 /* ofxOsc */,
 				22AA590E1606DF6800E88EF8 /* ofxEasingFunc */,
@@ -1597,7 +1811,6 @@
 				223CE0E91704F69E0007533D /* WorldLayer.h */,
 				22196FCA1720BC3D00C23B9A /* MapFeatureCollection.cpp */,
 				22196FCB1720BC3D00C23B9A /* MapFeatureCollection.h */,
-				22C32B7217222C240015BC73 /* MapFeature.cpp */,
 				22C32B7317222C240015BC73 /* MapFeature.h */,
 			);
 			path = src;
@@ -1718,10 +1931,6 @@
 				22AA598B1606DFAE00E88EF8 /* json_value.cpp in Sources */,
 				22AA598C1606DFAE00E88EF8 /* json_writer.cpp in Sources */,
 				22AA598D1606DFAE00E88EF8 /* ofxJSONElement.cpp in Sources */,
-				22AA59971606E08300E88EF8 /* tinyxml.cpp in Sources */,
-				22AA59981606E08300E88EF8 /* tinyxmlerror.cpp in Sources */,
-				22AA59991606E08300E88EF8 /* tinyxmlparser.cpp in Sources */,
-				22AA599A1606E08300E88EF8 /* ofxXmlSettings.cpp in Sources */,
 				22E14201164D862A00CA0A44 /* main.mm in Sources */,
 				22E1420E164D866F00CA0A44 /* MouseController.cpp in Sources */,
 				22E1420F164D866F00CA0A44 /* ReliefClientBase.cpp in Sources */,
@@ -1753,7 +1962,16 @@
 				22196FC61720B53100C23B9A /* MapWidget.cpp in Sources */,
 				22196FC91720B54800C23B9A /* Timeline.cpp in Sources */,
 				22196FCC1720BC3D00C23B9A /* MapFeatureCollection.cpp in Sources */,
-				22C32B7417222C240015BC73 /* MapFeature.cpp in Sources */,
+				22C32C4017238F5B0015BC73 /* ofxDisplay.cpp in Sources */,
+				22C32C4117238F5B0015BC73 /* ofxDisplayManager.cpp in Sources */,
+				22C32C4217238F5B0015BC73 /* ofxDisplayManagerMac.mm in Sources */,
+				22C32C4317238F5B0015BC73 /* ofxFenster.cpp in Sources */,
+				22C32C4417238F5B0015BC73 /* ofxFensterCanvas.cpp in Sources */,
+				22C32C4517238F5B0015BC73 /* ofxFensterManager.cpp in Sources */,
+				22C32C531724ACCA0015BC73 /* tinyxml.cpp in Sources */,
+				22C32C541724ACCA0015BC73 /* tinyxmlerror.cpp in Sources */,
+				22C32C551724ACCA0015BC73 /* tinyxmlparser.cpp in Sources */,
+				22C32C561724ACCA0015BC73 /* ofxXmlSettings.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1889,11 +2107,17 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/../../../addons/ofxLibdc/libs/osx/lib\"",
 					"\"$(SRCROOT)/../../../addons/ofxLeapMotion/src/ofxLeapMotion/libs/lib/osx\"",
+					"\"$(SRCROOT)/../../../addons/ofxFenster/libs/ghost/lib/linux\"",
+					"\"$(SRCROOT)/../../../addons/ofxFenster/libs/ghost/lib/linux64\"",
+					"\"$(SRCROOT)/../../../addons/ofxFenster/libs/ghost/lib/osx32\"",
+					"\"$(SRCROOT)/../../../addons/ofxFenster/libs/ghost/lib/osx64\"",
+					"\"$(SRCROOT)/../../../addons/ofxFenster/libs/ghost/lib/win_cb\"",
+					"\"$(SRCROOT)/../../../addons/ofxFenster/libs/ghost/lib/win_vs\"",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				OTHER_LDFLAGS = "$(inherited)";
 				PRODUCT_NAME = GeoSenseReliefClientOSXDebug;
-				SDKROOT = macosx;
+				SDKROOT = "";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -1919,11 +2143,17 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/../../../addons/ofxLibdc/libs/osx/lib\"",
 					"\"$(SRCROOT)/../../../addons/ofxLeapMotion/src/ofxLeapMotion/libs/lib/osx\"",
+					"\"$(SRCROOT)/../../../addons/ofxFenster/libs/ghost/lib/linux\"",
+					"\"$(SRCROOT)/../../../addons/ofxFenster/libs/ghost/lib/linux64\"",
+					"\"$(SRCROOT)/../../../addons/ofxFenster/libs/ghost/lib/osx32\"",
+					"\"$(SRCROOT)/../../../addons/ofxFenster/libs/ghost/lib/osx64\"",
+					"\"$(SRCROOT)/../../../addons/ofxFenster/libs/ghost/lib/win_cb\"",
+					"\"$(SRCROOT)/../../../addons/ofxFenster/libs/ghost/lib/win_vs\"",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				OTHER_LDFLAGS = "$(inherited)";
 				PRODUCT_NAME = GeoSenseReliefClientOSX;
-				SDKROOT = macosx;
+				SDKROOT = "";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;

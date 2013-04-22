@@ -31,19 +31,25 @@ class SceneController{
         virtual void update();
         bool panEase;
         float panEaseStart;
+        bool lookEase;
+        float lookEaseStart;
     
         ofVec3f panVelocity;
+        ofVec3f lookVelocity;
+    
         ofEvent<GestureEventArgs> onSwipe;
         ofEvent<GestureEventArgs> onCircle;
         ofEvent<GestureEventArgs> onTapDown;
         ofEvent<GestureEventArgs> onTapScreen;
         ofEvent<ofVec3f> onPan;
+        ofEvent<ofVec3f> onLook;
         ofEvent<float> onZoom;
         ofEvent<MapWidget> onViewpointChange;
 
         template<class ListenerClass>
         void registerEvents(ListenerClass * listener){
             ofAddListener(onPan, listener, &ListenerClass::onPan);
+            ofAddListener(onLook, listener, &ListenerClass::onLook);
             ofAddListener(onZoom, listener, &ListenerClass::onZoom);
             ofAddListener(onViewpointChange, listener, &ListenerClass::onViewpointChange);
             ofAddListener(onSwipe, listener, &ListenerClass::onSwipe);

@@ -4,15 +4,70 @@ KeyboardController::KeyboardController() {
     ofRegisterKeyEvents(this);
 }
 
-void KeyboardController::keyPressed(ofKeyEventArgs & args){
-    //    ofLog() << "KEY:" << args.key;
-    switch (args.key) {
-        case OF_KEY_LEFT:
-            panVelocity.x = -KEY_PAN_VELOCITY;
+bool isKeyDown[1024];
+
+void KeyboardController::keyPressed(ofKeyEventArgs & args) {
+    ofLog() << "  " << args.key;
+    isKeyDown[args.key] = true;
+}
+
+void KeyboardController::update() {
+    bool shift = ofGetKeyPressed(32);
+    
+    ofVec3f vel;
+    bool changed = false;
+    if (shift) {
+        vel = lookVelocity;
+    } else {
+        vel = panVelocity;
+    }
+    
+    if (isKeyDown[OF_KEY_LEFT]) {
+        vel.x = -KEY_PAN_VELOCITY;
+        changed = true;
+    }
+
+    if (isKeyDown[OF_KEY_UP]) {
+        vel.y = KEY_PAN_VELOCITY;
+        changed = true;
+     }
+    
+     if (isKeyDown[OF_KEY_RIGHT]) {
+         vel.x = KEY_PAN_VELOCITY;
+         changed = true;
+     }
+    
+     if (isKeyDown[OF_KEY_DOWN]) {
+         vel.y = -KEY_PAN_VELOCITY;
+         changed = true;
+     }
+    
+     if (isKeyDown[OF_KEY_PAGE_UP]) {
+         vel.z = KEY_PAN_VELOCITY;
+         changed = true;
+     }
+
+    if (isKeyDown[OF_KEY_PAGE_DOWN]) {
+        vel.z = -KEY_PAN_VELOCITY;
+        changed = true;
+    }
+
+    if (changed) {
+        if (shift) {
+            lookVelocity = vel;
+            lookEaseStart = ofGetElapsedTimef();
+            lookEase = true;
+        } else {
+            panVelocity = vel;
             panEaseStart = ofGetElapsedTimef();
             panEase = true;
-            break;
-        case OF_KEY_UP:
+        }
+        
+    }
+  
+    SceneController::update();
+    
+    /*    case OF_KEY_UP:
             panVelocity.y = KEY_PAN_VELOCITY;
             panEaseStart = ofGetElapsedTimef();
             panEase = true;
@@ -27,8 +82,20 @@ void KeyboardController::keyPressed(ofKeyEventArgs & args){
             panEaseStart = ofGetElapsedTimef();
             panEase = true;
             break;
-    };
+        case OF_KEY_PAGE_UP:
+            panVelocity.z = KEY_PAN_VELOCITY;
+            panEaseStart = ofGetElapsedTimef();
+            panEase = true;
+            break;
+        case OF_KEY_PAGE_DOWN:
+            panVelocity.z = -KEY_PAN_VELOCITY;
+            panEaseStart = ofGetElapsedTimef();
+            panEase = true;
+            break;
+    
+    };*/
 }
 
 void KeyboardController::keyReleased(ofKeyEventArgs & args) {
+    isKeyDown[args.key] = false;
 }

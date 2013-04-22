@@ -47,7 +47,13 @@
 #define COLOR_GRID ofColor(100, 100, 100, 70)
 #define COLOR_BACKGROUND ofColor(0)
 #define COLOR_MAP_WIDGET ofColor(255, 255, 230, 128)
+#define COLOR_LABEL ofColor(250)
+#define COLOR_LABEL_SHADOW ofColor(30, 30, 30, 80)
 #define GUI_DISAPPEAR_FRAMES 30
+
+#define OVERLAY_OPACITY .2
+#define FEATURE_OPACITY .7
+#define FEATURE_POINT_RADIUS .25
 
 #endif
 
@@ -74,3 +80,14 @@
 
 
 #define TIMELINE_CIRCLE_STEP .003
+
+
+#define RIPPLE_UPDATE_INTERVAL 2
+
+
+#define WINDOW_W 1280
+#define WINDOW_H 1024
+#define MULTI_WINDOWS false
+#define ENABLE_FULLSCREEN true
+
+#define VIEWPORT_SELECTOR_W 20

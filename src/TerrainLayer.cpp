@@ -12,29 +12,40 @@
 void TerrainLayer::loadHeightMap(string filename, float peakHeight) {
     ofLog() << "Loading height map: " << filename;
     heightMap.loadImage(filename);
-    mesh = meshFromImage(heightMap, 1, peakHeight);
-    vbo.setMesh(mesh, GL_STATIC_DRAW);
+    setMesh(meshFromImage(heightMap, 1, peakHeight));
+}
+
+void TerrainLayer::setMesh(ofMesh m) {
+    mesh = m;
+    vboMesh = mesh;
 }
 
 void TerrainLayer::loadTexture(string filename) {
     ofLog() << "Loading texture: " << filename;
     textureImage.loadImage(filename);
+    setTextureReference(textureImage.getTextureReference());
+}
+
+ofTexture& TerrainLayer::getTextureReference() {
+    return textureImage.getTextureReference();
+}
+
+void TerrainLayer::setTextureReference(ofTexture& tex) {
+    texture = &tex;
     drawTexture = true;
 }
 
 void TerrainLayer::customDraw() {
-    if (!drawWireframe) {
-        ofSetColor(255, 255, 255, 255 * opacity);
-        if (drawTexture) {
-            textureImage.getTextureReference().bind();
-        }
-        vbo.draw(GL_TRIANGLES, 0, mesh.getVertices().size() - 1);
-        //mesh.draw();
-        if (drawTexture) {
-            textureImage.getTextureReference().unbind();
-        }
-    } else {
-        ofSetColor(100, 100, 100, 20);
-        //vbo.drawWireframe();
+    ofSetColor(255, 255, 255, 255 * opacity);
+    if (drawTexture) {
+        texture->bind();
+    }
+    vboMesh.draw();
+    if (drawTexture) {
+        texture->unbind();
+    }
+    if (drawWireframe) {
+        ofSetColor(50, 50, 50, 128);
+        vboMesh.drawWireframe();
     }
 }

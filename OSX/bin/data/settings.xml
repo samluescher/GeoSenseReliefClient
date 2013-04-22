@@ -1,0 +1,105 @@
+<settings>
+    <realworldUnitToGlUnit>3.500000000</realworldUnitToGlUnit>
+    <viewports>
+        <viewport>
+            <drawTerrainEnabled>1</drawTerrainEnabled>
+            <globalScale>
+                <x>1.018595099</x>
+                <y>1.018595099</y>
+            </globalScale>
+            <globalOffset>
+                <x>398.347106934</x>
+                <y>242.975158691</y>
+            </globalOffset>
+            <drawMapFeaturesEnabled>1</drawMapFeaturesEnabled>
+            <drawOverlaysEnabled>1</drawOverlaysEnabled>
+            <drawMiniMapEnabled>1</drawMiniMapEnabled>
+            <drawTerrainGridEnabled>1</drawTerrainGridEnabled>
+            <lightingEnabled>1</lightingEnabled>
+            <drawTexturesEnabled>1</drawTexturesEnabled>
+            <fullscreenEnabled>1</fullscreenEnabled>
+            <lightAttenuation>3.000000000</lightAttenuation>
+            <camera>
+                <ortho>0</ortho>
+                <position>
+                    <x>138.283248901</x>
+                    <y>37.425251007</y>
+                    <z>1000.000000000</z>
+                </position>
+                <lookAtDir>
+                    <x>-0.000000000</x>
+                    <y>-0.000000000</y>
+                    <z>-1.000000000</z>
+                </lookAtDir>
+            </camera>
+            <terrainLayerVisible>
+                <layer name="Crust" visible="0"></layer>
+                <layer name="Ocean" visible="1"></layer>
+                <layer name="Plates" visible="0"></layer>
+                <layer name="Mantle" visible="0"></layer>
+            </terrainLayerVisible>
+            <featureLayerVisible>
+                <layer name="Prefectures" visible="0"></layer>
+                <layer name="Plate boundaries" visible="0"></layer>
+                <layer name="Convergence" visible="0"></layer>
+                <layer name="Inundation zone" visible="0"></layer>
+                <layer name="Tohoku earthquake" visible="1"></layer>
+                <layer name="Vertical Cuts" visible="0"></layer>
+                <layer name="Earthquakes" visible="0"></layer>
+            </featureLayerVisible>
+            <terrainOverlayVisible>
+                <layer name="Section cuts" visible="1"></layer>
+            </terrainOverlayVisible>
+        </viewport>
+        <viewport>
+            <drawTerrainEnabled>1</drawTerrainEnabled>
+            <globalScale>
+                <x>2.122520685</x>
+                <y>3.113636255</y>
+            </globalScale>
+            <globalOffset>
+                <x>8.264434814</x>
+                <y>-400.000000000</y>
+            </globalOffset>
+            <drawMapFeaturesEnabled>1</drawMapFeaturesEnabled>
+            <drawOverlaysEnabled>0</drawOverlaysEnabled>
+            <drawMiniMapEnabled>0</drawMiniMapEnabled>
+            <drawTerrainGridEnabled>0</drawTerrainGridEnabled>
+            <lightingEnabled>0</lightingEnabled>
+            <drawTexturesEnabled>1</drawTexturesEnabled>
+            <fullscreenEnabled>1</fullscreenEnabled>
+            <lightAttenuation>3.000000000</lightAttenuation>
+            <camera>
+                <ortho>0</ortho>
+                <position>
+                    <x>138.379013062</x>
+                    <y>37.412754059</y>
+                    <z>1000.000000000</z>
+                </position>
+                <lookAtDir>
+                    <x>-0.000095764</x>
+                    <y>0.000012497</y>
+                    <z>-1.000000000</z>
+                </lookAtDir>
+            </camera>
+            <terrainLayerVisible>
+                <layer name="Crust" visible="0"></layer>
+                <layer name="Ocean" visible="0"></layer>
+                <layer name="Plates" visible="1"></layer>
+                <layer name="Mantle" visible="0"></layer>
+            </terrainLayerVisible>
+            <featureLayerVisible>
+                <layer name="Prefectures" visible="0"></layer>
+                <layer name="Plate boundaries" visible="0"></layer>
+                <layer name="Convergence" visible="0"></layer>
+                <layer name="Inundation zone" visible="0"></layer>
+                <layer name="Tohoku earthquake" visible="0"></layer>
+                <layer name="Vertical Cuts" visible="0"></layer>
+                <layer name="Earthquakes" visible="1"></layer>
+            </featureLayerVisible>
+            <terrainOverlayVisible>
+                <layer name="Section cuts" visible="1"></layer>
+            </terrainOverlayVisible>
+        </viewport>
+    </viewports>
+</settings>
